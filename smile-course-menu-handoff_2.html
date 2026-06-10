@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Smile Education — Course Menu v2 · Handoff (PRD + Mock)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.24.0/dist/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#18202E; --muted:#5C6675; --faint:#8A93A2;
+    --line:#E7EAF0; --line-strong:#D6DBE4;
+    --surface:#FFFFFF; --panel:#F6F8FB; --page:#EDF0F5;
+    --brand:#0E9C7A; --brand-ink:#0A6E57; --brand-soft:#E2F4EE;
+    --new-bg:#E7F0FF; --new-ink:#1D4ED8;
+    --live-bg:#FCF0D8; --live-ink:#92590B;
+    --code-bg:#0F172A; --code-ink:#E2E8F0; --code-dim:#7C89A3; --code-key:#7DD3C0;
+    --radius:14px; --radius-sm:9px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--page); color:var(--ink);
+    font-family:'Plus Jakarta Sans','Noto Sans Thai',-apple-system,sans-serif;
+    line-height:1.62; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--brand-ink);}
+
+  /* ---------- Header ---------- */
+  header.doc{
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(14,156,122,.10), transparent 55%),
+      var(--surface);
+    border-bottom:1px solid var(--line);
+  }
+  .head-inner{max-width:1180px; margin:0 auto; padding:34px 26px 28px;}
+  .eyebrow{font-size:12px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--brand-ink);}
+  h1.title{font-size:30px; line-height:1.2; font-weight:800; letter-spacing:-.02em; margin:8px 0 4px;}
+  .subtitle{font-size:15px; color:var(--muted); margin:0 0 18px; max-width:62ch;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{font-size:12px; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:5px 12px; color:var(--muted);}
+  .chip b{color:var(--ink); font-weight:600;}
+  .chip.status{background:var(--brand-soft); border-color:transparent; color:var(--brand-ink); font-weight:600;}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:1180px; margin:0 auto; padding:30px 26px 80px; display:grid; grid-template-columns:212px 1fr; gap:40px; align-items:start;}
+  nav.toc{position:sticky; top:22px; font-size:13px;}
+  nav.toc .toc-h{font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--faint); font-weight:700; margin:0 0 10px 12px;}
+  nav.toc a{display:block; color:var(--muted); text-decoration:none; padding:6px 12px; border-left:2px solid transparent; border-radius:0 6px 6px 0;}
+  nav.toc a:hover{color:var(--ink); background:var(--surface);}
+  nav.toc a.active{color:var(--brand-ink); border-left-color:var(--brand); background:var(--surface); font-weight:600;}
+  main{min-width:0;}
+
+  section.block{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 28px; margin-bottom:18px; scroll-margin-top:20px;}
+  section.block.flush{padding:0; overflow:hidden;}
+  .sec-head{display:flex; align-items:center; gap:12px; margin:0 0 16px;}
+  .sec-num{flex:0 0 auto; width:28px; height:28px; border-radius:8px; background:var(--brand-soft); color:var(--brand-ink); font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace;}
+  .sec-head h2{font-size:19px; font-weight:700; margin:0; letter-spacing:-.01em;}
+  p{margin:0 0 12px;} p:last-child{margin-bottom:0;}
+  ul.clean{margin:0 0 4px; padding-left:20px;} ul.clean li{margin-bottom:6px;}
+  .lead{color:var(--muted);}
+  strong{font-weight:600;}
+  .divider{height:1px; background:var(--line); margin:18px 0;}
+
+  /* ---------- Mock component ---------- */
+  .mock-frame{border-bottom:1px solid var(--line); background:var(--surface);}
+  .mock-bar{display:flex; align-items:center; gap:9px; padding:11px 18px; border-bottom:1px solid var(--line); font-size:12px; color:var(--faint);}
+  .mock-bar .lamp{width:9px; height:9px; border-radius:50%;}
+  .mock-bar .lamp.r{background:#F2786E;} .mock-bar .lamp.y{background:#F4C04E;} .mock-bar .lamp.g{background:#5BCB8A;}
+  .mock-bar .url{margin-left:8px;}
+  .topbar{display:flex; align-items:center; gap:18px; padding:13px 18px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
+  .logo{display:flex; align-items:center; gap:9px;}
+  .logo .mark{width:32px; height:32px; border-radius:9px; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px;}
+  .logo .name{font-weight:800; font-size:16px; letter-spacing:-.01em; line-height:1;}
+  .logo .sub{font-size:9px; color:var(--faint); letter-spacing:.16em; text-transform:uppercase;}
+  nav.main{display:flex; align-items:center; gap:18px; flex:1; flex-wrap:wrap;}
+  .navlink{font-size:14px; color:var(--muted); cursor:pointer; padding:6px 1px; border-bottom:2px solid transparent; font-weight:500;}
+  .navlink:hover{color:var(--ink);}
+  .navlink.active{color:var(--ink); border-bottom-color:var(--brand);}
+  .actions{display:flex; align-items:center; gap:12px;}
+  .search{display:flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:7px 13px; color:var(--faint); font-size:13px;}
+  .search input{border:0; background:transparent; outline:none; font:inherit; color:var(--ink); width:96px;}
+  .iconbtn{color:var(--muted); font-size:21px; cursor:pointer;}
+  .login{display:flex; align-items:center; gap:7px; background:var(--brand); color:#fff; border:0; border-radius:999px; padding:9px 16px; font:inherit; font-weight:600; font-size:13px; cursor:pointer;}
+  .login:hover{background:var(--brand-ink);}
+  .megawrap{background:var(--panel);}
+  .mega{display:grid; grid-template-columns:248px 1fr; min-height:330px;}
+  .rail{border-right:1px solid var(--line); padding:10px;}
+  .railitem{display:flex; align-items:center; gap:11px; padding:12px; border-radius:var(--radius-sm); cursor:pointer; margin-bottom:3px; transition:background .12s;}
+  .railitem:hover{background:#fff;}
+  .railitem .ic{font-size:20px; color:var(--muted); width:22px; text-align:center;}
+  .railitem .lbl{flex:1; font-size:13.5px; font-weight:600; color:var(--muted);}
+  .railitem.active{background:#fff; box-shadow:0 1px 2px rgba(20,30,50,.05);}
+  .railitem.active .ic{color:var(--brand);}
+  .railitem.active .lbl{color:var(--ink);}
+  .newtag{font-size:9px; font-weight:700; letter-spacing:.04em; padding:2px 7px; border-radius:999px; background:var(--brand-soft); color:var(--brand-ink);}
+  .detail{padding:24px 26px;}
+  .detail .dh{margin:0 0 18px; font-size:17px; font-weight:700; display:flex; align-items:center; gap:9px;}
+  .detail .dh .ic{color:var(--brand); font-size:21px;}
+  .group{margin-bottom:20px;} .group:last-child{margin-bottom:0;}
+  .group .glabel{font-size:12px; font-weight:600; color:var(--brand-ink); margin:0 0 9px;}
+  .items{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:2px 22px;}
+  .item{display:flex; align-items:center; gap:8px; padding:7px 0; font-size:14px; color:var(--muted); cursor:pointer;}
+  .item:hover{color:var(--brand-ink);}
+  .item .dot{width:4px; height:4px; border-radius:50%; background:var(--line-strong); flex:0 0 4px;}
+  .item .txt{flex:1;}
+  .badge{font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; white-space:nowrap;}
+  .badge.new{background:var(--new-bg); color:var(--new-ink);}
+  .badge.live{background:var(--live-bg); color:var(--live-ink);}
+
+  /* ---------- Tables ---------- */
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin:4px 0 6px;}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-weight:600; color:var(--faint); font-size:12px; letter-spacing:.02em; background:var(--panel);}
+  tr:last-child td{border-bottom:0;}
+  td code, p code, li code{font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:1px 6px;}
+
+  /* ---------- Code blocks ---------- */
+  pre{background:var(--code-bg); color:var(--code-ink); border-radius:10px; padding:16px 18px; overflow-x:auto; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.7; margin:6px 0;}
+  pre .c{color:var(--code-dim);} pre .k{color:var(--code-key);}
+
+  /* ---------- Before / After ---------- */
+  .ba{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .ba .card{border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; background:var(--panel);}
+  .ba .card.after{border-color:var(--brand); background:var(--brand-soft);}
+  .ba .tag-v{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:0 0 10px;}
+  .ba .card.after .tag-v{color:var(--brand-ink);}
+  .tree{list-style:none; margin:0; padding:0; font-size:13.5px;}
+  .tree li{padding:3px 0; color:var(--ink);}
+  .tree .lv2{padding-left:18px; color:var(--muted); font-size:13px;}
+  .tree .hl{color:var(--brand-ink); font-weight:600;}
+  .tree .moved{text-decoration:line-through; color:var(--faint);}
+
+  /* ---------- Token swatches ---------- */
+  .swatch{display:inline-block; width:14px; height:14px; border-radius:4px; border:1px solid rgba(0,0,0,.08); vertical-align:-2px; margin-right:7px;}
+
+  /* ---------- Checklist ---------- */
+  .check{list-style:none; margin:0; padding:0;}
+  .check li{margin-bottom:8px;}
+  .check label{display:flex; gap:10px; align-items:flex-start; cursor:pointer; font-size:14px;}
+  .check input{margin-top:4px; width:16px; height:16px; accent-color:var(--brand); flex:0 0 16px;}
+
+  .callout{display:flex; gap:11px; background:var(--brand-soft); border:1px solid transparent; border-radius:var(--radius-sm); padding:13px 16px; font-size:13.5px; color:var(--brand-ink); margin:10px 0 2px;}
+  .callout i{font-size:18px; margin-top:1px;}
+
+  @media (max-width:880px){
+    .wrap{grid-template-columns:1fr; gap:0; padding:22px 16px 60px;}
+    nav.toc{display:none;}
+    .head-inner{padding:26px 18px 22px;}
+    h1.title{font-size:25px;}
+    .ba{grid-template-columns:1fr;}
+  }
+  @media (max-width:760px){
+    nav.main{order:3; width:100%; gap:14px;}
+    .actions{margin-left:auto;}
+    .mega{grid-template-columns:1fr;}
+    .rail{display:flex; gap:8px; overflow-x:auto; border-right:0; border-bottom:1px solid var(--line);}
+    .railitem{flex:0 0 auto; margin-bottom:0; white-space:nowrap;}
+    .detail{padding:18px 16px;}
+    .items{grid-template-columns:1fr;}
+  }
+
+  /* ---------- Mobile preview (JS device toggle): rail = icon only ---------- */
+  #mock-inner.is-mobile .railitem{flex:0 0 auto; margin-bottom:0; padding:11px; position:relative;}
+  #mock-inner.is-mobile .railitem .lbl{display:none;}
+  #mock-inner.is-mobile .railitem .newtag{
+    position:absolute; top:2px; right:2px; padding:1px 4px; font-size:7px; line-height:1.3;
+  }
+  #mock-inner.is-mobile .railitem .ic{width:auto;}
+</style>
+</head>
+<body>
+
+<header class="doc">
+  <div class="head-inner">
+    <div class="eyebrow">Handoff · PRD + Interactive Mock</div>
+    <h1 class="title">ปรับโครงสร้างเมนู “คอร์สเรียน” — แยก “คอร์สอื่นๆ &amp; บริการ” เป็น Topic หลัก</h1>
+    <p class="subtitle">เอกสารส่งต่องานสำหรับ Designer &amp; Developer — มี mock ที่คลิกได้จริง พร้อมข้อกำหนดเชิงเทคนิคและ acceptance criteria ครบในไฟล์เดียว</p>
+    <div class="chips">
+      <span class="chip status">Status · Draft for handoff</span>
+      <span class="chip"><b>Product:</b> Smile Education — Web</span>
+      <span class="chip"><b>Component:</b> Course Menu (Master–Detail)</span>
+      <span class="chip"><b>Version:</b> v2</span>
+      <span class="chip"><b>Owner:</b> Atom (Product)</span>
+      <span class="chip"><b>Date:</b> 9 มิ.ย. 2026</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc" id="toc">
+    <p class="toc-h">Contents</p>
+    <a href="#mock">Interactive Mock</a>
+    <a href="#overview">1 · ภาพรวม</a>
+    <a href="#problem">2 · ปัญหา &amp; เป้าหมาย</a>
+    <a href="#scope">3 · ขอบเขต</a>
+    <a href="#structure">4 · Before → After</a>
+    <a href="#data">5 · Data model</a>
+    <a href="#interaction">6 · Interaction</a>
+    <a href="#responsive">7 · Responsive</a>
+    <a href="#states">8 · States &amp; edge cases</a>
+    <a href="#ac">9 · Acceptance criteria</a>
+    <a href="#future">10 · Out of scope</a>
+    <a href="#questions">11 · Open questions</a>
+  </nav>
+
+  <main>
+    <!-- ============ MOCK ============ -->
+    <section class="block flush" id="mock">
+      <!-- Device toggle bar -->
+      <div id="device-toggle" style="display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--panel);">
+        <span style="font-size:12px;font-weight:600;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-right:4px;">Preview · Mobile First</span>
+        <button onclick="setDevice('mobile')" id="btn-mobile" style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;border:1px solid var(--brand);background:var(--brand);color:#fff;font:600 12px/1 inherit;cursor:pointer;">
+          <i class="ti ti-device-mobile" style="font-size:15px;"></i> Mobile
+        </button>
+        <button onclick="setDevice('desktop')" id="btn-desktop" style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 12px/1 inherit;cursor:pointer;">
+          <i class="ti ti-device-desktop" style="font-size:15px;"></i> Desktop
+        </button>
+      </div>
+
+      <!-- Mock viewport wrapper — width controlled by JS -->
+      <div id="mock-viewport" style="overflow-x:auto;background:var(--page);padding:0;">
+        <div id="mock-inner" style="width:100%;min-width:320px;background:var(--surface);transition:width .25s;">
+          <div class="mock-frame" style="border-bottom:none;">
+            <div class="mock-bar"><span class="lamp r"></span><span class="lamp y"></span><span class="lamp g"></span><span id="mock-url" class="url">smile.education / courses · Desktop</span></div>
+            <div class="topbar" id="mock-topbar">
+              <div class="logo">
+                <div class="mark"><i class="ti ti-mood-smile"></i></div>
+                <div><div class="name">Smile</div><div class="sub">Education</div></div>
+              </div>
+              <nav class="main" id="mock-nav">
+                <span class="navlink active">คอร์สเรียน</span>
+                <span class="navlink">คอร์สเปิดใหม่</span>
+                <span class="navlink">โปรโมชัน</span>
+                <span class="navlink">ผลงานนักเรียน</span>
+                <span class="navlink">เพิ่มเติม</span>
+              </nav>
+              <div class="actions" id="mock-actions">
+                <div class="search"><i class="ti ti-search"></i><input placeholder="ค้นหาคอร์ส" aria-label="ค้นหาคอร์ส"></div>
+                <i class="ti ti-shopping-cart iconbtn" aria-label="ตะกร้า"></i>
+                <button class="login"><i class="ti ti-login-2"></i>เข้าสู่ห้องเรียน</button>
+              </div>
+            </div>
+            <div class="megawrap">
+              <div class="mega" id="mock-mega">
+                <div class="rail" id="rail" role="tablist" aria-label="หมวดคอร์ส"></div>
+                <div class="detail" id="detail" role="tabpanel"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:12px 18px; font-size:12px; color:var(--faint);">
+        Mobile First — preview เริ่มที่ mobile (390px) เป็นค่าเริ่มต้น · คลิกหัวข้อเพื่อสลับเนื้อหา · สลับเป็น Desktop เพื่อดู layout ขยาย
+      </div>
+    </section>
+
+    <!-- ============ 1 OVERVIEW ============ -->
+    <section class="block" id="overview">
+      <div class="sec-head"><span class="sec-num">1</span><h2>ภาพรวม</h2></div>
+      <p class="lead">เมนูคอร์สใช้รูปแบบ <strong>Master–Detail</strong>: หัวข้อหลัก (Topic) เรียงเป็นเมนูฝั่งซ้าย เมื่อคลิกหัวข้อใด รายการคอร์สของหัวข้อนั้นจะแสดงในพื้นที่รายละเอียดฝั่งขวา</p>
+      <p>ปัจจุบันรายการ “คอร์สอื่นๆ &amp; บริการ” (FORWARD, Digital SAT MATH, สินค้าพรีเมียม, คอร์สบัญชี, ทดลองเรียน) ถูกวางเป็น <strong>sub-group ซ้อนอยู่ภายใต้ Topic “คอร์สเรียนรอบสด”</strong> ผู้ใช้จึงต้องเข้าหัวข้อรอบสดก่อนถึงจะเจอบริการเหล่านี้ ทั้งที่เนื้อหาไม่เกี่ยวกับ “คอร์สสด” โดยตรง โดยเฉพาะ “ทดลองเรียนฟรี” ที่เป็นจุด conversion สำคัญแต่ถูกฝังลึกที่สุด</p>
+      <div class="callout"><i class="ti ti-arrow-badge-right"></i><div><strong>การเปลี่ยนแปลงใน v2:</strong> ยก “คอร์สอื่นๆ &amp; บริการ” ขึ้นเป็น Topic หลักลำดับที่ 5 และยก “ทดลองเรียนฟรี” แยกออกมาเป็น Topic หลักลำดับที่ 6 ระดับเดียวกับหัวข้ออื่น (ไม่ซ้อนใต้ Topic 5 อีก) และให้ “คอร์สเรียนรอบสด” เหลือเฉพาะคอร์สสดจริง ๆ</div></div>
+    </section>
+
+    <!-- ============ 2 PROBLEM ============ -->
+    <section class="block" id="problem">
+      <div class="sec-head"><span class="sec-num">2</span><h2>ปัญหา &amp; เป้าหมาย</h2></div>
+      <ul class="clean">
+        <li>รายการบริการสำคัญ (เช่น ทดลองเรียนฟรี, FORWARD) ถูกฝังลึกใต้หัวข้อที่ไม่เกี่ยวข้อง ทำให้ค้นเจอยาก (discoverability ต่ำ)</li>
+        <li>ชื่อ “คอร์สเรียนรอบสด” สื่อความหมายไม่ตรง เพราะมีของที่ไม่ใช่คอร์สสดปนอยู่</li>
+        <li>Taxonomy ไม่สม่ำเสมอ — บาง Topic ปนเนื้อหาคนละประเภท</li>
+      </ul>
+      <div class="divider"></div>
+      <p><strong>เป้าหมายที่วัดผลได้</strong></p>
+      <ul class="clean">
+        <li>เพิ่มอัตราการคลิกเข้าดูคอร์สเรียนทุกประเภท ทดสอบได้โดยเปรียบเทียบกับ New users เทียบ Conversion rate ของ 2 Design</li>
+        <li>ลดความสับสนของ taxonomy (หัวข้อย่อย) โดยให้แต่ละ Topic มีเนื้อหาประเภทเดียวกัน</li>
+      </ul>
+    </section>
+
+    <!-- ============ 3 SCOPE ============ -->
+    <section class="block" id="scope">
+      <div class="sec-head"><span class="sec-num">3</span><h2>ขอบเขต</h2></div>
+      <table>
+        <tr><th style="width:50%">In scope</th><th>Out of scope</th></tr>
+        <tr>
+          <td>
+            • เพิ่ม Topic หลักใหม่ “คอร์สอื่นๆ &amp; บริการ” เป็นลำดับที่ 5<br>
+            • เพิ่ม Topic หลักใหม่ “ทดลองเรียนฟรี” เป็นลำดับที่ 6 (แยกออกมา ไม่ซ้อนใต้ Topic 5)<br>
+            • ย้าย 4 รายการ (FORWARD, Digital SAT MATH, สินค้าพรีเมียม, คอร์สบัญชี) มาอยู่ใต้ Topic 5<br>
+            • ลบ sub-group “อื่นๆ &amp; บริการ” ออกจาก “คอร์สเรียนรอบสด”<br>
+            • ปรับ icon/label ของ Topic ใหม่ทั้งสอง
+          </td>
+          <td>
+            • Redesign หน้า course detail<br>
+            • เปลี่ยน routing/URL ของคอร์สแต่ละตัว (ใช้ของเดิม)<br>
+            • เนื้อหา/ลำดับภายในอีก 4 Topic ที่เหลือ (คงเดิม)<br>
+            • เมนูบนแพลตฟอร์มอื่น (LINE OA / app)
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- ============ 4 STRUCTURE ============ -->
+    <section class="block" id="structure">
+      <div class="sec-head"><span class="sec-num">4</span><h2>โครงสร้าง: Before → After</h2></div>
+      <div class="ba">
+        <div class="card">
+          <p class="tag-v">Before · v1 (4 Topics)</p>
+          <ul class="tree">
+            <li>1. TCAS &amp; เตรียมสอบเข้ามหาลัย</li>
+            <li>2. คอร์สตามกลุ่มคณะ</li>
+            <li>3. คอร์สแนะนำ ม.ต้น / ม.ปลาย</li>
+            <li>4. คอร์สเรียนรอบสด</li>
+            <li class="lv2">└ คอร์สรอบสด</li>
+            <li class="lv2 moved">└ อื่นๆ &amp; บริการ</li>
+          </ul>
+        </div>
+        <div class="card after">
+          <p class="tag-v">After · v2 (6 Topics)</p>
+          <ul class="tree">
+            <li>1. TCAS &amp; เตรียมสอบเข้ามหาลัย</li>
+            <li>2. คอร์สตามกลุ่มคณะ</li>
+            <li>3. คอร์สแนะนำ ม.ต้น / ม.ปลาย</li>
+            <li>4. คอร์สเรียนรอบสด</li>
+            <li class="lv2">└ คอร์สรอบสด</li>
+            <li class="hl">5. คอร์สอื่นๆ &amp; บริการ &nbsp;◆ ใหม่</li>
+            <li class="lv2 hl">└ คอร์ส &amp; บริการเพิ่มเติม</li>
+            <li class="hl">6. ทดลองเรียนฟรี &nbsp;◆ ใหม่</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <p><strong>รายการที่ย้าย</strong></p>
+      <table>
+        <tr><th>รายการ</th><th>v1 ตำแหน่ง</th><th>v2 ตำแหน่ง</th></tr>
+        <tr><td>FORWARD</td><td>Topic 4 › อื่นๆ &amp; บริการ</td><td>Topic 5 › คอร์ส &amp; บริการเพิ่มเติม</td></tr>
+        <tr><td>Digital SAT MATH</td><td>Topic 4 › อื่นๆ &amp; บริการ</td><td>Topic 5 › คอร์ส &amp; บริการเพิ่มเติม</td></tr>
+        <tr><td>สินค้าพรีเมียม</td><td>Topic 4 › อื่นๆ &amp; บริการ</td><td>Topic 5 › คอร์ส &amp; บริการเพิ่มเติม</td></tr>
+        <tr><td>คอร์สบัญชี (มหาลัยฯ)</td><td>Topic 4 › อื่นๆ &amp; บริการ</td><td>Topic 5 › คอร์ส &amp; บริการเพิ่มเติม</td></tr>
+        <tr><td>ทดลองเรียน (ฟรี)</td><td>Topic 4 › อื่นๆ &amp; บริการ</td><td><strong>Topic 6 › ทดลองเรียนฟรี</strong> (Topic หลักของตัวเอง)</td></tr>
+      </table>
+    </section>
+
+    <!-- ============ 5 DATA ============ -->
+    <section class="block" id="data">
+      <div class="sec-head"><span class="sec-num">5</span><h2>โครงสร้างข้อมูล (Data model)</h2></div>
+      <p class="lead">เมนูทั้งหมดขับเคลื่อนด้วย config array ชุดเดียว — แก้คอร์ส = แก้ข้อมูล ไม่ต้องแตะ layout</p>
+<pre><span class="c">// 'NEW' = badge สีฟ้า, ค่าอื่น (เช่น 'V.เต็ม') = สไตล์ live/amber</span>
+<span class="k">type</span> Badge = 'NEW' | string;
+
+<span class="k">interface</span> CourseItem {
+  label: string;
+  href: string;
+  badge?: Badge;
+}
+<span class="k">interface</span> CourseGroup {
+  label: string;
+  items: CourseItem[];
+}
+<span class="k">interface</span> CourseTopic {
+  id: string;        <span class="c">// slug คงที่ ใช้ใน analytics/anchor</span>
+  title: string;
+  icon: string;      <span class="c">// ชื่อ icon (เช่น 'ti-package')</span>
+  isNew?: boolean;   <span class="c">// แสดง tag "ใหม่" บนเมนูซ้าย</span>
+  groups: CourseGroup[];
+}</pre>
+      <p style="margin-top:14px;"><strong>ตัวอย่าง Topic ใหม่ (ลำดับที่ 5 และ 6)</strong></p>
+<pre>{
+  id: 'others',
+  title: 'คอร์สอื่นๆ & บริการ',
+  icon: 'ti-package',
+  isNew: <span class="k">true</span>,
+  groups: [{
+    label: 'คอร์ส & บริการเพิ่มเติม',
+    items: [
+      { label: 'FORWARD',           href: '/course/forward',    badge: 'NEW' },
+      { label: 'Digital SAT MATH',  href: '/course/digital-sat' },
+      { label: 'สินค้าพรีเมียม',     href: '/premium' },
+      { label: 'คอร์สบัญชี (มหาลัยฯ)', href: '/course/accounting' },
+    ],
+  }],
+},
+{
+  id: 'trial',
+  title: 'ทดลองเรียนฟรี',
+  icon: 'ti-gift',
+  isNew: <span class="k">true</span>,
+  groups: [{
+    label: 'ทดลองเรียนฟรี',
+    items: [
+      { label: 'ทดลองเรียนฟรี ทุกคอร์ส', href: '/trial', badge: 'ฟรี' },
+    ],
+  }],
+}</pre>
+      <div class="callout"><i class="ti ti-info-circle"></i><div><code>href</code> เป็น placeholder — dev ใช้ URL จริงของระบบ · Topic 6 ใช้ <code>href</code> เดิม <code>/trial</code> ที่เคยอยู่ใต้ Topic 5</div></div>
+    </section>
+
+    <!-- ============ 6 INTERACTION ============ -->
+    <section class="block" id="interaction">
+      <div class="sec-head"><span class="sec-num">6</span><h2>พฤติกรรม UI (Interaction)</h2></div>
+      <table>
+        <tr><th style="width:32%">สถานะ</th><th>พฤติกรรม</th></tr>
+        <tr><td>Default</td><td>เปิด Topic แรก (<code>tcas</code>) เป็น active โดยอัตโนมัติ</td></tr>
+        <tr><td>Hover เมนูซ้าย</td><td>พื้นหลังเปลี่ยนเป็นสีขาว, cursor pointer</td></tr>
+        <tr><td>Active เมนูซ้าย</td><td>พื้นหลังขาว + icon และ label เป็นสีแบรนด์</td></tr>
+        <tr><td>คลิก Topic</td><td>พื้นที่ขวาอัปเดตทันที (ไม่ reload), เปลี่ยน <code>aria-selected</code></td></tr>
+        <tr><td>Hover รายการคอร์ส</td><td>สีข้อความเปลี่ยนเป็น brand-ink</td></tr>
+        <tr><td>คลิกรายการคอร์ส</td><td>นำทางไป <code>href</code> ของคอร์สนั้น</td></tr>
+        <tr><td>Tag “ใหม่”</td><td>แสดงเฉพาะ Topic ที่ <code>isNew === true</code> (เฟสนี้คือ Topic 5 และ Topic 6)</td></tr>
+      </table>
+      <p style="margin-top:14px;"><strong>Badge logic</strong></p>
+      <ul class="clean">
+        <li><code>badge === 'NEW'</code> → pill สีฟ้า</li>
+        <li><code>badge</code> มีค่าอื่น (เช่น <code>V.เต็ม</code>, <code>V.รวบรัด</code>, <code>ฟรี</code>) → pill สีเหลือง</li>
+        <li>ไม่มี <code>badge</code> → ไม่แสดง</li>
+      </ul>
+    </section>
+
+    <!-- ============ 7 RESPONSIVE ============ -->
+    <section class="block" id="responsive">
+      <div class="sec-head"><span class="sec-num">7</span><h2>Responsive — Mobile First</h2></div>
+      <p class="lead">ออกแบบและพัฒนาจาก <strong>mobile เป็นค่าเริ่มต้น (base)</strong> แล้วค่อยขยายขึ้น desktop ด้วย <code>@media (min-width: …)</code> — ไม่ใช่เขียน desktop ก่อนแล้วลดลง</p>
+      <table>
+        <tr><th style="width:32%">Breakpoint</th><th>Layout</th></tr>
+        <tr><td><strong>Base · mobile</strong> (เริ่มที่ ~390px)</td><td>คอลัมน์เดียว: rail เป็นแท็บแนวนอน scroll ได้ <strong>แสดงเฉพาะ icon</strong> (ป้าย “ใหม่” เป็น badge เล็กมุม icon), detail อยู่ด้านล่าง, รายการคอร์สเรียง 1 คอลัมน์</td></tr>
+        <tr><td><code>min-width: 761px</code> (tablet/desktop)</td><td>ขยายเป็น Master–Detail 2 คอลัมน์: rail ซ้าย 248px แสดง icon + label เต็ม, detail ขวา, รายการคอร์สหลายคอลัมน์</td></tr>
+      </table>
+      <p style="margin-top:12px;"><strong>หลักการ</strong></p>
+      <ul class="clean">
+        <li>Base CSS = layout mobile ทั้งหมด ไม่ต้องพึ่ง media query — จอเล็กสุดต้องใช้งานได้ครบ</li>
+        <li>Touch target ≥ 44×44px สำหรับแท็บ icon และรายการคอร์สบน mobile</li>
+        <li>รายการในแต่ละ group ใช้ <code>grid auto-fit minmax(190px, 1fr)</code> ที่ breakpoint desktop — จำนวนคอลัมน์ปรับตามความกว้างเอง</li>
+        <li>เนื้อหา/ลำดับ Topic เหมือนกันทุกขนาดจอ — ต่างกันเฉพาะ layout</li>
+      </ul>
+    </section>
+
+    <!-- ============ 8 TOKENS ============ -->
+    <!-- ============ 8 STATES ============ -->
+    <section class="block" id="states">
+      <div class="sec-head"><span class="sec-num">8</span><h2>States &amp; edge cases</h2></div>
+      <ul class="clean">
+        <li><strong>Topic ไม่มีคอร์ส</strong> — ถ้า items ว่าง แสดงข้อความ “ยังไม่มีคอร์สในหมวดนี้” แทนพื้นที่ว่าง</li>
+        <li><strong>Group เดียว</strong> — ถ้ามีกลุ่มเดียวและชื่อซ้ำกับ Topic อาจไม่ต้องแสดง group label ซ้ำ (พิจารณาตามดีไซน์)</li>
+        <li><strong>ป้าย “ใหม่”</strong> — ควรมีวันหมดอายุ (เช่น 30–60 วันหลังเพิ่ม) ไม่ค้างถาวร</li>
+        <li><strong>Keyboard</strong> — เมนูซ้าย focusable, เลือกด้วย Enter/Space, มี visible focus ring</li>
+        <li><strong>Analytics</strong> — ยิง event ตอนคลิก Topic และคลิกคอร์ส โดยใช้ <code>topic.id</code> + <code>item.label</code></li>
+      </ul>
+    </section>
+
+    <!-- ============ 9 AC ============ -->
+    <section class="block" id="ac">
+      <div class="sec-head"><span class="sec-num">9</span><h2>Acceptance Criteria</h2></div>
+      <ul class="check">
+        <li><label><input type="checkbox">เมนูซ้ายแสดง <strong>6 Topic</strong> เรียง: TCAS → กลุ่มคณะ → ม.ต้น/ม.ปลาย → รอบสด → อื่นๆ &amp; บริการ → ทดลองเรียนฟรี</label></li>
+        <li><label><input type="checkbox">“คอร์สเรียนรอบสด” <strong>ไม่มี</strong> กลุ่ม “อื่นๆ &amp; บริการ” แล้ว (เหลือคอร์สสด 3 รายการ)</label></li>
+        <li><label><input type="checkbox">Topic 5 (อื่นๆ &amp; บริการ) แสดงครบ 4 รายการ (FORWARD, Digital SAT MATH, สินค้าพรีเมียม, คอร์สบัญชี) — <strong>ไม่มี</strong> ทดลองเรียนฟรีแล้ว</label></li>
+        <li><label><input type="checkbox">Topic 6 (ทดลองเรียนฟรี) เป็น Topic หลักแยกท้ายสุด ลิงก์ไป <code>/trial</code> เดิม</label></li>
+        <li><label><input type="checkbox">FORWARD แสดง badge “NEW” สีฟ้า</label></li>
+        <li><label><input type="checkbox">Topic 5 และ Topic 6 แสดง tag “ใหม่” บนเมนูซ้าย</label></li>
+        <li><label><input type="checkbox">คลิก Topic → ขวาอัปเดตถูกต้อง, active เปลี่ยนตาม, ไม่ reload</label></li>
+        <li><label><input type="checkbox">รายการคอร์สทุกตัวลิงก์ไป URL เดิมที่ถูกต้อง (regression check)</label></li>
+        <li><label><input type="checkbox">Mobile First: base layout (mobile) ใช้งานได้ครบ — rail เป็นแท็บแนวนอนแบบ icon, detail อยู่ล่าง, touch target ≥ 44px</label></li>
+        <li><label><input type="checkbox">ที่ <code>min-width: 761px</code> ขยายเป็น Master–Detail 2 คอลัมน์ (rail 248px แสดง icon + label)</label></li>
+        <li><label><input type="checkbox">Keyboard navigation + visible focus ครบทุกเมนู</label></li>
+        <li><label><input type="checkbox">Analytics event ยิงถูกตาม <code>topic.id</code> / <code>item.label</code></label></li>
+      </ul>
+    </section>
+
+    <!-- ============ 10 FUTURE ============ -->
+    <section class="block" id="future">
+      <div class="sec-head"><span class="sec-num">10</span><h2>Out of scope / Future</h2></div>
+      <ul class="clean">
+        <li>พิจารณายุบ Topic 2 (เตรียมสอบ Dek70) กับ Topic 3 (สอบเข้าทั้งหมด) ที่มีรายวิชาซ้ำกัน — แยกเป็น PRD ต่างหาก</li>
+        <li>เพิ่ม thumbnail / ราคา ในพื้นที่ detail</li>
+        <li>เวอร์ชันเมนูบน mobile app / LINE OA</li>
+      </ul>
+    </section>
+
+    <!-- ============ 11 QUESTIONS ============ -->
+    <section class="block" id="questions">
+      <div class="sec-head"><span class="sec-num">11</span><h2>Open questions (รอ confirm)</h2></div>
+      <ul class="clean">
+        <li>ลำดับของ Topic 6 “ทดลองเรียนฟรี” — เฟสนี้วางท้ายสุด (confirm แล้ว) แต่หากต้องการดัน conversion เพิ่ม ควร AB test ดันขึ้นตำแหน่งต้น ๆ ไหม?</li>
+        <li>Topic 6 มีรายการเดียว (“ทดลองเรียนฟรี ทุกคอร์ส”) — คลิก Topic แล้วควรพาเข้า <code>/trial</code> ตรง ๆ เลย หรือแสดง detail panel ก่อน?</li>
+        <li>ป้าย “ใหม่” ตั้งให้หายเองหลังกี่วัน?</li>
+        <li>“สินค้าพรีเมียม” เป็นสินค้า (ไม่ใช่คอร์ส) — ควรอยู่ในเมนูคอร์ส หรือย้ายไปเมนูร้านค้าแยก?</li>
+        <li>ต้องการ redirect เก่า→ใหม่ไหม หากมี URL/anchor ที่ชี้มาที่ sub-group เดิม?</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script>
+const TOPICS = [
+  { id:'tcas', icon:'ti-school', title:'TCAS & เตรียมสอบเข้ามหาลัย', groups:[
+    { label:'แนะนำสำหรับ Dek70', items:[
+      {t:'TGAT ความถนัดทั่วไป'},{t:'TPAT1 ความถนัดแพทย์'},{t:'TPAT3 ความถนัดวิทย์-วิศวะ'},{t:'TPAT5 ความถนัดครู'} ]},
+    { label:'วิชาสอบเข้าทั้งหมด', items:[
+      {t:'A-Level คณิต 1',b:'NEW'},{t:'A-Level คณิต 2'},{t:'A-Level ฟิสิกส์'},
+      {t:'A-Level ชีววิทยา',b:'NEW'},{t:'A-Level ภาษาอังกฤษ',b:'NEW'},{t:'A-Level ภาษาไทย-สังคม'} ]}
+  ]},
+  { id:'faculty', icon:'ti-stethoscope', title:'คอร์สตามกลุ่มคณะ', groups:[
+    { label:'จัดกลุ่มตามสายคณะ', items:[
+      {t:'กลุ่มสายหมอ (แพทย์ ทันตะ เภสัช สัตว)'},{t:'กลุ่มคณะวิศวกรรมศาสตร์'},{t:'กลุ่มคณะบัญชี บริหาร'},
+      {t:'กลุ่มคณะมนุษยศาสตร์'},{t:'กลุ่มคณะนิเทศฯ วารสารฯ'},{t:'กลุ่มคณะครุศาสตร์'},{t:'กลุ่มคณะนิติศาสตร์'} ]}
+  ]},
+  { id:'grade', icon:'ti-users', title:'คอร์สแนะนำ ม.ต้น / ม.ปลาย', groups:[
+    { label:'คอร์สแนะนำตามชั้นปี', items:[
+      {t:'ม.6 (เสริมเกรด)'},{t:'ม.5 (เสริมเกรด)'},{t:'ม.4 (เสริมเกรด)'},{t:'ม.3'},{t:'ม.2'} ]},
+    { label:'เพิ่มเกรด / คอร์สพื้นฐาน', items:[
+      {t:'เนื้อหาคณิต ม.ปลาย Buffet'},{t:'ปรับพื้นฐาน + เสริมเกรด'},{t:'คณิต ม.ปลาย แพ็กเทอม'},
+      {t:'คณิต ม.ปลาย แยกรายบท'},{t:'คณิต ม.ต้น แพ็กเทอม'},{t:'คณิต ม.ต้น แยกรายบท'} ]}
+  ]},
+  { id:'live', icon:'ti-bolt', title:'คอร์สเรียนรอบสด', groups:[
+    { label:'คอร์สรอบสด (เรียนสดตามรอบ)', items:[
+      {t:'พิชิต TPAT3',b:'V.เต็ม'},{t:'PACK A-Level คณิต 1',b:'V.เต็ม'},{t:'พิชิต A-Level ชีววิทยา',b:'V.รวบรัด'} ]}
+  ]},
+  { id:'others', icon:'ti-package', title:'คอร์สอื่นๆ & บริการ', isNew:true, groups:[
+    { label:'คอร์ส & บริการเพิ่มเติม', items:[
+      {t:'FORWARD',b:'NEW'},{t:'Digital SAT MATH'},{t:'สินค้าพรีเมียม'},{t:'คอร์สบัญชี (มหาลัยฯ)'} ]}
+  ]},
+  { id:'trial', icon:'ti-gift', title:'ทดลองเรียนฟรี', isNew:true, groups:[
+    { label:'ทดลองเรียนฟรี', items:[
+      {t:'ทดลองเรียนฟรี ทุกคอร์ส',b:'ฟรี'} ]}
+  ]}
+];
+
+let active = 0;
+const rail = document.getElementById('rail');
+const detail = document.getElementById('detail');
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const badgeHTML = b => !b ? '' : `<span class="badge ${b==='NEW'?'new':'live'}">${esc(b)}</span>`;
+const itemHTML = i => `<div class="item"><span class="dot"></span><span class="txt">${esc(i.t)}</span>${badgeHTML(i.b)}</div>`;
+function renderRail(){
+  rail.innerHTML = TOPICS.map((t,idx)=>`
+    <div class="railitem ${idx===active?'active':''}" role="tab" aria-selected="${idx===active}" tabindex="0" data-idx="${idx}">
+      <span class="ic"><i class="ti ${t.icon}"></i></span>
+      <span class="lbl">${esc(t.title)}</span>
+      ${t.isNew?'<span class="newtag">ใหม่</span>':''}
+    </div>`).join('');
+}
+function renderDetail(){
+  const t = TOPICS[active];
+  detail.innerHTML = `
+    <div class="dh"><span class="ic"><i class="ti ${t.icon}"></i></span>${esc(t.title)}</div>
+    ${t.groups.map(g=>`
+      <div class="group"><p class="glabel">${esc(g.label)}</p>
+      <div class="items">${g.items.map(itemHTML).join('')}</div></div>`).join('')}`;
+}
+function render(){ renderRail(); renderDetail(); }
+function selectIdx(i){ active = i; render(); }
+rail.addEventListener('click', e=>{ const el=e.target.closest('[data-idx]'); if(el) selectIdx(+el.dataset.idx); });
+rail.addEventListener('keydown', e=>{
+  const el = e.target.closest('[data-idx]'); if(!el) return;
+  if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectIdx(+el.dataset.idx); }
+});
+render();
+
+/* Device toggle */
+function setDevice(d){
+  const inner = document.getElementById('mock-inner');
+  const mega  = document.getElementById('mock-mega');
+  const rail2 = document.getElementById('rail');
+  const urlEl = document.getElementById('mock-url');
+  const btnD  = document.getElementById('btn-desktop');
+  const btnM  = document.getElementById('btn-mobile');
+  const on  = 'border:1px solid var(--brand);background:var(--brand);color:#fff;';
+  const off = 'border:1px solid var(--line);background:var(--surface);color:var(--muted);';
+  if(d==='mobile'){
+    inner.classList.add('is-mobile');
+    inner.style.width = '390px';
+    inner.style.margin = '0 auto';
+    mega.style.gridTemplateColumns = '1fr';
+    rail2.style.cssText = 'display:flex;gap:8px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:10px;';
+    urlEl.textContent = 'smile.education / courses · Mobile (390px)';
+    btnM.style.cssText = btnM.style.cssText + on;
+    btnD.style.cssText = btnD.style.cssText + off;
+  } else {
+    inner.classList.remove('is-mobile');
+    inner.style.width = '100%';
+    inner.style.margin = '0';
+    mega.style.gridTemplateColumns = '248px 1fr';
+    rail2.style.cssText = 'display:block;border-right:1px solid var(--line);border-bottom:0;padding:10px;';
+    urlEl.textContent = 'smile.education / courses · Desktop';
+    btnD.style.cssText = btnD.style.cssText + on;
+    btnM.style.cssText = btnM.style.cssText + off;
+  }
+  render();
+}
+setDevice('mobile'); // Mobile First — เปิด preview เป็น mobile เป็นค่าเริ่มต้น
+
+/* TOC active-section highlight */
+const links = Array.from(document.querySelectorAll('nav.toc a'));
+const byId = id => links.find(a => a.getAttribute('href') === '#'+id);
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      links.forEach(a=>a.classList.remove('active'));
+      const link = byId(en.target.id); if(link) link.classList.add('active');
+    }
+  });
+}, { rootMargin:'-20% 0px -70% 0px' });
+document.querySelectorAll('section.block').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
