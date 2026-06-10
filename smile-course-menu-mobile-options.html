@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Smile Education — Mobile Menu Redesign · 3 ทางเลือก</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.24.0/dist/tabler-icons.min.css">
+<style>
+  :root{
+    --ink:#18202E; --muted:#5C6675; --faint:#8A93A2;
+    --line:#E7EAF0; --surface:#FFFFFF; --panel:#F6F8FB; --page:#EDF0F5;
+    --accent:#1B8FE0; --accent-ink:#0E6BB0; --accent-soft:#E3F2FD;
+    --cta:#FF7A2F; --cta-ink:#C2520F; --cta-soft:#FFF1E8;
+    --good:#0E9C7A;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--page); color:var(--ink);
+    font-family:'Plus Jakarta Sans','Noto Sans Thai',-apple-system,sans-serif; line-height:1.6;}
+  .wrap{max-width:1480px; margin:0 auto; padding:34px 26px 90px;}
+  .eyebrow{font-size:12px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink);}
+  h1{font-size:28px; font-weight:800; letter-spacing:-.02em; margin:8px 0 6px;}
+  .sub{font-size:14.5px; color:var(--muted); max-width:72ch; margin:0 0 26px;}
+
+  /* comparison table */
+  .cmp{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:6px 18px 10px; margin-bottom:30px; overflow-x:auto;}
+  table{width:100%; border-collapse:collapse; font-size:13.5px; min-width:760px;}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-weight:600; color:var(--faint); font-size:12px;}
+  tr:last-child td{border-bottom:0;}
+  .stars{color:var(--cta); letter-spacing:1px; white-space:nowrap;}
+  td b{font-weight:700;}
+
+  /* frames grid */
+  .frames{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:26px;}
+  .opt{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; display:flex; flex-direction:column; gap:14px;}
+  .opt-head{display:flex; align-items:center; gap:10px;}
+  .opt-num{width:30px; height:30px; border-radius:9px; background:var(--accent-soft); color:var(--accent-ink); font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;}
+  .opt-head h2{font-size:16px; font-weight:700; margin:0;}
+  .opt-head .eff{margin-left:auto; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; background:var(--panel); color:var(--muted); white-space:nowrap;}
+
+  /* phone */
+  .phone{border:1px solid var(--line); border-radius:26px; overflow:hidden; background:#F4F9FE; box-shadow:0 8px 28px rgba(20,40,70,.08); align-self:center; width:100%; max-width:340px;}
+  .sbar{display:flex; justify-content:space-between; align-items:center; padding:9px 18px 5px; font-size:12px; font-weight:700; color:var(--ink); background:#F4F9FE;}
+  .sbar .ic{font-size:13px; letter-spacing:2px;}
+  .scr{height:560px; overflow-y:auto; padding:12px 14px 22px; -webkit-overflow-scrolling:touch;}
+
+  /* shared mock bits */
+  .badge{font-size:9px; font-weight:800; padding:2px 7px; border-radius:999px; white-space:nowrap;}
+  .badge.new{background:#E7F0FF; color:#1D4ED8;}
+  .badge.free{background:var(--cta-soft); color:var(--cta-ink);}
+  .row{display:flex; align-items:center; gap:9px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:13px 14px; margin-bottom:8px; font-size:13.5px; font-weight:500;}
+  .row .ti-chevron-right{margin-left:auto; color:var(--faint); font-size:15px;}
+
+  /* CTA bar (option 1) */
+  .ctabar{position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:9px; background:linear-gradient(95deg,var(--cta),#FF9A57); color:#fff; border-radius:13px; padding:11px 13px; margin-bottom:12px; font-size:13px; font-weight:700; box-shadow:0 4px 14px rgba(255,122,47,.28);}
+  .ctabar .btn{margin-left:auto; background:#fff; color:var(--cta-ink); border:0; border-radius:999px; padding:7px 13px; font:700 12px/1 inherit; cursor:pointer; white-space:nowrap;}
+  .acc-sec{background:#fff; border:1px solid var(--line); border-radius:13px; margin-bottom:9px; overflow:hidden;}
+  .acc-head{display:flex; align-items:center; gap:9px; padding:13px 14px; font-size:14px; font-weight:700; cursor:pointer; min-height:44px;}
+  .acc-head .ti{color:var(--accent); font-size:17px;}
+  .acc-head .chev{margin-left:auto; color:var(--faint); transition:transform .18s;}
+  .acc-sec.open .chev{transform:rotate(180deg);}
+  .acc-body{display:none; padding:2px 14px 13px;}
+  .acc-sec.open .acc-body{display:block;}
+  .glabel{font-size:11.5px; font-weight:700; color:var(--accent-ink); margin:10px 0 6px;}
+  .grid2{display:grid; grid-template-columns:1fr; gap:0;}
+  .gi{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); padding:6px 0; min-height:32px;}
+  .gi .d{width:3px; height:3px; border-radius:50%; background:#C5CDD8; flex:0 0 3px;}
+
+  /* chips (option 2) */
+  .search{display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:10px 14px; font-size:13px; color:var(--faint); margin-bottom:11px;}
+  .chips{display:flex; gap:7px; overflow-x:auto; padding-bottom:10px; margin-bottom:8px;}
+  .chip{flex:0 0 auto; display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 13px; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer; min-height:40px; position:relative;}
+  .chip .ti{font-size:15px;}
+  .chip.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .chip.cta{background:var(--cta-soft); border-color:#FFD9BF; color:var(--cta-ink);}
+  .chip .ndot{position:absolute; top:-3px; right:-2px; background:#1D4ED8; color:#fff; font-size:7.5px; font-weight:800; border-radius:999px; padding:1px 5px;}
+  .chipnav{display:flex; align-items:center; gap:6px; margin-bottom:8px;}
+  .chipnav .chips{flex:1; margin-bottom:0; padding-bottom:0; scroll-behavior:smooth; scrollbar-width:none; cursor:grab;}
+  .chipnav .chips.dragging{cursor:grabbing;}
+  .chipnav .chips::-webkit-scrollbar{display:none;}
+  .cnbtn{flex:0 0 auto; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; padding:0;}
+  .cnbtn:hover{color:var(--ink); border-color:var(--line-strong,#D6DBE4);}
+  .cnbtn:disabled{opacity:.3; cursor:default;}
+
+  /* cards (option 3) */
+  .hero{display:flex; align-items:center; gap:11px; background:linear-gradient(100deg,var(--cta),#FF9A57); color:#fff; border-radius:15px; padding:15px; margin-bottom:12px; cursor:pointer;}
+  .hero .hic{width:40px; height:40px; border-radius:11px; background:rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; font-size:21px; flex:0 0 40px;}
+  .hero .ht{font-size:14px; font-weight:800; line-height:1.35;}
+  .hero .hs{font-size:11px; opacity:.92; font-weight:500;}
+  .hero .ti-chevron-right{margin-left:auto;}
+  .cards{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 13px; cursor:pointer; position:relative; min-height:104px;}
+  .card .cic{width:34px; height:34px; border-radius:10px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:9px;}
+  .card .ct{font-size:12.5px; font-weight:700; line-height:1.35; margin-bottom:3px;}
+  .card .cc{font-size:11px; color:var(--faint);}
+  .card .badge{position:absolute; top:10px; right:10px;}
+  .backbar{display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; margin-bottom:11px; cursor:pointer; min-height:44px;}
+  .backbar .ti{font-size:17px; color:var(--accent-ink);}
+
+  /* option 4 */
+  .hero4{background:linear-gradient(115deg,#0E6BB0,var(--accent)); color:#fff; border-radius:16px; padding:17px 16px; margin-bottom:13px;}
+  .hero4 .h4t{font-size:16px; font-weight:800; line-height:1.35; margin-bottom:3px;}
+  .hero4 .h4s{font-size:11.5px; opacity:.9; margin-bottom:11px;}
+  .hero4 .h4btn{display:inline-flex; align-items:center; gap:7px; background:var(--cta); color:#fff; border:0; border-radius:999px; padding:10px 17px; font:800 13px/1 inherit; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.18); min-height:40px;}
+  .poplabel{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:800; color:var(--ink); margin:2px 0 8px;}
+  .poplabel .ti{color:var(--cta);}
+  .pops{display:flex; gap:7px; overflow-x:auto; padding-bottom:10px; margin-bottom:6px;}
+  .pop{flex:0 0 auto; background:#fff; border:1px solid var(--line); border-radius:999px; padding:9px 13px; font-size:12px; font-weight:600; color:var(--ink); min-height:40px; display:flex; align-items:center; gap:6px;}
+
+  /* notes under each frame */
+  .notes{font-size:12.5px; color:var(--muted); border-top:1px dashed var(--line); padding-top:12px;}
+  .notes b{color:var(--ink);}
+  .notes ul{margin:6px 0 0; padding-left:18px;} .notes li{margin-bottom:4px;}
+  .pill-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px;}
+  .pill{font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:999px;}
+  .pill.p1{background:var(--accent-soft); color:var(--accent-ink);}
+  .pill.p2{background:var(--cta-soft); color:var(--cta-ink);}
+  .pill.p3{background:#E6F6F0; color:#0A6E57;}
+
+  /* recommendation */
+  .reco{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--good); border-radius:var(--radius); padding:20px 24px; margin-top:30px; font-size:14px;}
+  .reco h3{margin:0 0 8px; font-size:16px;}
+  .reco ol{margin:0; padding-left:20px;} .reco li{margin-bottom:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Proposal · Mobile Menu Redesign</div>
+  <h1>เมนูคอร์สบนมือถือ — 3 ทางเลือกในการปรับ</h1>
+  <p class="sub">เทียบจาก design เดิม (accordion ลิสต์ยาว scroll หนัก) — ทั้ง 3 แบบใช้โครงสร้างเดียวกับ PRD v2: <strong>6 หมวดหลัก</strong> รวม “ทดลองเรียนฟรี” ที่ยกขึ้นเป็นหมวดระดับเดียวกับหมวดอื่น ทุกแบบคลิกเล่นได้จริงในกรอบมือถือด้านล่าง</p>
+
+  <div class="cmp">
+    <table>
+      <tr><th style="width:24%">รูปแบบ</th><th>Dev effort</th><th>เห็น “ทดลองเรียนฟรี” เร็ว</th><th>ใช้งานง่าย</th><th>เหมาะกับ</th></tr>
+      <tr><td><b>1 · Quick Wins</b> — accordion กระชับ (เลือกค่าเริ่มต้นเปิด/พับหมวดได้)</td><td>★ (1–2 วัน, CSS เป็นหลัก)</td><td><span class="stars">★★★</span> ถ้าพับทุกหมวด เห็นหัวข้อครบจอแรก</td><td><span class="stars">★★★</span></td><td>ปล่อยได้ทันที เป็น baseline ก่อน AB test</td></tr>
+      <tr><td><b>2 · Category Tabs</b> — แท็บหมวดแนวนอน</td><td>★★ (3–5 วัน)</td><td><span class="stars">★★★★</span> แท็บเห็นตลอด · 1 แตะ</td><td><span class="stars">★★★★</span></td><td>ตรงกับ PRD v2 (master–detail) — โครงเดียวกับ desktop</td></tr>
+      <tr><td><b>3 · Card Grid</b> — การ์ดหมวด + drill-down</td><td>★★★ (1–1.5 สัปดาห์)</td><td><span class="stars">★★★</span> การ์ดอยู่จอแรก</td><td><span class="stars">★★★</span> (+1 แตะ)</td><td>หมวดเยอะขึ้นในอนาคต, อยากได้หน้าตาพรีเมียม</td></tr>
+    </table>
+  </div>
+
+  <div class="frames">
+
+    <!-- ============ OPTION 1 ============ -->
+    <div class="opt">
+      <div class="opt-head"><span class="opt-num">1</span><h2>Quick Wins</h2><span class="eff">effort ต่ำสุด · 1–2 วัน</span></div>
+      <div class="phone">
+        <div class="sbar"><span>15:27</span><span class="ic">▮▮▮ ⏻</span></div>
+        <div class="scr" id="scr1">
+          <div id="acc1"></div>
+        </div>
+      </div>
+      <div class="notes">
+        <b>เปลี่ยนอะไร:</b> คงโครง accordion เดิมทั้งหมด แค่ (1) บีบความสูงแถว/ระยะห่างให้กระชับ (2) เพิ่ม icon หมวด + badge NEW/ฟรี — และเพิ่ม “ทดลองเรียนฟรี” เป็นหมวดที่ 6 ตาม PRD v2
+        <ul>
+          <li>ไม่แตะ HTML structure / routing เดิมเลย — แก้ CSS เป็นหลัก</li>
+          <li>ค่าเริ่มต้น “เปิดหมวดแรก” (ตาม mock) หรือ “พับทุกหมวด” เลือกได้ — ถ้าพับหมด จะเห็นหัวข้อทั้ง 6 หมวดครบในจอแรก เหมาะ AB test กันเอง</li>
+          <li>ข้อแลก: ถ้าเปิดหมวดแรกไว้ “ทดลองเรียนฟรี” จะอยู่ใต้ fold ต้อง scroll</li>
+        </ul>
+        <div class="pill-row"><span class="pill p3">เสี่ยงต่ำ</span><span class="pill p1">CSS เป็นหลัก</span><span class="pill p2">ship ได้สัปดาห์นี้</span></div>
+      </div>
+    </div>
+
+    <!-- ============ OPTION 2 ============ -->
+    <div class="opt">
+      <div class="opt-head"><span class="opt-num">2</span><h2>Category Tabs</h2><span class="eff">3–5 วัน</span></div>
+      <div class="phone">
+        <div class="sbar"><span>15:27</span><span class="ic">▮▮▮ ⏻</span></div>
+        <div class="scr">
+          <div class="search"><i class="ti ti-search"></i> ค้นหาคอร์ส</div>
+          <div class="chipnav">
+            <button class="cnbtn" id="cn-left" aria-label="เลื่อนหมวดไปทางซ้าย"><i class="ti ti-chevron-left"></i></button>
+            <div class="chips" id="chips2"></div>
+            <button class="cnbtn" id="cn-right" aria-label="เลื่อนหมวดไปทางขวา"><i class="ti ti-chevron-right"></i></button>
+          </div>
+          <div id="list2"></div>
+        </div>
+      </div>
+      <div class="notes">
+        <b>เปลี่ยนอะไร:</b> แทน accordion ยาวด้วยแท็บหมวดแนวนอน 6 หมวด (icon + ชื่อย่อ) — เลือกหมวดแล้วรายการโชว์ด้านล่างทันที ทุกคอร์สห่างแค่ <b>1 แตะ</b>
+        <ul>
+          <li>โครงเดียวกับ mock ใน PRD v2 (master–detail) — desktop/mobile ใช้ data ชุดเดียวกัน</li>
+          <li>“ทดลองฟรี” เป็นแท็บระดับเดียวกับหมวดอื่น มี tag “ใหม่” กำกับ — เห็นในแถบตลอดเวลา</li>
+          <li>ลองคลิกชิปในกรอบได้เลย</li>
+        </ul>
+        <div class="pill-row"><span class="pill p1">ตรงกับ PRD v2</span><span class="pill p3">scroll น้อยสุด</span><span class="pill p2">ทุกหมวด 1 แตะ</span></div>
+      </div>
+    </div>
+
+    <!-- ============ OPTION 3 ============ -->
+    <div class="opt">
+      <div class="opt-head"><span class="opt-num">3</span><h2>Card Grid</h2><span class="eff">1–1.5 สัปดาห์</span></div>
+      <div class="phone">
+        <div class="sbar"><span>15:27</span><span class="ic">▮▮▮ ⏻</span></div>
+        <div class="scr" id="scr3"></div>
+      </div>
+      <div class="notes">
+        <b>เปลี่ยนอะไร:</b> หน้าแรกของเมนู = การ์ดหมวด 2 คอลัมน์ 6 ใบ (icon + จำนวนรายการ) → แตะการ์ดเพื่อ drill-down เข้าลิสต์คอร์ส มีปุ่มย้อนกลับ
+        <ul>
+          <li>หน้าแรกจบในจอเดียว ไม่ต้อง scroll — สแกนทั้ง 6 หมวดได้เร็วมาก รวม “ทดลองเรียนฟรี”</li>
+          <li>ข้อแลก: เข้าถึงคอร์สต้อง +1 แตะ (card → list)</li>
+          <li>ลองแตะการ์ดในกรอบเพื่อดู drill-down + ปุ่มย้อนกลับ</li>
+        </ul>
+        <div class="pill-row"><span class="pill p1">สแกนหมวดเร็ว</span><span class="pill p2">+1 แตะ</span><span class="pill p3">รองรับหมวดเพิ่มในอนาคต</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="reco">
+    <h3><i class="ti ti-bulb"></i> ข้อเสนอแนวทาง</h3>
+    <ol>
+      <li><b>ทำแบบ 1 ทันที</b> — effort 1–2 วัน ใช้เป็น baseline แล้ว <b>AB test ค่าเริ่มต้น “เปิดหมวดแรก” vs “พับทุกหมวด”</b> ในตัวมันเองได้แทบฟรี</li>
+      <li><b>ขนานกัน เตรียมแบบ 2</b> — ตรงกับโครง master–detail ใน PRD v2 ที่สุด (โค้ด/data ชุดเดียวใช้ทั้ง desktop และ mobile) เป็นเป้าหมายหลักของเฟสนี้</li>
+      <li>วัดผลทุกแบบด้วย metric เดียวกับ PRD: click-through เข้า Topic “ทดลองเรียนฟรี” (<code>topic.id = trial</code>) เทียบ baseline 4 สัปดาห์</li>
+      <li>แบบ 3 เก็บไว้พิจารณาเมื่อจำนวนหมวดโตเกิน ~7 หมวด — ตอนนี้ 6 หมวดยังไม่คุ้ม +1 แตะ</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+const TOPICS=[
+ {id:'tcas',icon:'ti-school',title:'TCAS & เตรียมสอบเข้ามหาลัย',short:'TCAS',count:10,items:[
+   {t:'TGAT ความถนัดทั่วไป'},{t:'TPAT1 ความถนัดแพทย์'},{t:'TPAT3 วิทย์-วิศวะ'},
+   {t:'A-Level คณิต 1',b:'NEW'},{t:'A-Level ฟิสิกส์'},{t:'A-Level ภาษาอังกฤษ',b:'NEW'}]},
+ {id:'faculty',icon:'ti-stethoscope',title:'คอร์สตามกลุ่มคณะ',short:'กลุ่มคณะ',count:7,items:[
+   {t:'กลุ่มสายหมอ'},{t:'วิศวกรรมศาสตร์'},{t:'บัญชี บริหาร'},{t:'มนุษยศาสตร์'},{t:'นิเทศฯ วารสารฯ'},{t:'ครุศาสตร์'},{t:'นิติศาสตร์'}]},
+ {id:'grade',icon:'ti-users',title:'คอร์สแนะนำ ม.ต้น / ม.ปลาย',short:'ม.ต้น/ปลาย',count:11,items:[
+   {t:'ม.6 (เสริมเกรด)'},{t:'ม.5 (เสริมเกรด)'},{t:'ม.4 (เสริมเกรด)'},{t:'ม.3'},{t:'ม.2'},{t:'คณิต ม.ปลาย Buffet'}]},
+ {id:'live',icon:'ti-bolt',title:'คอร์สเรียนรอบสด',short:'รอบสด',count:3,items:[
+   {t:'พิชิต TPAT3',b:'V.เต็ม'},{t:'PACK A-Level คณิต 1',b:'V.เต็ม'},{t:'พิชิต A-Level ชีววิทยา',b:'V.รวบรัด'}]},
+ {id:'others',icon:'ti-package',title:'คอร์สอื่นๆ & บริการ',short:'อื่นๆ',count:4,isNew:true,items:[
+   {t:'FORWARD',b:'NEW'},{t:'Digital SAT MATH'},{t:'สินค้าพรีเมียม'},{t:'คอร์สบัญชี (มหาลัยฯ)'}]},
+ {id:'trial',icon:'ti-gift',title:'ทดลองเรียนฟรี',short:'ทดลองฟรี',count:1,isNew:true,items:[
+   {t:'ทดลองเรียนฟรี ทุกคอร์ส',b:'ฟรี'}]}
+];
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const bdg=b=>!b?'':`<span class="badge ${b==='NEW'?'new':'free'}">${esc(b)}</span>`;
+
+/* ---- Option 1: compact accordion ---- */
+const acc1=document.getElementById('acc1');
+acc1.innerHTML=TOPICS.map((t,i)=>`
+  <div class="acc-sec ${i===0?'open':''}" data-i="${i}">
+    <div class="acc-head"><i class="ti ${t.icon}"></i>${esc(t.title)} ${t.isNew?'<span class="badge new">ใหม่</span>':''}<i class="ti ti-chevron-down chev"></i></div>
+    <div class="acc-body"><div class="grid2">
+      ${t.items.map(it=>`<span class="gi"><span class="d"></span>${esc(it.t)} ${bdg(it.b)}</span>`).join('')}
+    </div></div>
+  </div>`).join('');
+acc1.addEventListener('click',e=>{
+  const h=e.target.closest('.acc-head'); if(!h)return;
+  h.parentElement.classList.toggle('open');
+});
+
+/* ---- Option 2: chips + list ---- */
+let act2=0;
+const chips2=document.getElementById('chips2'), list2=document.getElementById('list2');
+function render2(){
+  chips2.innerHTML=TOPICS.map((t,i)=>`<span class="chip ${i===act2?'active':''}" data-i="${i}">
+      <i class="ti ${t.icon}"></i>${esc(t.short)}${t.isNew?'<span class="ndot">ใหม่</span>':''}</span>`).join('');
+  list2.innerHTML=TOPICS[act2].items.map(it=>
+    `<div class="row">${esc(it.t)} ${bdg(it.b)}<i class="ti ti-chevron-right"></i></div>`).join('');
+}
+chips2.addEventListener('click',e=>{
+  if(dragMoved){ dragMoved=false; return; } // ลากอยู่ ไม่ใช่คลิกเลือก
+  const c=e.target.closest('.chip[data-i]'); if(!c)return;
+  act2=+c.dataset.i; render2();
+});
+render2();
+
+/* drag-to-scroll — ปัด/ลากแถบหมวดด้วยเมาส์ (touch ใช้ native scroll อยู่แล้ว) */
+let dragging=false, dragMoved=false, dragX=0, dragSL=0;
+chips2.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse')return;
+  dragging=true; dragMoved=false; dragX=e.clientX; dragSL=chips2.scrollLeft;
+  chips2.classList.add('dragging');
+  chips2.style.scrollBehavior='auto';
+  e.preventDefault();
+});
+window.addEventListener('pointermove',e=>{
+  if(!dragging)return;
+  const dx=e.clientX-dragX;
+  if(Math.abs(dx)>5) dragMoved=true;
+  chips2.scrollLeft=dragSL-dx;
+});
+window.addEventListener('pointerup',()=>{
+  if(!dragging)return;
+  dragging=false;
+  chips2.classList.remove('dragging');
+  chips2.style.scrollBehavior='';
+});
+
+/* arrow buttons เลื่อนแถบหมวดแทนการปัด */
+const cnL=document.getElementById('cn-left'), cnR=document.getElementById('cn-right');
+function cnUpdate(){
+  cnL.disabled = chips2.scrollLeft <= 2;
+  cnR.disabled = chips2.scrollLeft + chips2.clientWidth >= chips2.scrollWidth - 2;
+}
+cnL.addEventListener('click',()=>chips2.scrollBy({left:-150,behavior:'smooth'}));
+cnR.addEventListener('click',()=>chips2.scrollBy({left:150,behavior:'smooth'}));
+chips2.addEventListener('scroll',cnUpdate);
+window.addEventListener('resize',cnUpdate);
+cnUpdate();
+
+/* ---- Option 3: cards + drill-down ---- */
+const scr3=document.getElementById('scr3');
+function render3Home(){
+  scr3.innerHTML=`
+    <div class="cards">
+      ${TOPICS.map((t,i)=>`<div class="card" data-i="${i}">
+        ${t.isNew?'<span class="badge new">ใหม่</span>':''}
+        <div class="cic"><i class="ti ${t.icon}"></i></div>
+        <div class="ct">${esc(t.title)}</div>
+        <div class="cc">${t.count} รายการ</div>
+      </div>`).join('')}
+    </div>`;
+}
+function render3List(i){
+  const t=TOPICS[i];
+  scr3.innerHTML=`
+    <div class="backbar" id="back3"><i class="ti ti-arrow-left"></i> ${esc(t.title)}</div>
+    ${t.items.map(it=>`<div class="row">${esc(it.t)} ${bdg(it.b)}<i class="ti ti-chevron-right"></i></div>`).join('')}`;
+}
+scr3.addEventListener('click',e=>{
+  const card=e.target.closest('.card');
+  if(card){ render3List(+card.dataset.i); return; }
+  if(e.target.closest('#back3')) render3Home();
+});
+render3Home();
+
+</script>
+</body>
+</html>
