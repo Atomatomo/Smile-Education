@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Ecosystem IA Restructure สำหรับทีมผู้บริหาร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF6; --card:#FFFFFF; --ink:#101A2E; --ink-soft:#46506A; --line:#E4E1D6;
+  --blue:#2E55E6; --blue-soft:#EBF0FF;
+  --red:#DD3B2F; --red-soft:#FCEEEC;
+  --green:#168A52; --green-soft:#E9F6EF;
+  --amber:#C97D12; --amber-soft:#FBF1DF;
+  --purple:#7A4FD6; --purple-soft:#F1EBFB;
+  --radius:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;font-size:15px}
+h1,h2,h3,h4{font-family:'Bai Jamjuree',sans-serif;line-height:1.35}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+header{border-bottom:3px solid var(--ink);background:var(--card)}
+.hwrap{max-width:1080px;margin:0 auto;padding:34px 22px 24px}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;font-weight:600}
+h1{font-size:clamp(24px,4.4vw,38px);font-weight:700;margin:8px 0 6px}
+h1 .pen{color:var(--red);text-decoration:underline;text-decoration-style:wavy;text-decoration-thickness:2px;text-underline-offset:6px}
+.sub{color:var(--ink-soft);max-width:760px;font-size:14.5px}
+.meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft)}
+.meta span b{color:var(--ink)}
+
+nav{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(16,26,46,.04)}
+.tabs{max-width:1080px;margin:0 auto;display:flex;overflow-x:auto;padding:0 14px}
+.tab{appearance:none;border:none;background:none;cursor:pointer;font-family:'Bai Jamjuree',sans-serif;font-weight:600;font-size:13.5px;color:var(--ink-soft);padding:15px 16px 13px;border-bottom:3px solid transparent;white-space:nowrap}
+.tab .no{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--blue);margin-right:6px}
+.tab.active{color:var(--ink);border-bottom-color:var(--blue)}
+.tab:hover{color:var(--ink)}
+.tab:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+
+main{max-width:1080px;margin:0 auto;padding:30px 22px 80px}
+.panel{display:none}
+.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.panel.active{animation:none}}
+
+.sec-h{display:flex;align-items:baseline;gap:12px;margin:6px 0 18px}
+.sec-h h2{font-size:21px}
+.sec-h .mono{font-size:11px;color:var(--ink-soft)}
+.lede{color:var(--ink-soft);max-width:820px;margin-bottom:22px;font-size:14.5px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+
+.finding{border-left:4px solid var(--blue);padding-left:16px}
+.finding.warn{border-left-color:var(--red)}
+.finding.opp{border-left-color:var(--green)}
+.finding h3{font-size:15.5px;margin-bottom:4px}
+.finding p{font-size:13.5px;color:var(--ink-soft)}
+.finding .tagline{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:6px;display:block}
+.finding .tagline.blue{color:var(--blue)}.finding .tagline.red{color:var(--red)}.finding .tagline.green{color:var(--green)}
+
+.decision{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);overflow:hidden;margin-bottom:14px}
+.decision .dh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 20px;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:'Bai Jamjuree',sans-serif}
+.decision .dh:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.decision .dh h3{font-size:15.5px;font-weight:600}
+.decision .dh .mono{font-size:10.5px;color:var(--red);font-weight:600}
+.decision .chev{transition:transform .2s;color:var(--ink-soft);flex-shrink:0}
+.decision.open .chev{transform:rotate(180deg)}
+.decision .body{display:none;padding:0 20px 18px;border-top:1px dashed var(--line)}
+.decision.open .body{display:block}
+.optrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px}
+.opt{border:1px solid var(--line);border-radius:8px;padding:13px 15px;font-size:13px;color:var(--ink-soft)}
+.opt b{color:var(--ink);display:block;margin-bottom:3px;font-size:13.5px}
+.opt.rec{border:2px solid var(--green);background:var(--green-soft)}
+.opt .reclabel{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;letter-spacing:.1em;display:block;margin-bottom:4px}
+.why{font-size:13px;color:var(--ink-soft);margin-top:12px;padding:11px 14px;background:var(--paper);border-radius:8px}
+.why b{color:var(--ink)}
+
+.site-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
+.site-head{padding:16px 20px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;border-bottom:1px solid var(--line)}
+.site-head .domain{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px}
+.role-pill{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;padding:3px 10px;border-radius:99px;text-transform:uppercase}
+.r1{background:var(--blue-soft);color:var(--blue)} .r2{background:var(--green-soft);color:var(--green)}
+.r3{background:var(--amber-soft);color:var(--amber)} .r4{background:var(--purple-soft);color:var(--purple)}
+.site-head .metric{margin-left:auto;font-size:12px;color:var(--ink-soft)}
+.site-head .metric b{color:var(--ink)}
+.site-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:0}
+.cell{padding:14px 20px;border-top:1px solid var(--line);font-size:13px}
+.cell + .cell{border-left:1px solid var(--line)}
+.cell .lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:6px}
+.cell ul{list-style:none}
+.cell li{padding-left:16px;position:relative;margin-bottom:3px;color:var(--ink-soft)}
+.cell li.in::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700}
+.cell li.out::before{content:"✕";position:absolute;left:0;color:var(--red);font-weight:700}
+.cell .principle{font-weight:600;color:var(--ink)}
+.cell .pdesc{color:var(--ink-soft);margin-top:3px}
+@media(max-width:760px){.cell + .cell{border-left:none}}
+
+.ia-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden;background:var(--card)}
+.seg button{appearance:none;border:none;background:none;padding:8px 16px;font-family:'Bai Jamjuree',sans-serif;font-weight:600;font-size:12.5px;cursor:pointer;color:var(--ink-soft)}
+.seg button.on{background:var(--ink);color:#fff}
+.seg button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:3px 9px;border-radius:5px}
+.c-keep{background:var(--green-soft);color:var(--green)}
+.c-move{background:var(--amber-soft);color:var(--amber)}
+.c-merge{background:var(--blue-soft);color:var(--blue)}
+.c-kill{background:var(--red-soft);color:var(--red)}
+.c-new{background:var(--purple-soft);color:var(--purple)}
+
+.ia-site{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+.ia-site > .ia-head{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ia-head .domain{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px}
+.ia-head .note{font-size:12px;color:var(--ink-soft)}
+.tree{padding:16px 20px 20px;display:none}
+.tree.show{display:block}
+.node{position:relative;padding:6px 0 6px 22px;font-size:13.5px}
+.node::before{content:"";position:absolute;left:7px;top:0;bottom:0;border-left:1.5px solid var(--line)}
+.node::after{content:"";position:absolute;left:7px;top:17px;width:11px;border-top:1.5px solid var(--line)}
+.node.root{padding-left:0;font-weight:700;font-family:'Bai Jamjuree',sans-serif;font-size:14px}
+.node.root::before,.node.root::after{display:none}
+.node .t{margin-left:7px}
+.node .anno{display:block;font-size:11.5px;color:var(--ink-soft);margin:1px 0 0 7px;padding-left:2px}
+.node .anno.redpen{color:var(--red);font-style:italic}
+.lv2{margin-left:22px}
+.strike{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;color:var(--ink-soft)}
+.ext{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--blue)}
+.delta{padding:12px 20px;background:var(--paper);border-top:1px dashed var(--line);font-size:12.5px;color:var(--ink-soft)}
+.delta b{color:var(--ink)}
+.cnt{font-family:'IBM Plex Mono',monospace;font-size:11px}
+
+.iematrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 6px}
+.iq{border-radius:8px;padding:14px 16px;font-size:12.5px;min-height:120px}
+.iq h4{font-size:12.5px;margin-bottom:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.iq ul{list-style:none}.iq li{margin-bottom:5px;color:var(--ink-soft);padding-left:14px;position:relative}
+.iq li::before{content:"-";position:absolute;left:0}
+.q-do{background:var(--green-soft)} .q-do h4{color:var(--green)}
+.q-plan{background:var(--blue-soft)} .q-plan h4{color:var(--blue)}
+.q-quick{background:var(--amber-soft)} .q-quick h4{color:var(--amber)}
+.q-avoid{background:var(--red-soft)} .q-avoid h4{color:var(--red)}
+.axes{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);margin-top:6px}
+
+.phase{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+.phase:first-of-type{border-top:none}
+.phase .ph{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--blue)}
+.phase h4{font-size:14.5px;margin-bottom:4px}
+.phase p{font-size:13px;color:var(--ink-soft)}
+.phase .kpi{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green);margin-top:5px;display:block}
+@media(max-width:600px){.phase{grid-template-columns:1fr;gap:4px}}
+
+.risk{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.risk{grid-template-columns:1fr}}
+.risk .card h4{font-size:13.5px;margin-bottom:5px}
+.risk .card p{font-size:12.5px;color:var(--ink-soft)}
+.risk .sev{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em}
+.sev.hi{color:var(--red)} .sev.md{color:var(--amber)}
+
+footer{border-top:1px solid var(--line);margin-top:10px}
+.fwrap{max-width:1080px;margin:0 auto;padding:20px 22px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-soft)}
+
+/* technical appendix */
+.audience-note{display:inline-flex;align-items:center;gap:8px;background:var(--purple-soft);color:var(--purple);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:99px;margin-bottom:18px}
+.archdiag{background:#101A2E;color:#D8DEF0;border-radius:var(--radius);padding:22px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.9;overflow-x:auto;margin:14px 0}
+.archdiag .hl{color:#7FA3FF;font-weight:600}
+.archdiag .ok{color:#5BD89A}
+.archdiag .dim{color:#6B7694}
+.codeblock{background:#101A2E;color:#D8DEF0;border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.7;overflow-x:auto;margin:10px 0}
+.codeblock .cmt{color:#6B7694}
+.checklist{list-style:none;margin-top:10px}
+.checklist li{padding:10px 0 10px 30px;position:relative;border-top:1px dashed var(--line);font-size:13px;color:var(--ink-soft)}
+.checklist li:first-child{border-top:none}
+.checklist li::before{content:"";position:absolute;left:2px;top:14px;width:15px;height:15px;border:2px solid var(--blue);border-radius:4px}
+.checklist li b{color:var(--ink)}
+.qa{border-left:3px solid var(--amber);background:var(--amber-soft);border-radius:0 8px 8px 0;padding:13px 16px;font-size:13px;margin-bottom:10px}
+.qa b{display:block;margin-bottom:2px}
+.qa span{color:var(--ink-soft);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <span class="eyebrow">Internal Strategy Brief / Product UX</span>
+    <h1>โครงสร้าง 4 เว็บไซต์: Direction Matrix และข้อเสนอ<span class="pen">ปรับ IA</span></h1>
+    <p class="sub">เอกสารช่วยตัดสินใจสำหรับทีมผู้บริหาร กำหนดบทบาทและขอบเขตของแต่ละเว็บให้ชัด พร้อมข้อเสนอปรับโครงสร้างเมนูแบบเทียบก่อนและหลัง อิงจากโครงสร้างจริงของเว็บ ณ เดือนมิถุนายน 2026</p>
+    <div class="meta">
+      <span>SURFACES: <b>www / blog / online / classroom</b></span>
+      <span>เรื่องที่ต้องตัดสินใจ: <b>3 เรื่อง</b></span>
+      <span>VERSION: <b>1.3 (12 มิ.ย. 2026)</b></span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-p="p1" role="tab"><span class="no">01</span>สรุปผู้บริหาร</button>
+    <button class="tab" data-p="p2" role="tab"><span class="no">02</span>Direction Matrix</button>
+    <button class="tab" data-p="p3" role="tab"><span class="no">03</span>IA ก่อนและหลัง</button>
+    <button class="tab" data-p="p4" role="tab"><span class="no">04</span>Roadmap และความเสี่ยง</button>
+    <button class="tab" data-p="p5" role="tab"><span class="no">05</span>Technical Appendix</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ PANEL 1 ============ -->
+<section class="panel active" id="p1">
+  <div class="sec-h"><h2>สรุปสำหรับผู้บริหาร</h2><span class="mono">อ่านจบใน 3 นาที</span></div>
+  <p class="lede">การแบ่ง 4 เว็บตาม funnel เดินมาถูกทางแล้ว แต่ปัญหาคือขอบเขตของแต่ละเว็บยังทับซ้อนกัน และเมนูบวมเกินบทบาทของตัวเอง ผลคือ user หลงทางเวลาข้ามเว็บ ส่วนทีมภายในก็ไม่มีเกณฑ์ว่าของใหม่ควรไปอยู่เว็บไหน เอกสารนี้ขอให้ที่ประชุมตัดสินใจ 3 เรื่อง</p>
+
+  <div class="grid3" style="margin-bottom:26px">
+    <div class="card finding">
+      <span class="tagline blue">Finding 01 / Structure</span>
+      <h3>มี 4 เว็บ แต่ยังไม่ใช่เว็บละหน้าที่</h3>
+      <p>โปรโมชันกับรีวิวไปอยู่บนเว็บแบรนด์ ทั้งที่เป็นของไว้ปิดการขาย ส่วนเมนูคอร์สบนเว็บขายลึกถึง 5 คอลัมน์ ราว 40 ลิงก์ ซึ่งใช้บนมือถือลำบากมาก ทั้งที่มือถือคืออุปกรณ์หลักของนักเรียน</p>
+    </div>
+    <div class="card finding warn">
+      <span class="tagline red">Finding 02 / Critical Risk</span>
+      <h3>blog subdomain ค้างอยู่ครึ่งทาง</h3>
+      <p>blog.* ถูกสร้างแล้วแต่ยังปิดไม่ให้ Google เก็บ (noindex) ข้างในมีโพสต์ทดสอบและรูปที่ชี้ localhost ค้างอยู่ ขณะที่บทความ SEO ตัวจริงยังอยู่บนเว็บหลักทั้งหมด ถ้าเปิดใช้โดยไม่มีแผนย้ายที่รัดกุม คะแนน SEO ที่สะสมมาจะถูกแบ่งครึ่งทันที</p>
+    </div>
+    <div class="card finding opp">
+      <span class="tagline green">Finding 03 / Opportunity</span>
+      <h3>เมนูแบบ "เลือกตามคณะ" คือจุดแข็งที่ควรขยาย</h3>
+      <p>การจัดคอร์สตามกลุ่มคณะ เช่น สายหมอ วิศวะ บัญชี ตรงกับวิธีคิดของเด็ก ม.ปลาย มากกว่าการไล่ตามรายวิชา ควรยกขึ้นเป็นแกนหลักของเว็บขาย ไม่ใช่ซ่อนเป็นแค่คอลัมน์หนึ่งในเมนู</p>
+    </div>
+  </div>
+
+  <div class="sec-h"><h2 style="font-size:17px">3 เรื่องที่ขอให้ที่ประชุมตัดสินใจ</h2></div>
+
+  <div class="decision open">
+    <button class="dh" aria-expanded="true"><h3>เรื่องที่ 1 บทความจะอยู่บนเว็บหลัก หรือแยกไป blog.*</h3><span class="mono">P0 ควรตัดสินใจก่อนเข้า Q3</span><svg class="chev" width="16" height="16" viewBox="0 0 16 16"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg></button>
+    <div class="body">
+      <div class="optrow">
+        <div class="opt rec"><span class="reclabel">★ แนะนำ</span><b>A) เก็บบทความไว้บนเว็บหลักที่ /article/ เหมือนเดิม</b>หยุดแผน blog.* หรือเก็บไว้เป็นที่ทดสอบอย่างเดียว แล้วเอาแรงไปลงกับการจัดโครงบทความใหม่แทน</div>
+        <div class="opt"><b>B) เปิด blog.* พร้อมแผนย้ายเต็มรูปแบบ</b>ต้องทำ 301 redirect รายหน้า แก้ลิงก์ภายในทั้งหมด ใช้แรง dev และ SEO สูง และยอมรับว่า traffic อาจตกช่วง 2 ถึง 6 เดือนแรก</div>
+        <div class="opt"><b>C) ปล่อยไว้แบบนี้</b>เสี่ยงที่สุด เพราะตอนนี้มีระบบบทความค้างอยู่ 2 ที่ ทีม content ไม่รู้จะลงที่ไหน และมีโอกาสเผลอเปิด index ซ้ำซ้อนโดยไม่ตั้งใจ</div>
+      </div>
+      <p class="why"><b>เหตุผลสั้น ๆ:</b> Google มอง subdomain ใกล้เคียงกับอีกเว็บหนึ่ง การย้ายบทความที่สะสม backlink มานานออกจากโดเมนหลักเท่ากับเริ่มนับหนึ่งใหม่บางส่วน ในจังหวะที่กำลังแข่ง keyword สนามสอบ ความเสี่ยงนี้ไม่คุ้ม ยกเว้นมีข้อจำกัดด้านระบบที่แยกไม่ได้จริง ๆ</p>
+      <p class="why" style="margin-top:8px"><b>หมายเหตุสำคัญ:</b> การเลือกข้อ A ไม่ได้ผูกกับ tech stack ของ CMS เลย จะใช้ WordPress ต่อหรือสร้างระบบใหม่ก็ได้ เพราะระบบใหม่เสิร์ฟผ่าน URL เดิมที่ /article/ ได้ด้วยเทคนิค reverse proxy การวิเคราะห์เทียบทั้งสองสาย (WordPress และไม่ใช่ WordPress) อยู่ในแท็บ 05 Technical Appendix</p>
+    </div>
+  </div>
+
+  <div class="decision">
+    <button class="dh" aria-expanded="false"><h3>เรื่องที่ 2 อนุมัติหลัก "เว็บละหน้าที่เดียว" และ IA ใหม่ทั้ง 4 เว็บ</h3><span class="mono">P1 เป็นกรอบงาน Q3</span><svg class="chev" width="16" height="16" viewBox="0 0 16 16"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg></button>
+    <div class="body">
+      <div class="optrow">
+        <div class="opt rec"><span class="reclabel">★ แนะนำ</span><b>อนุมัติ Direction Matrix ในแท็บ 02 เป็นเกณฑ์กลาง</b>ต่อไปของใหม่ทุกชิ้นต้องตอบได้ว่าอยู่เว็บไหน ตามตาราง Scope ที่วางไว้ ช่วยลดการถกเถียงรายครั้ง และกันเมนูบวมกลับมาอีก</div>
+        <div class="opt"><b>แก้เฉพาะจุดที่เจ็บที่สุด เช่น mega menu กับหน้า HOF</b>เร็วกว่า แต่ปัญหาต้นเหตุที่ว่าของใหม่ไม่รู้ไปไว้ไหนจะวนกลับมาในอีก 2 ถึง 3 ไตรมาส</div>
+      </div>
+      <p class="why"><b>สิ่งที่จะได้:</b> เมนูหลักของเว็บแบรนด์ลดจาก 7 กลุ่มเหลือ 5 กลุ่ม เว็บขายได้เมนูแบบ mobile-first 4 ทางเข้า และทุกเว็บมีตัวชี้วัดเจ้าภาพของตัวเอง รายละเอียดอยู่ในแท็บ 03</p>
+    </div>
+  </div>
+
+  <div class="decision">
+    <button class="dh" aria-expanded="false"><h3>เรื่องที่ 3 ลงทุนทำบัญชีเดียว (SSO) เชื่อม online กับ classroom</h3><span class="mono">P1 รอประเมิน effort กับ dev</span><svg class="chev" width="16" height="16" viewBox="0 0 16 16"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg></button>
+    <div class="body">
+      <div class="optrow">
+        <div class="opt rec"><span class="reclabel">★ แนะนำ</span><b>ทำ SSO และให้จัดการบัญชีจบได้ในที่เดียว</b>ทุกวันนี้แค่ลืมรหัสผ่านห้องเรียน ยังต้องเด้งกลับไปทำที่เว็บขาย เป็น friction กับลูกค้าที่จ่ายเงินแล้ว ซึ่งเป็นกลุ่มที่เสียไปแล้วแพงที่สุด</div>
+        <div class="opt"><b>คงโครงเดิม แต่ปรับข้อความและลิงก์ให้ชัดขึ้น</b>ลดความงงได้ระดับหนึ่งด้วยต้นทุนต่ำ เหมาะใช้เป็น quick win ระหว่างรอ SSO</div>
+      </div>
+      <p class="why"><b>เหตุผลสั้น ๆ:</b> เว็บห้องเรียนคือที่ที่ลูกค้าอยู่นานที่สุด และเป็นที่ที่เขาตัดสินใจซื้อซ้ำหรือบอกต่อ friction ทุกจุดตรงนี้จึงมีต้นทุนเป็น LTV โดยตรง</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PANEL 2 ============ -->
+<section class="panel" id="p2">
+  <div class="sec-h"><h2>Direction Matrix</h2><span class="mono">เกณฑ์กลางสำหรับตัดสิน Scope</span></div>
+  <p class="lede">แต่ละเว็บมีบทบาทเดียว ผู้ใช้หลักกลุ่มเดียว และตัวชี้วัดเจ้าภาพตัวเดียว ส่วนช่อง Scope คือเกณฑ์ที่ทีมใช้ตอบคำถามว่าของชิ้นนี้ควรอยู่เว็บไหน โดยไม่ต้องนัดประชุม</p>
+
+  <!-- www -->
+  <div class="site-card">
+    <div class="site-head">
+      <span class="domain">www.</span>
+      <span class="role-pill r1">TRUST &amp; BRAND HUB</span>
+      <span class="metric">ตัวชี้วัดหลัก: <b>อัตราคลิกต่อไปเว็บขาย</b></span>
+    </div>
+    <div class="site-body">
+      <div class="cell"><span class="lab">ผู้ใช้หลัก</span>คนที่เพิ่งรู้จักแบรนด์ ผู้ปกครอง และโรงเรียนที่จะติดต่อ ทุกคนเข้ามาเพื่อหาคำตอบเดียวกันว่าที่นี่เชื่อถือได้ไหม</div>
+      <div class="cell"><span class="lab">Scope</span>
+        <ul>
+          <li class="in">เรื่องราวสถาบันและทีมติวเตอร์</li>
+          <li class="in">ผลงานและรีวิว</li>
+          <li class="in">ของฟรีระดับประตูทางเข้า</li>
+          <li class="in">ช่องทางติดต่อและที่ตั้ง</li>
+          <li class="out">ราคาและโปรโมชัน (ย้ายไป online)</li>
+          <li class="out">รายละเอียดคอร์สเชิงลึก (ไป online)</li>
+        </ul>
+      </div>
+      <div class="cell"><span class="lab">หลักการจัด IA</span>
+        <span class="principle">เรียงตามเส้นทางความเชื่อใจ: รู้จัก เชื่อมั่น แล้วไปต่อ</span>
+        <p class="pdesc">เมนูหลักไม่เกิน 5 กลุ่ม และทุกหน้าจบด้วย CTA เดียวคือทดลองเรียนฟรีหรือดูคอร์ส ซึ่งส่งคนต่อไปเว็บขาย</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- blog -->
+  <div class="site-card">
+    <div class="site-head">
+      <span class="domain">/article/ <span style="font-weight:400;color:var(--ink-soft)">(แทนที่ blog.*)</span></span>
+      <span class="role-pill r2">ACQUISITION ENGINE</span>
+      <span class="metric">ตัวชี้วัดหลัก: <b>organic traffic ที่กลายเป็นสมัครทดลองเรียน</b></span>
+    </div>
+    <div class="site-body">
+      <div class="cell"><span class="lab">ผู้ใช้หลัก</span>นักเรียนที่ search ปัญหาหรือชื่อสนามสอบ ยังไม่รู้จักแบรนด์ มาเพราะเนื้อหาตอบโจทย์เขา</div>
+      <div class="cell"><span class="lab">Scope</span>
+        <ul>
+          <li class="in">บทความตาม keyword cluster</li>
+          <li class="in">เอกสารแจกฟรีที่ใช้เป็น lead magnet</li>
+          <li class="in">เครื่องมือ interactive เช่น แบบฝึก เช็กลิสต์</li>
+          <li class="out">หน้าขายและราคา (ใส่ลิงก์ตามบริบทพอ)</li>
+          <li class="out">ข่าวกิจกรรมของแบรนด์ (ไปอยู่ www)</li>
+        </ul>
+      </div>
+      <div class="cell"><span class="lab">หลักการจัด IA</span>
+        <span class="principle">จัดตามเรื่องที่เด็ก search ไม่ใช่ตามประเภทบทความ</span>
+        <p class="pdesc">วางเป็น pillar ใหญ่ตามสนามสอบ เช่น TGAT, TPAT, A-Level และเสริมเกรดรายชั้น แล้วให้บทความย่อยลิงก์กลับหา pillar พร้อม CTA ไปคอร์สที่ตรงกัน</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- online -->
+  <div class="site-card">
+    <div class="site-head">
+      <span class="domain">online.</span>
+      <span class="role-pill r3">CONVERSION STORE</span>
+      <span class="metric">ตัวชี้วัดหลัก: <b>อัตราซื้อต่อจำนวนคนเข้าเว็บ</b></span>
+    </div>
+    <div class="site-body">
+      <div class="cell"><span class="lab">ผู้ใช้หลัก</span>คนที่ตัดสินใจมาระดับหนึ่งแล้ว เข้ามาเทียบแพ็ก ดูราคา และอยากจ่ายเงินให้จบเร็วที่สุด</div>
+      <div class="cell"><span class="lab">Scope</span>
+        <ul>
+          <li class="in">Catalog หน้าสินค้า และ checkout</li>
+          <li class="in">ราคาและโปรโมชัน (ย้ายมาจาก www)</li>
+          <li class="in">วิธีสมัคร แจ้งชำระ และ FAQ การซื้อ</li>
+          <li class="out">บทความ (อยู่ที่ /article/)</li>
+          <li class="out">เรื่องราวแบรนด์ฉบับเต็ม (อยู่ที่ www)</li>
+        </ul>
+      </div>
+      <div class="cell"><span class="lab">หลักการจัด IA</span>
+        <span class="principle">เข้าได้หลายทาง แต่จบทางเดียว</span>
+        <p class="pdesc">เปิดทางเข้า 3 ถึง 4 แบบ คือตามสนามสอบ ตามชั้นเรียน และตามคณะเป้าหมาย แต่ทุกทางต้องจบที่หน้าสินค้า template เดียวกันแล้วเข้า checkout เดียวกัน และออกแบบเมนูจากจอมือถือก่อนเสมอ</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- classroom -->
+  <div class="site-card">
+    <div class="site-head">
+      <span class="domain">classroom.</span>
+      <span class="role-pill r4">RETENTION &amp; LEARNING</span>
+      <span class="metric">ตัวชี้วัดหลัก: <b>อัตราเรียนจบคอร์ส และผู้เรียน active รายสัปดาห์</b></span>
+    </div>
+    <div class="site-body">
+      <div class="cell"><span class="lab">ผู้ใช้หลัก</span>ลูกค้าที่จ่ายเงินแล้ว เป็นกลุ่มที่ใช้งานบ่อยที่สุด และคาดหวังเรื่องความเสถียรสูงที่สุด</div>
+      <div class="cell"><span class="lab">Scope</span>
+        <ul>
+          <li class="in">คอร์สของฉัน ตัวเล่นวิดีโอ และ progress</li>
+          <li class="in">แบบฝึกหัด เฉลย และประกาศ</li>
+          <li class="in">จัดการบัญชีให้จบในเว็บนี้ และ Help</li>
+          <li class="in">แนะนำคอร์สถัดไปเมื่อเรียนใกล้จบ</li>
+          <li class="out">หน้าขายและแคมเปญเต็มรูปแบบ</li>
+        </ul>
+      </div>
+      <div class="cell"><span class="lab">หลักการจัด IA</span>
+        <span class="principle">จัดตามสิ่งที่ผู้เรียนจะทำ ไม่ใช่ตามประเภทเนื้อหา</span>
+        <p class="pdesc">ปุ่มเรียนต่อจากเดิมต้องอยู่ห่างจากหน้าแรกไม่เกิน 1 คลิก และ IA ที่ดีที่สุดของเว็บนี้คือ วิดีโอไม่สะดุด session ไม่หลุด progress ไม่หาย</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PANEL 3 ============ -->
+<section class="panel" id="p3">
+  <div class="sec-h"><h2>โครงเมนูเทียบก่อนและหลัง</h2><span class="mono">markup แบบปากกาแดงตรวจข้อสอบ</span></div>
+  <p class="lede">กดสลับมุมมองก่อนและหลังได้ทุกเว็บ แต่ละรายการติดป้ายบอกว่าจะทำอะไรกับมัน ส่วนตัวเอียงสีแดงคือจุดที่เราตรวจเจอปัญหาในโครงปัจจุบัน</p>
+
+  <div class="ia-controls">
+    <div class="seg" role="group" aria-label="สลับมุมมอง">
+      <button class="segbtn" data-v="before">ก่อน (ปัจจุบัน)</button>
+      <button class="segbtn on" data-v="after">หลัง (ข้อเสนอ)</button>
+    </div>
+    <div class="legend">
+      <span class="chip c-keep">KEEP คงไว้</span><span class="chip c-move">MOVE ย้าย</span><span class="chip c-merge">MERGE รวม</span><span class="chip c-kill">KILL ตัด</span><span class="chip c-new">NEW เพิ่ม</span>
+    </div>
+  </div>
+
+  <!-- WWW -->
+  <div class="ia-site">
+    <div class="ia-head"><span class="domain">www.</span><span class="role-pill r1">TRUST HUB</span><span class="note">เมนูหลักลดจาก 7 กลุ่มเหลือ 5 กลุ่ม</span></div>
+    <div class="tree t-before">
+      <div class="node root">www โครงปัจจุบัน <span class="cnt">(7 กลุ่ม รวมแล้วเกิน 20 ลิงก์)</span></div>
+      <div class="node lv2"><span class="t">คอร์สเรียน ทั้งออนไลน์ <span class="ext">ไป online</span> และรอบสด</span></div>
+      <div class="node lv2"><span class="t">รวมโปรโมชัน</span><span class="anno redpen">นี่คือของไว้ปิดการขาย แต่กลับวางบนเว็บแบรนด์ คนที่สนใจราคาควรถูกส่งไปเว็บขายเลย</span></div>
+      <div class="node lv2"><span class="t">ผลงานลูกศิษย์ แตกเป็น 7 เมนูย่อยตามรุ่น (Dek64 ถึง Dek68, เกรด 4, รีวิว)</span><span class="anno redpen">ทุกปีต้องสร้างหน้าใหม่เพิ่มเมนูใหม่ เมนูจะยาวขึ้นเรื่อย ๆ แถมแต่ละหน้าใช้ template คนละแบบ</span></div>
+      <div class="node lv2"><span class="t">บทความ อยู่ที่ /blog/ และ /article/{slug}</span></div>
+      <div class="node lv2"><span class="t">โครงการ ได้แก่ คลังข้อสอบ, SMP Guide, Template Portfolio, ตารางอ่านหนังสือ</span></div>
+      <div class="node lv2"><span class="t">เกี่ยวกับเรา ได้แก่ ติวเตอร์ สถานที่ ติดต่อ</span></div>
+      <div class="node lv2"><span class="t">ปุ่มสมัครเรียนออนไลน์ <span class="ext">ไป online</span></span></div>
+    </div>
+    <div class="tree t-after show">
+      <div class="node root">www โครงที่เสนอ <span class="cnt">(5 กลุ่ม)</span></div>
+      <div class="node lv2"><span class="t">คอร์สเรียน <span class="chip c-keep">KEEP</span></span><span class="anno">คงเป็นทางแยกเดียวที่พูดเรื่องคอร์ส แบ่งออนไลน์ (ส่งต่อไป online) กับรอบสด</span></div>
+      <div class="node lv2"><span class="t">ผลงานและรีวิว <span class="chip c-merge">MERGE</span></span><span class="anno">ยุบ 7 หน้าให้เหลือ hub เดียว ใช้ filter เลือกรุ่นหรือประเภทคะแนนแทน ปีต่อไปแค่เพิ่มข้อมูล ไม่ต้องสร้างหน้าใหม่อีก</span></div>
+      <div class="node lv2"><span class="t">แหล่งเรียนรู้ฟรี <span class="chip c-keep">KEEP</span></span><span class="anno">เปลี่ยนชื่อจากคำว่าโครงการให้สื่อคุณค่ากับเด็กมากขึ้น ข้างในคือคลังข้อสอบ Portfolio ตารางอ่าน และแนะแนว</span></div>
+      <div class="node lv2"><span class="t">บทความ /article/ <span class="chip c-keep">KEEP</span></span><span class="anno">คงไว้บนโดเมนหลักตามเรื่องที่ 1 แล้วจัดโครงใหม่เป็น pillar ดูบล็อกถัดไป</span></div>
+      <div class="node lv2"><span class="t">เกี่ยวกับเรา <span class="chip c-keep">KEEP</span></span><span class="anno">ติวเตอร์ สถานที่ ติดต่อ และเพิ่มหน้าสำหรับโรงเรียนหรือองค์กรไว้รับ lead จากพาร์ทเนอร์</span></div>
+      <div class="node lv2"><span class="t strike">รวมโปรโมชัน</span> <span class="chip c-move">MOVE ไป online</span><span class="anno">ย้ายไปรวมเป็น Promo Hub บนเว็บขาย คนสนใจราคาจะได้ไม่ต้องเด้งข้ามเว็บ</span></div>
+    </div>
+    <div class="delta"><b>ผลที่ได้:</b> เมนูสั้นลงและทุกกลุ่มตอบโจทย์เรื่องความเชื่อใจตรง ๆ ส่วนงานดูแลหน้าผลงานเปลี่ยนจากสร้างหน้าใหม่ทุกปี เป็นเพิ่มข้อมูลใน hub เดิม</div>
+  </div>
+
+  <!-- BLOG -->
+  <div class="ia-site">
+    <div class="ia-head"><span class="domain">blog. ไปเป็น /article/</span><span class="role-pill r2">ACQUISITION</span><span class="note">เปลี่ยนจากจัดตามประเภทบทความ เป็นจัดตาม pillar</span></div>
+    <div class="tree t-before">
+      <div class="node root">blog.* สถานะปัจจุบัน <span class="cnt">(staging และ noindex)</span></div>
+      <div class="node lv2"><span class="t">แบ่ง 7 หมวด คือ TCAS, สนามสอบ, เนื้อหาวิชาการ, แนะแนวคณะอาชีพ, เติมกำลังใจ, ความรู้ทั่วไป, เอกสารแจกฟรี</span><span class="anno redpen">นี่คือการจัดตามมุมมองทีมภายใน ไม่ใช่ตามสิ่งที่เด็ก search จริง แถมทั้งโดเมนยัง noindex และมีโพสต์ทดสอบค้างอยู่</span></div>
+      <div class="node lv2"><span class="t">บทความตัวจริงกระจายอยู่บนเว็บหลัก ทั้ง /article/ และ /blog/</span><span class="anno redpen">ระบบ content ซ้อนกัน 2 ที่ ทีมไม่มีคำตอบเดียวว่าควรลงบทความที่ไหน</span></div>
+    </div>
+    <div class="tree t-after show">
+      <div class="node root">/article/ บนเว็บหลัก โครงที่เสนอ <span class="cnt">(4 pillar กับ 1 hub ของฟรี)</span></div>
+      <div class="node lv2"><span class="t strike">blog.* subdomain</span> <span class="chip c-kill">KILL</span><span class="anno">หยุดใช้ หรือเก็บเป็นที่ทดสอบอย่างเดียวตามเรื่องที่ 1 จะได้ตัดความเสี่ยงเปิด index ซ้ำซ้อน</span></div>
+      <div class="node lv2"><span class="t">Pillar เตรียมสอบ TGAT <span class="chip c-new">NEW</span></span><span class="anno">ทำหน้าใหญ่หน้าเดียวที่ครบเรื่องสนามนี้ แล้วให้บทความย่อยอย่างเนื้อหารายพาร์ต แนวข้อสอบ เทคนิค ลิงก์กลับมา และจบด้วย CTA ไปคอร์ส TGAT</span></div>
+      <div class="node lv2"><span class="t">Pillar TPAT 1, 3, 5 <span class="chip c-new">NEW</span></span><span class="anno">โครงเดียวกัน แยกตามความถนัด เพื่อจับ search intent ของเด็กที่อยากติดหมอ วิศวะ หรือครู</span></div>
+      <div class="node lv2"><span class="t">Pillar A-Level รายวิชา <span class="chip c-new">NEW</span></span><span class="anno">บทความหมวดเนื้อหาวิชาการเดิมทั้งหมด <span class="chip c-merge">MERGE</span> เข้ามาเป็นบทความย่อยใต้วิชาของตัวเอง</span></div>
+      <div class="node lv2"><span class="t">Pillar เสริมเกรด ม.ต้น ถึง ม.ปลาย <span class="chip c-new">NEW</span></span><span class="anno">สรุปบทเรียนรายชั้นรายบท ไว้เก็บเด็กที่ยังไม่ถึงปีสอบ ซึ่งเป็น funnel ระยะยาว</span></div>
+      <div class="node lv2"><span class="t">Hub เอกสารแจกฟรี <span class="chip c-keep">KEEP</span></span><span class="anno">ยกระดับเป็น lead magnet ให้กรอกอีเมลหรือ LINE ก่อนโหลด เพื่อสร้างฐานไว้ทำ remarketing</span></div>
+      <div class="node lv2"><span class="t">เติมกำลังใจ และความรู้ทั่วไป <span class="chip c-merge">MERGE</span></span><span class="anno">ลดเหลือ tag เสริม ไม่ต้องเป็นหมวดหลัก เพราะปริมาณน้อยและไม่ใช่ตัวดึง traffic</span></div>
+    </div>
+    <div class="delta"><b>ผลที่ได้:</b> โครงบทความตรงกับสิ่งที่เด็ก search ลิงก์ภายในมีทิศทางชัดคือบทความย่อยชี้หา pillar แล้ว pillar ชี้หาคอร์ส และทีม content มีกติกาเดียวว่าบทความใหม่ทุกชิ้นต้องสังกัด pillar</div>
+  </div>
+
+  <!-- ONLINE -->
+  <div class="ia-site">
+    <div class="ia-head"><span class="domain">online.</span><span class="role-pill r3">CONVERSION</span><span class="note">จาก mega menu 5 คอลัมน์ เหลือ 4 ทางเข้าแบบ mobile-first</span></div>
+    <div class="tree t-before">
+      <div class="node root">online โครงปัจจุบัน <span class="cnt">(เมนูคอร์ส 5 คอลัมน์ ราว 40 ลิงก์)</span></div>
+      <div class="node lv2"><span class="t">เมนูคอร์สเรียนแบบ mega menu</span><span class="anno redpen">เปิด 5 แกนพร้อมกัน ทั้งแนะนำรายชั้น เสริมเกรด เตรียมสอบ Dek70 เตรียมสอบทั้งหมด และกลุ่มคณะ ซึ่งหมวดเตรียมสอบซ้ำกันอยู่ 2 ชุด และทั้งหมดนี้พังเมื่อเปิดบนมือถือ</span></div>
+      <div class="node lv2"><span class="t">รวมคอร์สเปิดใหม่ และรวมโปรโมชัน <span class="ext">เด้งกลับ www</span></span><span class="anno redpen">คนกำลังดูราคาอยู่ดี ๆ ต้องสลับเว็บไปกลับ</span></div>
+      <div class="node lv2"><span class="t">หน้า utility คือ ประวัติสั่งซื้อ แจ้งชำระเงิน วิธีสมัคร ติดต่อ</span></div>
+      <div class="node lv2"><span class="t">หน้าสินค้า /product/{SKU} และหมวด /product-c/</span></div>
+    </div>
+    <div class="tree t-after show">
+      <div class="node root">online โครงที่เสนอ <span class="cnt">(4 ทางเข้า บวก Promo Hub)</span></div>
+      <div class="node lv2"><span class="t">เลือกตามสนามสอบ <span class="chip c-merge">MERGE</span></span><span class="anno">รวมหมวดเตรียมสอบ Dek70 กับเตรียมสอบทั้งหมดเป็นชุดเดียว แล้วใช้ filter เลือกปีรุ่นเอา</span></div>
+      <div class="node lv2"><span class="t">เลือกตามชั้นเรียน ม.2 ถึง ม.6 <span class="chip c-keep">KEEP</span></span><span class="anno">เอาคอร์สเสริมเกรด Buffet และแพ็กเทอม มารวมไว้ใต้ชั้นเรียนของตัวเอง</span></div>
+      <div class="node lv2"><span class="t">เลือกตามคณะเป้าหมาย <span class="chip c-keep">KEEP</span> <span class="chip c-new">ยกเป็นแกนหลัก</span></span><span class="anno">นี่คือแกนที่ตรงวิธีคิดของเด็กที่สุด ควรดันขึ้นมาอยู่หน้าแรกของเว็บขายเลย ไม่ใช่ซ่อนใน mega menu</span></div>
+      <div class="node lv2"><span class="t">ทดลองเรียนฟรี <span class="chip c-keep">KEEP</span></span><span class="anno">เป็นทางเข้าแบบไม่มีความเสี่ยงสำหรับคนที่ยังลังเล ให้โผล่ทุกหน้า</span></div>
+      <div class="node lv2"><span class="t">Promo Hub <span class="chip c-move">MOVE มาจาก www</span></span><span class="anno">รวมโปรโมชันกับคอร์สเปิดใหม่ไว้ที่เดียวบนเว็บขาย จบ journey ในเว็บเดียว</span></div>
+      <div class="node lv2"><span class="t">Utility และบัญชี <span class="chip c-keep">KEEP</span></span><span class="anno">วิธีสมัคร แจ้งชำระ ประวัติสั่งซื้อ และเชื่อมบัญชีเดียวกับ classroom ตามเรื่องที่ 3</span></div>
+      <div class="node lv2"><span class="t">หน้าสินค้า template มาตรฐานเดียว <span class="chip c-new">NEW</span></span><span class="anno">ไม่ว่าเข้าทางไหน ต้องจบที่หน้าโครงเดียวกัน คือ ได้อะไร ตารางเรียน ติวเตอร์ รีวิวสั้น ราคา แล้วเข้า checkout</span></div>
+    </div>
+    <div class="delta"><b>ผลที่ได้:</b> ลิงก์ระดับบนลดจากราว 40 เหลือราว 15 ใช้บนมือถือได้จริง และวัด conversion แยกตามทางเข้าได้สะอาดขึ้นว่าแกนไหนขายดีกว่ากัน</div>
+  </div>
+
+  <!-- CLASSROOM -->
+  <div class="ia-site">
+    <div class="ia-head"><span class="domain">classroom.</span><span class="role-pill r4">RETENTION</span><span class="note">จากแค่หน้า login เป็น dashboard ที่พาเข้าบทเรียนทันที</span></div>
+    <div class="tree t-before">
+      <div class="node root">classroom โครงปัจจุบัน <span class="cnt">(คนนอกเห็นแค่หน้า login)</span></div>
+      <div class="node lv2"><span class="t">หน้า Login และ FAQ</span></div>
+      <div class="node lv2"><span class="t">ลืมรหัสผ่านหรือสมัครบัญชี <span class="ext">เด้งไป online</span></span><span class="anno redpen">ลูกค้าที่จ่ายแล้วเจอ friction ข้ามเว็บตั้งแต่ประตูทางเข้า</span></div>
+      <div class="node lv2"><span class="t">Footer เต็มไปด้วยลิงก์ขายของ <span class="ext">ไป www และ online</span></span><span class="anno redpen">เว็บนี้มีไว้เรียน แต่พื้นที่ด้านล่างกลายเป็นพื้นที่การตลาด</span></div>
+    </div>
+    <div class="tree t-after show">
+      <div class="node root">classroom โครงที่เสนอ <span class="cnt">(จัดตามสิ่งที่ผู้เรียนจะทำ)</span></div>
+      <div class="node lv2"><span class="t">Dashboard ปุ่มเรียนต่อจากเดิม <span class="chip c-new">NEW</span></span><span class="anno">โชว์การ์ดคอร์สล่าสุดพร้อมปุ่ม resume เข้าบทเรียนได้ใน 1 คลิกหลัง login</span></div>
+      <div class="node lv2"><span class="t">คอร์สของฉัน, Progress, แบบฝึกหัด <span class="chip c-keep">KEEP</span></span><span class="anno">โครงหลังบ้านคงเดิม แต่ยกเรื่องความเสถียรของวิดีโอ session และ progress เป็น P0 ตาม feedback ลูกค้า</span></div>
+      <div class="node lv2"><span class="t">จัดการบัญชี จบในเว็บนี้ <span class="chip c-move">MOVE มาจาก online</span></span><span class="anno">รีเซ็ตรหัสผ่านหรือแก้โปรไฟล์ทำได้เลยที่ classroom ผ่านบัญชีเดียวตามเรื่องที่ 3</span></div>
+      <div class="node lv2"><span class="t">ประกาศ และ Help Center <span class="chip c-keep">KEEP</span></span><span class="anno">FAQ เดิมบวกช่องทางแจ้งปัญหาในแอป ลด ticket ที่หลุดไปทาง LINE หรือเพจ</span></div>
+      <div class="node lv2"><span class="t">แนะนำคอร์สถัดไป <span class="chip c-new">NEW</span></span><span class="anno">ขายเฉพาะตอนที่เรียนจบหรือใกล้จบเท่านั้น แม่นกว่าและไม่กวนการเรียน</span></div>
+      <div class="node lv2"><span class="t strike">Footer ลิงก์การตลาดชุดใหญ่</span> <span class="chip c-kill">KILL</span><span class="anno">เหลือแค่ลิงก์จำเป็น คือ ติดต่อ นโยบาย และกลับเว็บหลัก</span></div>
+    </div>
+    <div class="delta"><b>ผลที่ได้:</b> ผู้เรียนกลับเข้าบทเรียนเร็วขึ้น friction เรื่องบัญชีหายไป และพื้นที่ขายเปลี่ยนจากยิงกว้างเป็นยิงตรงจังหวะ</div>
+  </div>
+</section>
+
+<!-- ============ PANEL 4 ============ -->
+<section class="panel" id="p4">
+  <div class="sec-h"><h2>ลำดับการลงมือ และความเสี่ยง</h2><span class="mono">Impact เทียบ Effort</span></div>
+
+  <div class="card" style="margin-bottom:18px">
+    <h3 style="font-size:15px;margin-bottom:4px">Impact เทียบ Effort</h3>
+    <p style="font-size:12.5px;color:var(--ink-soft)">จัดกลุ่มข้อเสนอทั้งหมดเพื่อเรียงว่าควรลงทุนกับอะไรก่อน</p>
+    <div class="iematrix">
+      <div class="iq q-quick"><h4>Quick wins ทำได้เลย</h4><ul><li>ปิดความเสี่ยง blog.* ยืนยัน noindex แล้วลบโพสต์ทดสอบ</li><li>ย้ายโปรโมชันไปรวมเป็น Promo Hub บนเว็บขาย</li><li>เก็บกวาด footer ขายของบน classroom</li></ul></div>
+      <div class="iq q-do"><h4>Big bets คุ้มที่จะลงแรง</h4><ul><li>เมนูใหม่ของเว็บขาย แบบ mobile-first 4 ทางเข้า</li><li>จัดโครงบทความใหม่เป็น pillar</li><li>SSO บวก dashboard เรียนต่อจากเดิม</li></ul></div>
+      <div class="iq q-plan"><h4>วางแผนไว้ รอจังหวะ</h4><ul><li>ยุบหน้าผลงาน 7 หน้าเป็น hub เดียว รอ template ใหม่เสร็จ</li><li>หน้าสินค้า template มาตรฐานเดียวทุก SKU</li></ul></div>
+      <div class="iq q-avoid"><h4>ยังไม่แนะนำตอนนี้</h4><ul><li>ย้ายบทความทั้งหมดไป blog.* subdomain</li><li>Redesign ใหญ่พร้อมกันทั้ง 4 เว็บใน sprint เดียว</li></ul></div>
+    </div>
+    <div class="axes"><span>← effort ต่ำ</span><span>effort สูง →</span></div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <h3 style="font-size:15px;margin-bottom:2px">Roadmap 3 เฟส</h3>
+    <div class="phase">
+      <span class="ph">PHASE 1<br>2 ถึง 4 สัปดาห์</span>
+      <div><h4>ปิดความเสี่ยง แล้วย้ายของให้ถูกบ้าน</h4><p>เคาะสถานะ blog.* ตามเรื่องที่ 1 ย้ายโปรโมชันไปเว็บขาย เก็บกวาด footer ของ classroom และตั้ง tracking baseline ของแต่ละเว็บ ทั้ง CTR, conversion และ completion</p><span class="kpi">วัดผล: baseline ครบ 4 เว็บ และไม่มีหน้าไหน index ซ้ำซ้อน</span></div>
+    </div>
+    <div class="phase">
+      <span class="ph">PHASE 2<br>ไตรมาสถัดไป</span>
+      <div><h4>IA ใหม่ฝั่งหาลูกค้าและฝั่งขาย</h4><p>เปิดเมนูใหม่ของเว็บขาย ถ้า traffic พอให้ A/B เทียบกับโครงเดิม จากนั้นทยอยจัดบทความเข้า pillar โดยเริ่มจากกลุ่มที่ traffic สูงสุด แล้วค่อยยุบหน้าผลงานเป็น hub เดียว</p><span class="kpi">วัดผล: bounce บนมือถือฝั่งขายลดลง และยอด organic ที่กลายเป็นสมัครทดลองเรียนเพิ่มขึ้น</span></div>
+    </div>
+    <div class="phase">
+      <span class="ph">PHASE 3<br>ครึ่งปีหลัง</span>
+      <div><h4>เก็บงานฝั่ง Retention</h4><p>ทำ SSO ให้จัดการบัญชีจบใน classroom ทำ dashboard เรียนต่อจากเดิม และเปิดแนะนำคอร์สถัดไป โดยทั้งหมดนี้ทำหลังจากแก้เรื่องความเสถียรของวิดีโอ session และ progress นิ่งแล้ว</p><span class="kpi">วัดผล: completion rate และยอดซื้อซ้ำที่มาจากการแนะนำในแอป</span></div>
+    </div>
+  </div>
+
+  <div class="sec-h"><h2 style="font-size:17px">ความเสี่ยงหลัก และวิธีกัน</h2></div>
+  <div class="risk">
+    <div class="card"><span class="sev hi">RISK HIGH</span><h4>SEO สะดุดเพราะไปแตะโครง URL</h4><p>การยุบหน้าผลงานและจัดโครงบทความต้องทำ 301 redirect รายหน้า แล้วเฝ้าดู Search Console ต่ออีก 4 ถึง 8 สัปดาห์ ที่สำคัญคือห้ามลบหน้าเก่าก่อน redirect ทำงาน</p></div>
+    <div class="card"><span class="sev hi">RISK HIGH</span><h4>เมนูใหม่กระทบยอดขายช่วงพีค</h4><p>อย่าสลับเมนูฝั่งขายช่วงเปิดรอบรับสมัครหรือช่วงแคมเปญใหญ่ ให้ปล่อยแบบ A/B หรือ soft launch นอกฤดูพีค และเตรียมแผน rollback ให้กลับโครงเดิมได้ภายใน 1 วัน</p></div>
+    <div class="card"><span class="sev md">RISK MED</span><h4>ทีม content ทำงานคร่อม 2 ระบบ</h4><p>ช่วงเปลี่ยนผ่านต้องประกาศกติกาเดียวให้ชัด คือบทความใหม่ทุกชิ้นลงที่ /article/ และต้องสังกัด pillar เท่านั้น ไม่งั้นโครงจะบวมกลับมาเหมือนเดิม</p></div>
+    <div class="card"><span class="sev md">RISK MED</span><h4>SSO อาจกินแรงวิศวกรรมมากกว่าที่คิด</h4><p>ให้ dev ทำ technical spike ประเมินก่อนค่อย commit timeline ระหว่างนั้นใช้วิธีปรับข้อความและลิงก์เส้นทางบัญชีให้ชัดไปก่อน</p></div>
+  </div>
+</section>
+
+<!-- ============ PANEL 5 : TECHNICAL APPENDIX ============ -->
+<section class="panel" id="p5">
+  <div class="sec-h"><h2>Technical Appendix</h2><span class="mono">CMS ใหม่ บน URL เดิม /article/</span></div>
+  <span class="audience-note">สำหรับทีม DEV ใช้หลังจากที่ประชุมเคาะเรื่องที่ 1 ข้อ A แล้ว</span>
+  <p class="lede">โจทย์คือทีมจะพัฒนา blog ขึ้นใหม่ แต่ <b>ยังไม่ได้ตัดสินใจว่า CMS จะใช้ tech stack ไหน</b> อาจเป็น WordPress ต่อ หรือสร้างด้วยระบบอื่นก็ได้ ส่วนนี้จึงวิเคราะห์ทั้งสองสาย พร้อมยืนยันข้อสำคัญที่สุดก่อนเลยว่า ไม่ว่าเลือก stack ไหน ก็ยังใช้ URL เดิมที่ www.smartmathpro.com/article/ ได้เสมอ ต่างกันแค่ความยากของวิธีต่อระบบ เพราะ www. ปัจจุบันอยู่บน WordPress กับ shared hosting</p>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">หลักคิดก่อนเลือก stack: การตัดสินใจ 2 ชั้นที่แยกจากกันได้</h3>
+    <p style="font-size:13px;color:var(--ink-soft)"><b style="color:var(--ink)">ชั้นที่ 1 เรื่อง URL</b> (บทความอยู่ที่ /article/ บนโดเมนหลัก ตามเรื่องที่ 1 ข้อ A) กับ <b style="color:var(--ink)">ชั้นที่ 2 เรื่อง CMS</b> (สร้างด้วยอะไร) เป็นคนละเรื่องกัน เพราะชั้น routing ที่ Cloudflare ไม่สนใจว่าปลายทางเป็นระบบอะไร ที่ประชุมจึง<b style="color:var(--ink)">เคาะเรื่องที่ 1 ได้เลยวันนี้</b> โดยไม่ต้องรอทีม dev สรุป stack และทีม dev ก็เลือก stack ได้อิสระภายหลังโดยไม่กระทบ SEO</p>
+  </div>
+
+  <div class="sec-h"><h2 style="font-size:17px">Scenario A: blog ใหม่ยังใช้ WordPress</h2></div>
+  <div class="card" style="margin-bottom:16px">
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:6px">มี 3 ท่าย่อย เรียงจากง่ายไปยาก</p>
+    <div class="optrow">
+      <div class="opt rec"><span class="reclabel">★ ง่ายที่สุด</span><b>A1) ใช้ WordPress ตัวเดิมบน www.</b>ทำ /article/ เป็น category หรือ custom post type ในระบบเดิม ไม่ต้องมี proxy ไม่ต้องมี server ใหม่ SEO ปลอดภัยที่สุด เหมาะถ้าข้อจำกัดหลักคือเวลา dev ข้อแลกคือยังติด theme, plugin และ performance ของ shared hosting เดิม</div>
+      <div class="opt"><b>A2) WordPress ตัวใหม่แยก server แล้ว proxy เข้า /article/</b>ใช้สถาปัตยกรรม Cloudflare ด้านล่างได้เหมือนกัน WordPress รองรับการอยู่ใต้ subdirectory ผ่าน WP_HOME / WP_SITEURL แต่มีจุดเจ็บคือ plugin จำนวนมากฝัง absolute URL ใน database ต้องทำ search-replace และ wp-admin หลัง proxy ต้องตั้ง header ให้ครบ effort ใกล้เคียงทำ CMS ใหม่แต่ได้ของเดิม จึงไม่ค่อยคุ้ม</div>
+      <div class="opt"><b>A3) Headless WordPress</b>เก็บ WordPress ไว้เป็นหลังบ้านให้ทีม content ใช้ editor ที่คุ้นเคย แล้วให้ frontend ใหม่ (เช่น Next.js) ดึงเนื้อหาผ่าน REST API หรือ WPGraphQL มาเรนเดอร์ใต้ /article/ ได้ความเร็วและ design อิสระโดย workflow ทีม content ไม่เปลี่ยน ข้อแลกคือต้องดูแล 2 ระบบ และ flow preview บทความก่อน publish ต้องทำเพิ่มเอง</div>
+    </div>
+    <p class="why" style="margin-top:12px"><b>เมื่อไหร่ควรเลือกสาย A:</b> ทีม content ผูกกับ workflow ของ WordPress มาก (เขียน จัดรูป จัด SEO ผ่าน plugin เองได้โดยไม่พึ่ง dev) และกำลัง dev มีจำกัด — A1 คือ quick win ส่วน A3 คือทางยกระดับโดยไม่ทิ้งจุดแข็งนี้</p>
+  </div>
+
+  <div class="sec-h"><h2 style="font-size:17px">Scenario B: blog ใหม่ไม่ใช้ WordPress</h2></div>
+  <div class="card" style="margin-bottom:16px">
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:6px">มี 2 ท่าย่อยหลัก ทั้งคู่ใช้สถาปัตยกรรม Cloudflare proxy ด้านล่าง และต้องทำ checklist เรื่อง base path / canonical / noindex ให้ครบเหมือนกัน</p>
+    <div class="optrow">
+      <div class="opt rec"><span class="reclabel">★ แนะนำสำหรับสาย B</span><b>B1) Headless CMS สำเร็จรูป + frontend framework</b>เช่น Payload, Strapi, Directus หรือ Sanity คู่กับ Next.js หรือ Astro ทีม content ได้หน้าจอเขียนบทความที่ไม่ต้องแตะโค้ด ส่วน dev คุมโครงสร้างข้อมูล (pillar, tag, CTA ไปคอร์ส) ได้ตั้งแต่ระดับ schema รองรับโครง pillar ในแท็บ 03 ได้ตรง ๆ</div>
+      <div class="opt"><b>B2) Git-based / Markdown + SSG</b>เขียนบทความเป็นไฟล์ใน git แล้ว build เป็นหน้า static ถูกและเร็วที่สุด แต่ทีม content ต้องทำงานผ่านเครื่องมือเชิง dev ซึ่งไม่ตรงกับทีม content ปัจจุบัน เหมาะกับทีมที่คนเขียนคือ dev เอง จึง<b>ไม่แนะนำ</b>สำหรับเคสเรา</div>
+    </div>
+    <p class="why" style="margin-top:12px"><b>เมื่อไหร่ควรเลือกสาย B:</b> ต้องการความเร็วหน้าเว็บและ design อิสระเต็มที่ อยากออกแบบโครงข้อมูลรองรับ pillar / lead magnet / เครื่องมือ interactive ตั้งแต่ต้น และมีกำลัง dev ดูแลระบบเองระยะยาว ข้อแลกหลักคือทีม content ต้องเรียนเครื่องมือใหม่ และฟีเจอร์ที่ WordPress ได้ฟรีจาก plugin (SEO meta, redirect manager, sitemap) ต้องให้ dev ทำเอง</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">เทียบเร็ว สาย A กับ สาย B</h3>
+    <ul class="checklist">
+      <li><b>Effort ฝั่ง dev:</b> A1 ต่ำสุด → A3 / B1 ปานกลาง (ต้องตั้ง proxy และระบบใหม่) → A2 สูงแบบไม่คุ้ม</li>
+      <li><b>Workflow ทีม content:</b> A1 / A3 ไม่เปลี่ยนเลย, B1 ต้องเรียนเครื่องมือใหม่ราว 1-2 สัปดาห์, B2 ไม่เหมาะ</li>
+      <li><b>ความเสี่ยง SEO:</b> เท่ากันทุกท่า ตราบใดที่บทความอยู่ที่ /article/ ของโดเมนหลักและทำ checklist ด้านล่างครบ ความเสี่ยงจริงอยู่ที่คุณภาพการ migrate ไม่ใช่ตัว stack</li>
+      <li><b>Performance และความอิสระของ design:</b> A3 / B1 ดีสุด ส่วน A1 ติดเพดาน theme และ shared hosting เดิม</li>
+      <li><b>ภาระดูแลระยะยาว:</b> A1 ดูแลที่เดียว, A3 ดูแลทั้ง WordPress และ frontend, B1 ดูแล CMS กับ frontend แต่เป็น stack เดียวที่ dev เลือกเอง</li>
+    </ul>
+    <p class="why" style="margin-top:12px"><b>ข้อเสนอวิธีตัดสิน:</b> ตอบคำถามเดียวก่อนว่า "ทีม content ยอมเปลี่ยนเครื่องมือเขียนบทความไหม" ถ้าไม่ยอม → เลือกสาย A (เริ่ม A1 แล้วค่อยโตเป็น A3) ถ้ายอม → B1 คุ้มกว่าระยะยาวเพราะออกแบบ schema รองรับโครง pillar ได้ตั้งแต่ต้น และที่สำคัญ <b>อย่าให้การยังไม่ตัดสินใจเรื่อง stack ไปหน่วง Phase 1</b> (ปิดความเสี่ยง blog.* และยืนยัน noindex) ซึ่งทำได้ทันทีไม่ว่าจะเลือกสายไหน</p>
+  </div>
+
+  <div class="sec-h"><h2 style="font-size:17px">กรณีเลือกสาย B (รวมถึง A2 / A3): สถาปัตยกรรม reverse proxy</h2></div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">ข้อจำกัดตั้งต้น</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">Shared hosting ไม่ให้เราเข้าไปแก้ config ของ web server ตรง ๆ จึงทำ reverse proxy ที่ฝั่ง hosting เองไม่ได้ ทางออกคือยกหน้าที่นี้ไปไว้ที่ชั้นบนสุดของ traffic แทน ซึ่งก็คือ Cloudflare ที่คั่นอยู่หน้า domain</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:2px">สถาปัตยกรรมที่เสนอ</h3>
+    <div class="archdiag">ผู้ใช้เปิด www.smartmathpro.com/...
+        |
+        v
+<span class="hl">Cloudflare</span> (proxy คั่นกลาง ตัดสินใจจาก path)
+        |
+        |-- path ขึ้นต้นด้วย <span class="ok">/article/*</span>
+        |       ส่งไปที่ <span class="ok">server ใหม่ที่รัน CMS ใหม่</span>
+        |       (host จริงปิด index ไว้ ผู้ใช้ไม่เห็น)
+        |
+        |-- path <span class="dim">อื่นทั้งหมด</span>
+                ส่งไปที่ <span class="dim">shared hosting (WordPress เดิม)</span>
+
+ผลคือ user และ Google เห็นทุกอย่างเป็นโดเมนเดียว
+SEO authority ไม่ถูกแบ่ง และสองระบบอยู่ร่วมกันได้</div>
+    <p style="font-size:13px;color:var(--ink-soft)">วิธีตั้งค่าฝั่ง Cloudflare ใช้ได้ทั้ง Workers (ยืดหยุ่นสุด เขียน logic ได้) หรือ Origin Rules ในแผนที่รองรับ โดยทั่วไปปริมาณ traffic ระดับ blog ยังอยู่ใน free tier ของ Workers ได้</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:2px">สิ่งที่ CMS ใหม่ต้องตั้งค่าตั้งแต่วันแรก</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">หัวใจคือ CMS ใหม่ต้องรู้ว่าตัวเองอาศัยอยู่ที่ /article ไม่ใช่ root ถ้าไม่ตั้งแต่ต้น ลิงก์ภายในและไฟล์ asset จะชี้ผิดทั้งระบบ และแก้ทีหลังเจ็บมาก ตัวอย่างกรณีใช้ Next.js</p>
+    <div class="codeblock"><span class="cmt">// next.config.js</span>
+module.exports = {
+  basePath: '/article',
+}</div>
+    <p style="font-size:13px;color:var(--ink-soft)">framework อื่นมีแนวคิดเดียวกัน เช่น Astro ใช้ base, Nuxt ใช้ app.baseURL ส่วนระบบที่เขียนเองต้อง prefix ทุก route และ asset ให้ครบ</p>
+    <ul class="checklist">
+      <li><b>Base path เป็น /article</b> ทุกลิงก์ภายใน ทุกรูป ทุกไฟล์ JS และ CSS ต้องอยู่ใต้ path นี้</li>
+      <li><b>Canonical tag ชี้ URL เต็มของโดเมนหลัก</b> เช่น https://www.smartmathpro.com/article/ชื่อบทความ ห้ามชี้ host จริงของ server ใหม่เด็ดขาด</li>
+      <li><b>Sitemap รวมเป็นภาพเดียว</b> ให้ CMS ใหม่สร้าง sitemap ของตัวเอง แล้วประกาศเพิ่มใน robots.txt หรือ submit คู่กันใน Search Console ใต้ property เดียวกัน</li>
+      <li><b>Host จริงของ server ใหม่ต้อง noindex</b> และควรบล็อกการเข้าถึงตรงด้วย ให้รับ traffic จาก Cloudflare เท่านั้น กันปัญหา content ซ้ำสองที่</li>
+      <li><b>หน้า 404 และ redirect จัดการในระบบใหม่ให้จบ</b> บทความที่ URL เปลี่ยน slug ต้องมี 301 ภายในระบบใหม่ ไม่ปล่อยหล่นเป็น 404</li>
+      <li><b>เช็คเรื่อง trailing slash ให้นโยบายเดียวกับ WordPress เดิม</b> ไม่งั้นจะเกิด redirect ซ้อนหรือ URL สองแบบชี้หน้าเดียวกัน</li>
+      <li><b>อย่าลืม resource นอก HTML</b> เช่น RSS feed, OG image, ไฟล์ PDF แจกฟรี ต้องเสิร์ฟผ่าน /article/ เหมือนกัน</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:2px">แผนย้ายแบบทีละขั้น ไม่ต้อง big bang</h3>
+    <div class="phase">
+      <span class="ph">STEP 1</span>
+      <div><h4>ตั้งระบบคู่ขนาน</h4><p>CMS ใหม่ขึ้น server ของตัวเอง ปิด index สนิท ทีม content เริ่มทดลองใช้งานจริงเพื่อเช็ค workflow ระหว่างที่ WordPress เดิมยังเสิร์ฟ /article/ ตามปกติ</p></div>
+    </div>
+    <div class="phase">
+      <span class="ph">STEP 2</span>
+      <div><h4>เปิด routing เฉพาะบทความใหม่</h4><p>ตั้ง rule ที่ Cloudflare ให้ slug ของบทความใหม่ชี้ไประบบใหม่ ส่วน slug เก่ายังไปที่ WordPress เหมือนเดิม ช่วงนี้สองระบบทำงานคู่กันโดย user ไม่รู้สึกอะไร</p></div>
+    </div>
+    <div class="phase">
+      <span class="ph">STEP 3</span>
+      <div><h4>ทยอยย้ายบทความเก่าทีละ batch</h4><p>เริ่มจากกลุ่มที่ traffic สูงเพื่อรีบได้ประโยชน์จากระบบใหม่ ย้ายแล้วเทียบ URL ให้ตรงเดิมหรือใส่ 301 ให้ครบ เฝ้า Search Console ทุก batch ราว 1 ถึง 2 สัปดาห์ก่อนไป batch ถัดไป</p></div>
+    </div>
+    <div class="phase">
+      <span class="ph">STEP 4</span>
+      <div><h4>สลับ routing ทั้ง /article/ แล้วปลดของเก่า</h4><p>เมื่อบทความครบแล้ว เปลี่ยน rule ให้ /article/* ทั้งหมดชี้ระบบใหม่ จากนั้นถอดส่วน blog ของ WordPress ออก เหลือไว้แค่ redirect กันลิงก์เก่าตกค้าง</p></div>
+    </div>
+  </div>
+
+  <div class="sec-h"><h2 style="font-size:17px">คำถามที่ต้องได้คำตอบจากทีม dev ก่อนเริ่ม</h2></div>
+  <div class="qa"><b>1. Domain ผูก nameserver กับ Cloudflare แล้วหรือยัง</b><span>ถ้าผูกแล้วเริ่มทำ routing ได้ทันที ถ้ายังต้องย้าย nameserver ก่อน ซึ่งใช้เวลาไม่นานแต่ควรทำนอกช่วงแคมเปญ</span></div>
+  <div class="qa"><b>2. CMS ใหม่สร้างด้วย stack อะไร และรองรับ base path ดีแค่ไหน</b><span>คำตอบนี้กำหนดความยากของงานทั้งหมด ควรพิสูจน์ด้วย demo หน้าเดียวที่รันใต้ /article/ ให้ดูก่อน commit โครงใหญ่</span></div>
+  <div class="qa"><b>3. Hosting เดิมยอมให้ Cloudflare proxy ครอบได้ไหม</b><span>shared hosting ส่วนใหญ่ไม่มีปัญหา แต่บางเจ้ามีระบบ SSL หรือ security ที่ตีกับ proxy ต้องเช็ค SSL mode ให้เป็น Full อย่างน้อย</span></div>
+  <div class="qa"><b>4. ใครเป็นเจ้าของ rule ที่ Cloudflare</b><span>routing layer นี้จะกลายเป็นจุดสำคัญที่สุดของระบบ ต้องกำหนดคนดูแล สิทธิ์เข้าถึง และวิธี rollback ให้ชัดก่อนเปิดใช้จริง</span></div>
+
+  <!-- ===== Account & Token Strategy ===== -->
+  <div class="sec-h" style="margin-top:34px"><h2>Account &amp; Token Strategy</h2><span class="mono">เชื่อมกับเรื่องที่ 3 (SSO) และ P0 session หลุด</span></div>
+  <p class="lede">ปัจจุบัน online กับ classroom ผูก login ผ่าน LINE และ Facebook แยกกันคนละชุด บวกช่องทางเบอร์โทรกับรหัสผ่าน เท่ากับเรามีระบบบัญชี 2 ระบบที่บังเอิญใช้ social provider เดียวกัน ส่วนนี้อธิบายว่าปัญหาอยู่ตรงไหน แก้ระยะสั้นได้อย่างไร และโครงระยะยาวควรเป็นแบบไหน</p>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">พื้นฐาน Token ที่ทีมต้องเข้าใจตรงกันก่อน</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">ระบบ login สมัยใหม่ใช้ token สองตัวทำงานคู่กัน <b style="color:var(--ink)">Access Token</b> อายุสั้นราว 15 นาทีถึง 1 ชั่วโมง ใช้ยืนยันตัวตนทุก request ที่ให้หมดอายุเร็วก็เพื่อว่าถ้าโดนขโมยจะใช้ได้ไม่นาน ส่วน <b style="color:var(--ink)">Refresh Token</b> อายุยาวเป็นหลักสัปดาห์ถึงหลักเดือน เก็บไว้เงียบ ๆ พอ access token หมด ระบบใช้ตัวนี้ขอใบใหม่อัตโนมัติโดยผู้ใช้ไม่รู้สึกอะไร</p>
+    <p style="font-size:13px;color:var(--ink-soft);margin-top:8px">อาการเด็กเรียนอยู่แล้วโดนเด้งออก เกือบทั้งหมดเกิดจาก 3 จุดนี้ คือ access token หมดแล้วระบบต่ออายุไม่สำเร็จ, refresh token หมดอายุจริง หรือ logic ฝั่ง client จัดการตอนต่ออายุพลาด เช่น สอง request แย่งกันต่ออายุพร้อมกัน การไล่แก้ P0 เรื่อง session จึงต้องตรวจครบทั้งสามจุด ไม่ใช่แค่ขยายตัวเลขอายุ token อย่างเดียว</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">ปัญหาเชิงโครงสร้างของระบบปัจจุบัน</h3>
+    <ul class="checklist">
+      <li><b>Login ซ้ำซ้อนข้ามเว็บ</b> user เข้า online แล้ว มาถึง classroom ต้อง login ใหม่ เพราะ token ของสองเว็บออกคนละใบ ไม่รู้จักกัน</li>
+      <li><b>อายุ session สองฝั่งไม่เท่ากัน</b> ฝั่งหนึ่งหลุดอีกฝั่งยังอยู่ user เลยงงว่าตกลงตัวเอง login อยู่หรือเปล่า</li>
+      <li><b>คนเดียวกลายเป็นสองบัญชี</b> เช่น login ด้วย LINE ที่เว็บหนึ่ง Facebook ที่อีกเว็บ ระบบมองเป็นคนละคน ประวัติการเรียนกับการซื้อแยกจากกัน</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">ระยะสั้น ทำได้ใน 1 ถึง 2 sprint</h3>
+    <ul class="checklist">
+      <li><b>ยืดอายุ refresh token ฝั่ง classroom</b> ให้ยาวพอกับพฤติกรรมเรียนจริง เช่น 30 วันแบบ sliding คือใช้งานเมื่อไหร่นับหนึ่งใหม่ เด็กที่เข้าเรียนทุกสัปดาห์จะไม่หลุดเลย</li>
+      <li><b>ทำ silent refresh ให้แน่น</b> client ต้องต่ออายุ token ก่อนหมดจริง และมี retry เมื่อการต่ออายุล้มเหลวชั่วคราว ไม่ใช่เด้ง logout ทันที จุดนี้มักเป็นต้นตอ session หลุดมากกว่าตัวเลข expire เอง</li>
+      <li><b>ใช้ cookie ระดับ parent domain ช่วยเชื่อม</b> สองเว็บอยู่ใต้ smartmathpro.com เหมือนกัน ตั้ง cookie ที่ .smartmathpro.com ให้อ่านร่วมกันได้ แล้วทำ logic ว่าถ้ามี session ฝั่งโน้นอยู่ ให้ login ฝั่งนี้อัตโนมัติ เป็น SSO ฉบับประหยัดที่ไม่ต้องรื้อระบบ</li>
+      <li><b>ใช้เบอร์โทรเป็น key จับคู่บัญชีซ้ำ</b> เด็กไทยหนึ่งคนมักมีเบอร์เดียว จึงเหมาะเป็นตัวกลางบอกว่า LINE account นี้กับ Facebook account นี้คือคนเดียวกัน บังคับยืนยันเบอร์ครั้งแรกที่ login ทุกช่องทาง เพื่อเตรียมข้อมูลไว้รวมบัญชีในระยะยาว</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:2px">ระยะยาว Auth Service กลางตัวเดียว</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">หลักคิดคือ LINE กับ Facebook ต้องถูกลดบทบาทจากระบบบัญชี เหลือแค่วิธี login ส่วนบัญชีจริงมีใบเดียวอยู่ที่ระบบกลาง ทั้งสองเว็บเลิกออก token เอง รับจากระบบกลางอย่างเดียว นโยบายอายุ token จึงเป็นชุดเดียวกันโดยอัตโนมัติ</p>
+    <div class="archdiag">                  User (นักเรียน)
+                       |
+                       v
+        เลือกช่องทาง login ช่องทางใดก็ได้
+        <span class="hl">LINE / Facebook / เบอร์โทร+รหัสผ่าน</span>
+        (เป็นแค่วิธีพิสูจน์ตัวตน ไม่ใช่ตัวบัญชี)
+                       |
+                       v
+              <span class="ok">Auth Service กลาง</span>
+        จับคู่เข้าบัญชีเดียว 1 คน = 1 บัญชี
+     ออก token จากที่เดียว นโยบาย expire ชุดเดียว
+                       |
+            ┌──────────┴──────────┐
+            v                     v
+         online               classroom
+     <span class="dim">ใช้ token ใบเดียวกัน login ครั้งเดียวเข้าได้ทั้งสองเว็บ</span></div>
+    <p style="font-size:13px;color:var(--ink-soft)">ทางเลือกเชิงเครื่องมือมีตั้งแต่บริการสำเร็จรูปอย่าง Auth0, Clerk, Supabase Auth หรือ self-host อย่าง Keycloak สำหรับทีมขนาดเรา แนะนำของสำเร็จรูปก่อน เพราะงาน auth พลาดแล้วแพง และไม่ใช่ความสามารถหลักที่เราต้องสร้างเอง</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">นโยบาย expire ที่แนะนำเป็นจุดตั้งต้น</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">สำหรับ EdTech ที่ผู้ใช้เป็นนักเรียน ให้ access token อายุ 30 ถึง 60 นาที, refresh token 30 วันแบบ sliding และบังคับยืนยันตัวตนซ้ำเฉพาะจุดอ่อนไหวอย่างหน้าชำระเงินหรือเปลี่ยนรหัสผ่าน แนวนี้สมดุลระหว่างความปลอดภัยกับการไม่รบกวนการเรียน ตัวเลขปรับจูนภายหลังได้จากข้อมูล session หลุดจริง</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="font-size:15px;margin-bottom:4px">เรื่องที่ต้องออกแบบเพิ่ม เพราะใช้เบอร์โทรกับรหัสผ่าน</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">ต่างจากระบบ OTP ตรงที่รหัสผ่านอยู่กับตัวผู้ใช้ตลอด ไม่มีตัวกลางอย่าง SMS มาช่วยยืนยันซ้ำ จึงมีสองเคสที่ต้องเตรียม flow ไว้ก่อน</p>
+    <ul class="checklist">
+      <li><b>ลืมรหัสผ่าน</b> ถ้าบัญชีนั้นผูก LINE หรือ Facebook ไว้ด้วย ให้ reset ผ่านช่องทางนั้นได้เลย ถูกกว่าและเด็กทำเองได้โดยไม่ต้องรอ support และทั้ง flow ต้องจบใน classroom ได้ ไม่เด้งข้ามเว็บแบบปัจจุบัน</li>
+      <li><b>บัญชีที่มีแค่เบอร์กับรหัสผ่าน ไม่มี social ผูก</b> ถ้าลืมรหัสผ่านแล้วเบอร์เปลี่ยนด้วย จะกู้บัญชีเองไม่ได้เลย ต้องมีเส้นทางกู้ผ่านแอดมินพร้อมวิธีพิสูจน์ตัวตน เช่น ประวัติการซื้อ วางแผนไว้ก่อนจะได้ไม่กลายเป็น ticket ก้อนใหญ่ของทีม support</li>
+      <li><b>เด็กเปลี่ยนเบอร์บ่อยกว่าผู้ใหญ่</b> ต้องมี flow เปลี่ยนเบอร์ที่ทำเองได้โดยยืนยันผ่าน social ที่ผูกไว้ และจุดนี้คือเหตุผลที่ควรชวน user ผูก social เพิ่มอย่างน้อยหนึ่งช่องทางตั้งแต่ onboarding</li>
+    </ul>
+  </div>
+
+  <div class="qa"><b>ข้อควรระวังตอน migrate บัญชีเข้าระบบกลาง</b><span>ต้องมี flow จับคู่บัญชีซ้ำสำหรับคนที่มีบัญชีทั้งสองเว็บก่อนเปิดใช้จริง โดยใช้เบอร์โทรเป็น key หลัก และมีหน้ายืนยันให้ user ตรวจว่าใช่บัญชีตัวเองจริงก่อนรวม ห้ามรวมอัตโนมัติเงียบ ๆ เพราะถ้ารวมผิดคน ประวัติการเรียนและการซื้อจะปนกันและแก้ยากมาก</span></div>
+</section>
+
+</main>
+
+<footer><div class="fwrap">จัดทำโดยทีม Product / ข้อมูลจากการ audit โครงสร้างเว็บจริง มิ.ย. 2026 / ใช้ภายในเพื่อประกอบการตัดสินใจเท่านั้น</div></footer>
+
+<script>
+const tabs=document.querySelectorAll('.tab'),panels=document.querySelectorAll('.panel');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>x.classList.remove('active'));panels.forEach(p=>p.classList.remove('active'));
+  t.classList.add('active');document.getElementById(t.dataset.p).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+document.querySelectorAll('.decision .dh').forEach(h=>h.addEventListener('click',()=>{
+  const d=h.parentElement,open=d.classList.toggle('open');
+  h.setAttribute('aria-expanded',open?'true':'false');
+}));
+document.querySelectorAll('.segbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  const v=b.dataset.v;
+  document.querySelectorAll('.tree').forEach(tr=>{
+    tr.classList.toggle('show',tr.classList.contains('t-'+v));
+  });
+}));
+</script>
+</body>
+</html>
