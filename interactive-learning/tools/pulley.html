@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Drag the Rope — Interactive เรื่องรอก</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1,
+h2 {
+  margin-top: 0;
+}
+
+.subtitle {
+  margin-top: -5px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.callout {
+  margin-bottom: 18px;
+  padding: 15px;
+  border-left: 5px solid #4f46e5;
+  border-radius: 12px;
+  background: #eef2ff;
+  line-height: 1.7;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 18px;
+}
+
+.card {
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: white;
+}
+
+.control-group {
+  margin-bottom: 22px;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.control-header strong {
+  color: #4338ca;
+}
+
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  background: white;
+  color: #172033;
+  font-size: 15px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #4f46e5;
+}
+
+.range-label {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+button {
+  width: 100%;
+  padding: 11px 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  background: white;
+  color: #172033;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  background: #f8fafc;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.metric {
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: white;
+}
+
+.metric small {
+  display: block;
+  margin-bottom: 6px;
+  color: #64748b;
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.explanation {
+  margin-top: 12px;
+  min-height: 120px;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+  line-height: 1.7;
+}
+
+.scene-section {
+  margin-top: 22px;
+}
+
+.scene-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.badge {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.badge.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+#pulleySvg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: white;
+
+  /*
+    สำคัญสำหรับมือถือ
+    ป้องกัน browser เลื่อนหน้าจอ
+    ขณะลากเชือก
+  */
+  touch-action: none;
+
+  user-select: none;
+}
+
+#ropeHandle {
+  cursor: grab;
+}
+
+#pulleySvg.dragging #ropeHandle {
+  cursor: grabbing;
+}
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.lesson-box {
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: white;
+  text-align: center;
+}
+
+.lesson-box small {
+  display: block;
+  margin-bottom: 5px;
+  color: #64748b;
+}
+
+.lesson-box strong {
+  font-size: 17px;
+}
+
+.formula {
+  margin-top: 18px;
+  padding: 17px;
+  border-radius: 14px;
+  background: #eef2ff;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.drag-tip {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 850px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🪝 Drag the Rope — ทดลองเรื่องรอก</h1>
+
+  <p class="subtitle">
+    จับปลายเชือกแล้วลากด้วยตัวเอง
+    เพื่อดูว่าแรงที่ใช้และระยะที่ต้องดึงเชือก
+    เปลี่ยนไปอย่างไรเมื่อใช้รอกแต่ละแบบ
+  </p>
+
+
+  <div class="callout">
+
+    <strong>วิธีทดลอง:</strong>
+
+    คลิกค้างที่
+    <strong>วงกลมสีม่วงตรงปลายเชือก</strong>
+    แล้วลากขึ้นหรือลง
+
+    <br>
+
+    เมื่อปล่อยเมาส์ เชือกจะ
+    <strong>หยุดอยู่ตรงตำแหน่งนั้น</strong>
+
+    ถ้าต้องการลากต่อ
+    ให้คลิกวงกลมอีกครั้ง
+
+  </div>
+
+
+
+  <!-- ==========================================
+       CONTROL + RESULT
+  =========================================== -->
+
+  <div class="grid">
+
+    <!-- CONTROL -->
+
+    <div class="card">
+
+      <!-- PULLEY TYPE -->
+
+      <div class="control-group">
+
+        <label
+          for="pulleyKind"
+          style="display:block;margin-bottom:8px;"
+        >
+          ชนิดของรอก
+        </label>
+
+
+        <select id="pulleyKind">
+
+          <option value="fixed">
+            รอกเดี่ยวตายตัว — 1 เส้นพยุง
+          </option>
+
+          <option value="movable">
+            รอกเดี่ยวเคลื่อนที่ — 2 เส้นพยุง
+          </option>
+
+          <option value="compound">
+            รอกพวง — 4 เส้นพยุง
+          </option>
+
+        </select>
+
+      </div>
+
+
+
+      <!-- WEIGHT -->
+
+      <div class="control-group">
+
+        <div class="control-header">
+
+          <label for="loadWeight">
+            น้ำหนักวัตถุ W
+          </label>
+
+          <strong>
+            <span id="weightText">
+              600
+            </span>
+            N
+          </strong>
+
+        </div>
+
+
+        <input
+          id="loadWeight"
+          type="range"
+          min="200"
+          max="1000"
+          step="50"
+          value="600"
+        >
+
+
+        <div class="range-label">
+          <span>200 N</span>
+          <span>1000 N</span>
+        </div>
+
+      </div>
+
+
+
+      <!-- TARGET HEIGHT -->
+
+      <div class="control-group">
+
+        <div class="control-header">
+
+          <label for="targetHeight">
+            เป้าหมายยกสูง
+          </label>
+
+          <strong>
+            <span id="targetText">
+              0.50
+            </span>
+            m
+          </strong>
+
+        </div>
+
+
+        <input
+          id="targetHeight"
+          type="range"
+          min="0.2"
+          max="1.5"
+          step="0.1"
+          value="0.5"
+        >
+
+
+        <div class="range-label">
+          <span>0.2 m</span>
+          <span>1.5 m</span>
+        </div>
+
+      </div>
+
+
+
+      <!-- RESET -->
+
+      <button
+        id="resetDrag"
+        type="button"
+      >
+        ↺ วางของลงแล้วลองใหม่
+      </button>
+
+
+      <div class="drag-tip">
+
+        💡 สามารถลากเชือกลงบางส่วนแล้วปล่อย
+        จากนั้นคลิกปลายเชือกอีกครั้งเพื่อลากต่อ
+        หรือลากย้อนขึ้นก็ได้
+
+      </div>
+
+    </div>
+
+
+
+    <!-- RESULT -->
+
+    <div>
+
+      <div class="metrics">
+
+        <div class="metric">
+
+          <small>
+            แรงที่ต้องออก F
+          </small>
+
+          <div
+            id="forceValue"
+            class="metric-value"
+          >
+            600 N
+          </div>
+
+        </div>
+
+
+
+        <div class="metric">
+
+          <small>
+            ระยะที่ดึงเชือก s
+          </small>
+
+          <div
+            id="ropeDistance"
+            class="metric-value"
+          >
+            0.00 m
+          </div>
+
+        </div>
+
+
+
+        <div class="metric">
+
+          <small>
+            วัตถุยกขึ้น h
+          </small>
+
+          <div
+            id="loadHeight"
+            class="metric-value"
+          >
+            0.00 m
+          </div>
+
+        </div>
+
+
+
+        <div class="metric">
+
+          <small>
+            อัตราได้เปรียบเชิงกล
+          </small>
+
+          <div
+            id="maValue"
+            class="metric-value"
+          >
+            1 เท่า
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div
+        id="lessonText"
+        class="explanation"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ==========================================
+       INTERACTIVE
+  =========================================== -->
+
+  <section class="scene-section">
+
+    <div class="scene-header">
+
+      <div>
+
+        <h2>
+          ลองดึงเชือกด้วยตัวเอง
+        </h2>
+
+        <p class="subtitle">
+          คลิกวงกลมสีม่วง → ลาก → ปล่อย
+        </p>
+
+      </div>
+
+
+      <div
+        id="statusBadge"
+        class="badge"
+      >
+        พร้อมทดลอง
+      </div>
+
+    </div>
+
+
+
+    <svg
+      id="pulleySvg"
+      viewBox="0 0 760 500"
+      aria-label="แบบจำลองระบบรอกแบบลากเชือก"
+    >
+
+      <g id="pulleyDrawing"></g>
+
+    </svg>
+
+
+
+    <!-- INFORMATION -->
+
+    <div class="lesson-grid">
+
+      <div class="lesson-box">
+
+        <small>
+          จำนวนเส้นเชือกพยุง
+        </small>
+
+        <strong id="supportCount">
+          1 เส้น
+        </strong>
+
+      </div>
+
+
+
+      <div class="lesson-box">
+
+        <small>
+          ความสัมพันธ์ของระยะ
+        </small>
+
+        <strong id="relationship">
+          s = h
+        </strong>
+
+      </div>
+
+
+
+      <div class="lesson-box">
+
+        <small>
+          ระยะเชือกที่ต้องดึงถึงเป้าหมาย
+        </small>
+
+        <strong id="requiredPull">
+          0.50 m
+        </strong>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- FORMULA -->
+
+  <div class="formula">
+
+    <strong>
+      สำหรับรอกอุดมคติ
+    </strong>
+
+    <br>
+
+    F = W / n
+
+    <br>
+
+    s = nh
+
+    <br><br>
+
+    <span style="font-size:14px;color:#64748b;">
+
+      n = จำนวนเส้นเชือกที่ช่วยพยุงชุดรอกเคลื่อนที่
+
+    </span>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+/* =================================================
+   ELEMENTS
+================================================= */
+
+const typeEl =
+document.getElementById(
+  "pulleyKind"
+);
+
+
+const weightEl =
+document.getElementById(
+  "loadWeight"
+);
+
+
+const targetEl =
+document.getElementById(
+  "targetHeight"
+);
+
+
+const svg =
+document.getElementById(
+  "pulleySvg"
+);
+
+
+const drawing =
+document.getElementById(
+  "pulleyDrawing"
+);
+
+
+
+/* =================================================
+   PULLEY CONFIG
+================================================= */
+
+const configs = {
+
+  fixed: {
+
+    name:
+    "รอกเดี่ยวตายตัว",
+
+    n:
+    1,
+
+    handleStartY:
+    180
+
+  },
+
+
+  movable: {
+
+    name:
+    "รอกเดี่ยวเคลื่อนที่",
+
+    n:
+    2,
+
+    handleStartY:
+    300
+
+  },
+
+
+  compound: {
+
+    name:
+    "รอกพวง",
+
+    n:
+    4,
+
+    handleStartY:
+    175
+
+  }
+
+};
+
+
+
+/* =================================================
+   SCALE
+================================================= */
+
+/*
+  50 px = 1 เมตร
+
+  รอกพวง 4 เส้น
+  ถ้ายก 1.5 m
+
+  ต้องดึง:
+
+  s = 4(1.5)
+    = 6.0 m
+
+  จึงขยับบนหน้าจอ:
+
+  6 × 50
+  = 300 px
+*/
+
+const PX_PER_M =
+50;
+
+
+
+/*
+  ตำแหน่งเริ่มต้นของวัตถุ
+*/
+
+const LOAD_BASE_Y =
+360;
+
+
+
+/* =================================================
+   DRAG STATE
+================================================= */
+
+/*
+  เชือกถูกดึงไปแล้วกี่เมตร
+*/
+
+let ropePull =
+0;
+
+
+/*
+  ขณะนี้กำลังลากหรือไม่
+*/
+
+let dragging =
+false;
+
+
+/*
+  pointer ที่กำลังใช้งาน
+*/
+
+let activePointer =
+null;
+
+
+/*
+  ตำแหน่ง pointer
+  ตอนเริ่มลากครั้งปัจจุบัน
+*/
+
+let dragStartY =
+0;
+
+
+/*
+  ระยะเชือกที่ถูกดึงอยู่
+  ตอนเริ่มลากครั้งปัจจุบัน
+*/
+
+let dragStartRopePull =
+0;
+
+
+
+/* =================================================
+   PHYSICS
+================================================= */
+
+function getData() {
+
+  const config =
+
+  configs[
+    typeEl.value
+  ];
+
+
+  const W =
+
+  Number(
+    weightEl.value
+  );
+
+
+  const targetH =
+
+  Number(
+    targetEl.value
+  );
+
+
+  /*
+    ระยะเชือกที่ต้องดึง
+    เพื่อให้วัตถุถึงเป้าหมาย
+
+    s = nh
+  */
+
+  const maxPull =
+
+  config.n *
+  targetH;
+
+
+  /*
+    แรงที่ใช้
+
+    F = W/n
+  */
+
+  const F =
+
+  W /
+  config.n;
+
+
+  /*
+    ความสูงที่ยกได้
+
+    h = s/n
+  */
+
+  const h =
+
+  ropePull /
+  config.n;
+
+
+  return {
+
+    ...config,
+
+    W,
+
+    targetH,
+
+    maxPull,
+
+    F,
+
+    h
+
+  };
+
+}
+
+
+
+/* =================================================
+   DRAW PULLEY
+================================================= */
+
+function pulley(
+  cx,
+  cy,
+  radius = 30
+) {
+
+  return `
+
+  <g>
+
+    <circle
+      cx="${cx}"
+      cy="${cy}"
+      r="${radius}"
+
+      fill="#ffffff"
+
+      stroke="#172033"
+      stroke-width="4"
+    />
+
+
+    <circle
+      cx="${cx}"
+      cy="${cy}"
+      r="6"
+
+      fill="#172033"
+    />
+
+  </g>
+
+  `;
+
+}
+
+
+
+/* =================================================
+   DRAW LOAD
+================================================= */
+
+function load(
+  x,
+  y,
+  W
+) {
+
+  return `
+
+  <g>
+
+    <rect
+      x="${x - 50}"
+      y="${y}"
+
+      width="100"
+      height="66"
+
+      rx="10"
+
+      fill="#2563eb"
+    />
+
+
+    <text
+      x="${x}"
+      y="${y + 27}"
+
+      text-anchor="middle"
+
+      font-size="14"
+
+      fill="#ffffff"
+    >
+      วัตถุ
+    </text>
+
+
+    <text
+      x="${x}"
+      y="${y + 49}"
+
+      text-anchor="middle"
+
+      font-size="13"
+
+      fill="#ffffff"
+    >
+      ${W} N
+    </text>
+
+  </g>
+
+  `;
+
+}
+
+
+
+/* =================================================
+   DRAW ROPE HANDLE
+================================================= */
+
+function handle(
+  x,
+  y
+) {
+
+  return `
+
+  <g
+    id="ropeHandle"
+  >
+
+    <!-- ใหญ่กว่าวงกลมเล็กน้อย
+         เพื่อให้คลิกง่าย -->
+
+    <circle
+      cx="${x}"
+      cy="${y}"
+      r="30"
+
+      fill="transparent"
+
+      pointer-events="all"
+    />
+
+
+    <circle
+      cx="${x}"
+      cy="${y}"
+      r="23"
+
+      fill="#4f46e5"
+
+      stroke="#ffffff"
+      stroke-width="4"
+
+      pointer-events="none"
+    />
+
+
+    <!-- ลูกศรชี้ลง -->
+
+    <path
+      d="
+        M${x - 8} ${y - 4}
+        L${x} ${y + 7}
+        L${x + 8} ${y - 4}
+      "
+
+      fill="none"
+
+      stroke="#ffffff"
+      stroke-width="3"
+
+      stroke-linecap="round"
+      stroke-linejoin="round"
+
+      pointer-events="none"
+    />
+
+  </g>
+
+  `;
+
+}
+
+
+
+/* =================================================
+   RENDER
+================================================= */
+
+function render() {
+
+  const d =
+  getData();
+
+
+  const pullPx =
+
+  ropePull *
+  PX_PER_M;
+
+
+  const liftPx =
+
+  d.h *
+  PX_PER_M;
+
+
+  const loadY =
+
+  LOAD_BASE_Y -
+  liftPx;
+
+
+  const handleY =
+
+  d.handleStartY +
+  pullPx;
+
+
+
+  let html = `
+
+    <!-- CEILING -->
+
+    <line
+      x1="65"
+      y1="48"
+
+      x2="695"
+      y2="48"
+
+      stroke="#172033"
+      stroke-width="7"
+
+      stroke-linecap="round"
+    />
+
+
+    <text
+      x="76"
+      y="28"
+
+      font-size="13"
+
+      fill="#64748b"
+    >
+      จุดยึดด้านบน
+    </text>
+
+
+    <!-- FLOOR -->
+
+    <line
+      x1="70"
+      y1="430"
+
+      x2="690"
+      y2="430"
+
+      stroke="#e2e8f0"
+      stroke-width="2"
+    />
+
+  `;
+
+
+
+  /* =================================================
+     FIXED PULLEY
+  ================================================= */
+
+  if (
+    typeEl.value ===
+    "fixed"
+  ) {
+
+    html +=
+
+    pulley(
+      430,
+      118,
+      34
+    );
+
+
+    html += `
+
+      <path
+
+        d="
+          M300 ${loadY}
+
+          L300 118
+
+          Q300 82
+           336 82
+
+          L524 82
+
+          Q560 82
+           560 118
+
+          L560 ${handleY}
+        "
+
+        fill="none"
+
+        stroke="#4f46e5"
+        stroke-width="7"
+
+        stroke-linecap="round"
+
+      />
+
+
+      <line
+        x1="300"
+        y1="${loadY}"
+
+        x2="300"
+        y2="${loadY + 4}"
+
+        stroke="#172033"
+        stroke-width="5"
+      />
+
+    `;
+
+
+    html +=
+
+    load(
+      300,
+      loadY,
+      d.W
+    );
+
+
+    html +=
+
+    handle(
+      560,
+      handleY
+    );
+
+
+    html += `
+
+      <text
+        x="430"
+        y="190"
+
+        text-anchor="middle"
+
+        font-size="13"
+
+        fill="#64748b"
+      >
+        รอกตายตัวช่วยเปลี่ยนทิศของแรง
+      </text>
+
+    `;
+
+  }
+
+
+
+  /* =================================================
+     MOVABLE PULLEY
+  ================================================= */
+
+  else if (
+    typeEl.value ===
+    "movable"
+  ) {
+
+    const movingY =
+
+    245 -
+    liftPx;
+
+
+    /*
+      จุดยึดเชือก
+    */
+
+    html += `
+
+      <circle
+        cx="300"
+        cy="48"
+        r="7"
+
+        fill="#172033"
+      />
+
+
+      <text
+        x="260"
+        y="73"
+
+        font-size="12"
+
+        fill="#64748b"
+      >
+        ปลายเชือกยึด
+      </text>
+
+    `;
+
+
+
+    html +=
+
+    pulley(
+      405,
+      movingY,
+      34
+    );
+
+
+    html += `
+
+      <path
+
+        d="
+          M300 48
+
+          L300 ${movingY}
+
+          Q300 ${movingY + 36}
+           336 ${movingY + 36}
+
+          L474 ${movingY + 36}
+
+          Q510 ${movingY + 36}
+           510 ${movingY}
+
+          L510 ${handleY}
+        "
+
+        fill="none"
+
+        stroke="#4f46e5"
+        stroke-width="7"
+
+        stroke-linecap="round"
+
+      />
+
+
+      <line
+        x1="405"
+        y1="${movingY + 34}"
+
+        x2="405"
+        y2="${loadY}"
+
+        stroke="#172033"
+        stroke-width="5"
+      />
+
+    `;
+
+
+    html +=
+
+    load(
+      405,
+      loadY,
+      d.W
+    );
+
+
+    html +=
+
+    handle(
+      510,
+      handleY
+    );
+
+
+    html += `
+
+      <text
+        x="405"
+        y="112"
+
+        text-anchor="middle"
+
+        font-size="13"
+
+        fill="#64748b"
+      >
+        เชือก 2 เส้นช่วยพยุงวัตถุ
+      </text>
+
+    `;
+
+  }
+
+
+
+  /* =================================================
+     COMPOUND PULLEY
+  ================================================= */
+
+  else {
+
+    const movingY =
+
+    245 -
+    liftPx;
+
+
+    /*
+      จุดยึดเชือก
+    */
+
+    html += `
+
+      <circle
+        cx="245"
+        cy="48"
+        r="7"
+
+        fill="#172033"
+      />
+
+
+      <text
+        x="206"
+        y="73"
+
+        font-size="12"
+
+        fill="#64748b"
+      >
+        ปลายเชือกยึด
+      </text>
+
+    `;
+
+
+
+    /*
+      รอกบน
+    */
+
+    html +=
+
+    pulley(
+      350,
+      112,
+      27
+    );
+
+
+    html +=
+
+    pulley(
+      460,
+      112,
+      27
+    );
+
+
+
+    /*
+      รอกล่าง
+    */
+
+    html +=
+
+    pulley(
+      350,
+      movingY,
+      27
+    );
+
+
+    html +=
+
+    pulley(
+      460,
+      movingY,
+      27
+    );
+
+
+
+    /*
+      เชือก
+    */
+
+    html += `
+
+      <path
+
+        d="
+
+          M245 48
+
+          L245 ${movingY}
+
+          Q245 ${movingY + 28}
+           273 ${movingY + 28}
+
+          L350 ${movingY + 28}
+
+          Q378 ${movingY + 28}
+           378 ${movingY}
+
+          L378 112
+
+          Q378 84
+           350 84
+
+          L322 84
+
+          Q294 84
+           294 112
+
+          L294 ${movingY}
+
+          Q294 ${movingY + 28}
+           322 ${movingY + 28}
+
+          L460 ${movingY + 28}
+
+          Q488 ${movingY + 28}
+           488 ${movingY}
+
+          L488 112
+
+          Q488 84
+           460 84
+
+          L432 84
+
+          Q404 84
+           404 112
+
+          L404 ${handleY}
+
+        "
+
+        fill="none"
+
+        stroke="#4f46e5"
+        stroke-width="7"
+
+        stroke-linecap="round"
+        stroke-linejoin="round"
+
+      />
+
+
+      <line
+        x1="405"
+        y1="${movingY + 28}"
+
+        x2="405"
+        y2="${loadY}"
+
+        stroke="#172033"
+        stroke-width="5"
+      />
+
+    `;
+
+
+    html +=
+
+    load(
+      405,
+      loadY,
+      d.W
+    );
+
+
+    html +=
+
+    handle(
+      404,
+      handleY
+    );
+
+
+    html += `
+
+      <text
+        x="565"
+        y="170"
+
+        font-size="13"
+
+        fill="#64748b"
+      >
+        เชือก 4 เส้นช่วยพยุง
+      </text>
+
+    `;
+
+  }
+
+
+
+  /* =================================================
+     TARGET
+  ================================================= */
+
+  const targetY =
+
+  LOAD_BASE_Y -
+
+  d.targetH *
+  PX_PER_M;
+
+
+  html += `
+
+    <line
+
+      x1="78"
+      y1="${targetY}"
+
+      x2="188"
+      y2="${targetY}"
+
+      stroke="#f97316"
+
+      stroke-width="3"
+
+      stroke-dasharray="8 6"
+
+    />
+
+
+    <text
+
+      x="78"
+      y="${targetY - 10}"
+
+      font-size="13"
+
+      fill="#f97316"
+
+    >
+
+      เป้าหมาย
+      ${d.targetH.toFixed(2)} m
+
+    </text>
+
+  `;
+
+
+
+  drawing.innerHTML =
+  html;
+
+
+  updateReadouts();
+
+}
+
+
+
+/* =================================================
+   READOUT
+================================================= */
+
+function updateReadouts() {
+
+  const d =
+  getData();
+
+
+  document
+  .getElementById(
+    "weightText"
+  )
+  .textContent =
+  d.W;
+
+
+  document
+  .getElementById(
+    "targetText"
+  )
+  .textContent =
+  d.targetH.toFixed(2);
+
+
+  document
+  .getElementById(
+    "forceValue"
+  )
+  .textContent =
+
+  Math.round(
+    d.F
+  )
+
+  + " N";
+
+
+  document
+  .getElementById(
+    "ropeDistance"
+  )
+  .textContent =
+
+  ropePull.toFixed(2)
+
+  + " m";
+
+
+  document
+  .getElementById(
+    "loadHeight"
+  )
+  .textContent =
+
+  d.h.toFixed(2)
+
+  + " m";
+
+
+  document
+  .getElementById(
+    "maValue"
+  )
+  .textContent =
+
+  d.n +
+  " เท่า";
+
+
+  document
+  .getElementById(
+    "supportCount"
+  )
+  .textContent =
+
+  d.n +
+  " เส้น";
+
+
+  document
+  .getElementById(
+    "relationship"
+  )
+  .textContent =
+
+  d.n === 1
+
+  ?
+
+  "s = h"
+
+  :
+
+  `s = ${d.n}h`;
+
+
+  document
+  .getElementById(
+    "requiredPull"
+  )
+  .textContent =
+
+  d.maxPull.toFixed(2)
+
+  + " m";
+
+
+
+  /* ===============================================
+     STATUS
+  ================================================ */
+
+  const completed =
+
+  d.h >=
+
+  d.targetH -
+  0.001;
+
+
+  const status =
+
+  document
+  .getElementById(
+    "statusBadge"
+  );
+
+
+  if (
+    completed
+  ) {
+
+    status.textContent =
+    "ถึงเป้าหมายแล้ว ✓";
+
+
+    status.classList.add(
+      "success"
+    );
+
+  }
+
+
+  else if (
+    dragging
+  ) {
+
+    status.textContent =
+    "กำลังดึงเชือก";
+
+
+    status.classList.remove(
+      "success"
+    );
+
+  }
+
+
+  else if (
+    ropePull > 0
+  ) {
+
+    status.textContent =
+    "ปล่อยเชือกแล้ว";
+
+
+    status.classList.remove(
+      "success"
+    );
+
+  }
+
+
+  else {
+
+    status.textContent =
+    "พร้อมทดลอง";
+
+
+    status.classList.remove(
+      "success"
+    );
+
+  }
+
+
+
+  /* ===============================================
+     LESSON TEXT
+  ================================================ */
+
+  const lesson =
+
+  document
+  .getElementById(
+    "lessonText"
+  );
+
+
+  if (
+    d.n === 1
+  ) {
+
+    lesson.innerHTML =
+
+    `<strong>${d.name}</strong>
+
+    ไม่ช่วยลดขนาดของแรงในแบบจำลองอุดมคติ
+
+    จึงต้องออกแรงประมาณ
+
+    <strong>
+      ${Math.round(d.F)} N
+    </strong>
+
+    <br>
+
+    ดึงเชือกไปแล้ว
+
+    <strong>
+      ${ropePull.toFixed(2)} m
+    </strong>
+
+    วัตถุจึงยกขึ้น
+
+    <strong>
+      ${d.h.toFixed(2)} m
+    </strong>
+
+    เท่ากัน`;
+
+  }
+
+
+  else {
+
+    lesson.innerHTML =
+
+    `<strong>${d.name}</strong>
+
+    มีเชือก
+
+    <strong>
+      ${d.n} เส้น
+    </strong>
+
+    ช่วยพยุงชุดรอก
+
+    จึงใช้แรงประมาณ
+
+    <strong>
+      ${Math.round(d.F)} N
+    </strong>
+
+    หรือ
+
+    <strong>
+      1/${d.n}
+    </strong>
+
+    ของน้ำหนักวัตถุ
+
+    <br>
+
+    ตอนนี้ดึงเชือกไปแล้ว
+
+    <strong>
+      ${ropePull.toFixed(2)} m
+    </strong>
+
+    ทำให้วัตถุยกขึ้น
+
+    <strong>
+      ${d.h.toFixed(2)} m
+    </strong>`;
+
+  }
+
+}
+
+
+
+/* =================================================
+   GET POINTER POSITION IN SVG
+================================================= */
+
+function svgY(
+  event
+) {
+
+  const rect =
+
+  svg
+  .getBoundingClientRect();
+
+
+  /*
+    viewBox สูง 500
+  */
+
+  return (
+
+    event.clientY -
+    rect.top
+
+  )
+
+  *
+
+  (
+    500 /
+    rect.height
+  );
+
+}
+
+
+
+/* =================================================
+   DRAG START
+
+   ต้องคลิกที่วงกลมปลายเชือกเท่านั้น
+================================================= */
+
+svg
+.addEventListener(
+
+  "pointerdown",
+
+  event => {
+
+    /*
+      เช็กว่า element ที่คลิก
+      อยู่ใน #ropeHandle หรือไม่
+    */
+
+    const handleTarget =
+
+    event.target.closest
+    ?
+
+    event.target.closest(
+      "#ropeHandle"
+    )
+
+    :
+
+    null;
+
+
+    /*
+      ไม่ได้คลิกปลายเชือก
+      = ไม่ลาก
+    */
+
+    if (
+      !handleTarget
+    ) {
+
+      return;
+
+    }
+
+
+
+    /*
+      เริ่มลาก
+    */
+
+    dragging =
+    true;
+
+
+    activePointer =
+    event.pointerId;
+
+
+
+    /*
+      จำตำแหน่ง pointer
+      ตอนเริ่มลาก
+    */
+
+    dragStartY =
+
+    svgY(
+      event
+    );
+
+
+
+    /*
+      จำระยะเชือกเดิม
+
+      เช่น:
+      รอบก่อนดึงไว้ 2 m
+
+      รอบนี้จะเริ่มต่อจาก 2 m
+      ไม่กลับไปเริ่ม 0
+    */
+
+    dragStartRopePull =
+
+    ropePull;
+
+
+
+    /*
+      visual cursor
+    */
+
+    svg.classList.add(
+      "dragging"
+    );
+
+
+
+    /*
+      Pointer Capture อยู่บน SVG
+
+      ต่อให้เมาส์ออกนอกวงกลม
+      ตอนลากก็ยังทำงาน
+    */
+
+    try {
+
+      svg.setPointerCapture(
+        event.pointerId
+      );
+
+    }
+
+    catch (
+      error
+    ) {}
+
+
+    event.preventDefault();
+
+
+    updateReadouts();
+
+  }
+
+);
+
+
+
+/* =================================================
+   DRAG MOVE
+================================================= */
+
+svg
+.addEventListener(
+
+  "pointermove",
+
+  event => {
+
+    /*
+      ถ้าปล่อยเมาส์แล้ว
+      dragging = false
+
+      ดังนั้นเลื่อนเมาส์เฉย ๆ
+      เชือกจะไม่ตามอีก
+    */
+
+    if (
+
+      !dragging
+
+      ||
+
+      event.pointerId !==
+      activePointer
+
+    ) {
+
+      return;
+
+    }
+
+
+
+    const d =
+    getData();
+
+
+
+    const currentY =
+
+    svgY(
+      event
+    );
+
+
+
+    /*
+      ดูว่าเมาส์ขยับจาก
+      จุดที่คลิกเริ่มต้น
+      ไปกี่ pixel
+    */
+
+    const deltaPixels =
+
+    currentY -
+    dragStartY;
+
+
+
+    /*
+      pixel → meter
+    */
+
+    const deltaMeters =
+
+    deltaPixels /
+    PX_PER_M;
+
+
+
+    /*
+      ระยะใหม่ =
+
+      ระยะเดิมก่อนคลิก
+      +
+      ระยะที่ลากรอบนี้
+    */
+
+    let newRopePull =
+
+    dragStartRopePull +
+    deltaMeters;
+
+
+
+    /*
+      จำกัดไม่ให้ติดลบ
+
+      และไม่ให้เกินเป้าหมาย
+    */
+
+    newRopePull =
+
+    Math.max(
+
+      0,
+
+      Math.min(
+
+        d.maxPull,
+
+        newRopePull
+
+      )
+
+    );
+
+
+
+    ropePull =
+
+    newRopePull;
+
+
+
+    /*
+      redraw
+
+      เชือกกับวัตถุจะขยับ
+    */
+
+    render();
+
+  }
+
+);
+
+
+
+/* =================================================
+   STOP DRAG
+================================================= */
+
+function stopDragging(
+  event
+) {
+
+  /*
+    ถ้าไม่ได้ลาก
+  */
+
+  if (
+    !dragging
+  ) {
+
+    return;
+
+  }
+
+
+
+  /*
+    ถ้า event มาจาก pointer อื่น
+    ไม่ต้องหยุด
+  */
+
+  if (
+
+    event
+
+    &&
+
+    event.pointerId !==
+    undefined
+
+    &&
+
+    activePointer !==
+    null
+
+    &&
+
+    event.pointerId !==
+    activePointer
+
+  ) {
+
+    return;
+
+  }
+
+
+
+  const oldPointer =
+
+  activePointer;
+
+
+
+  /*
+    หยุดลากตรงนี้
+
+    จุดสำคัญ:
+    ropePull ไม่ถูก reset
+
+    ดังนั้นเชือกจะค้าง
+    อยู่ตำแหน่งปัจจุบัน
+  */
+
+  dragging =
+  false;
+
+
+  activePointer =
+  null;
+
+
+
+  svg.classList.remove(
+    "dragging"
+  );
+
+
+
+  /*
+    ปล่อย pointer capture
+  */
+
+  if (
+    oldPointer !==
+    null
+  ) {
+
+    try {
+
+      if (
+        svg.hasPointerCapture(
+          oldPointer
+        )
+      ) {
+
+        svg.releasePointerCapture(
+          oldPointer
+        );
+
+      }
+
+    }
+
+    catch (
+      error
+    ) {}
+
+  }
+
+
+
+  updateReadouts();
+
+}
+
+
+
+/* =================================================
+   RELEASE
+================================================= */
+
+/*
+  ปล่อยเมาส์ / นิ้ว
+*/
+
+svg.addEventListener(
+
+  "pointerup",
+
+  stopDragging
+
+);
+
+
+
+/*
+  browser ยกเลิก pointer
+*/
+
+svg.addEventListener(
+
+  "pointercancel",
+
+  stopDragging
+
+);
+
+
+
+/*
+  ถ้า pointer capture หายไปเอง
+*/
+
+svg.addEventListener(
+
+  "lostpointercapture",
+
+  () => {
+
+    if (
+      dragging
+    ) {
+
+      dragging =
+      false;
+
+
+      activePointer =
+      null;
+
+
+      svg.classList.remove(
+        "dragging"
+      );
+
+
+      updateReadouts();
+
+    }
+
+  }
+
+);
+
+
+
+/* =================================================
+   EXTRA SAFETY
+
+   ถ้าปล่อยเมาส์นอก SVG
+   ต้องหยุดลากด้วย
+================================================= */
+
+window.addEventListener(
+
+  "pointerup",
+
+  event => {
+
+    if (
+      dragging
+    ) {
+
+      stopDragging(
+        event
+      );
+
+    }
+
+  }
+
+);
+
+
+
+/*
+  ถ้าสลับ tab / หน้าต่าง
+  ระหว่างลาก
+*/
+
+window.addEventListener(
+
+  "blur",
+
+  () => {
+
+    if (
+      dragging
+    ) {
+
+      dragging =
+      false;
+
+
+      activePointer =
+      null;
+
+
+      svg.classList.remove(
+        "dragging"
+      );
+
+
+      updateReadouts();
+
+    }
+
+  }
+
+);
+
+
+
+/* =================================================
+   RESET
+================================================= */
+
+function reset() {
+
+  /*
+    ถ้ากำลังลาก
+    ให้หยุดก่อน
+  */
+
+  dragging =
+  false;
+
+
+  activePointer =
+  null;
+
+
+  svg.classList.remove(
+    "dragging"
+  );
+
+
+
+  /*
+    วางของกลับด้านล่าง
+  */
+
+  ropePull =
+  0;
+
+
+  render();
+
+}
+
+
+
+/* =================================================
+   CHANGE PULLEY TYPE
+================================================= */
+
+typeEl
+.addEventListener(
+
+  "change",
+
+  reset
+
+);
+
+
+
+/* =================================================
+   CHANGE WEIGHT
+================================================= */
+
+weightEl
+.addEventListener(
+
+  "input",
+
+  () => {
+
+    /*
+      render ใหม่ด้วย
+      เพื่อให้น้ำหนักบนกล่องเปลี่ยน
+    */
+
+    render();
+
+  }
+
+);
+
+
+
+/* =================================================
+   CHANGE TARGET HEIGHT
+================================================= */
+
+targetEl
+.addEventListener(
+
+  "input",
+
+  () => {
+
+    /*
+      เปลี่ยนโจทย์
+      จึงเริ่มทดลองใหม่
+    */
+
+    reset();
+
+  }
+
+);
+
+
+
+/* =================================================
+   RESET BUTTON
+================================================= */
+
+document
+.getElementById(
+  "resetDrag"
+)
+.addEventListener(
+
+  "click",
+
+  reset
+
+);
+
+
+
+/* =================================================
+   INITIALIZE
+================================================= */
+
+render();
+
+</script>
+
+</body>
+</html>

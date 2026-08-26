@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friction Lab</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f6f8fc;
+      color: #1f2937;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .intro {
+      background: #eef2ff;
+      border-left: 5px solid #4f46e5;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+
+    .scene-box {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-size: 15px;
+      background: #e5e7eb;
+    }
+
+    button.primary {
+      background: #4f46e5;
+      color: white;
+    }
+
+    button.active {
+      outline: 3px solid #818cf8;
+      background: #eef2ff;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .metric small {
+      color: #64748b;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 22px;
+    }
+
+    .feedback {
+      min-height: 65px;
+      padding: 14px;
+      border: 1px solid #dbe2ea;
+      border-radius: 12px;
+      background: #f8fafc;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    .surface-btn {
+      background: white;
+      border: 1px solid #d1d5db;
+    }
+
+    .book-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .book-count {
+      min-width: 80px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .custom-control {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .custom-control.show {
+      display: grid;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 800px) {
+      .grid-4,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🧪 Friction Lab</h1>
+
+  <div class="intro">
+    <strong>ภารกิจ:</strong>
+    ลองลากกล่อง แล้วสังเกตว่าแรงเสียดทานเปลี่ยนไปอย่างไร
+    ก่อนกล่องเคลื่อน และหลังกล่องเริ่มไถล
+  </div>
+
+
+  <!-- =====================
+       SIMULATION
+  ====================== -->
+
+  <div class="scene-box">
+
+    <svg
+      id="scene"
+      viewBox="0 0 720 340"
+    >
+
+      <defs>
+
+        <!-- BLUE ARROW -->
+
+        <marker
+          id="pullHead"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path
+            d="M0 0 L10 5 L0 10Z"
+            fill="#3b82f6"
+          />
+        </marker>
+
+
+        <!-- GREEN ARROW -->
+
+        <marker
+          id="fricHead"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path
+            d="M0 0 L10 5 L0 10Z"
+            fill="#16a34a"
+          />
+        </marker>
+
+      </defs>
+
+
+      <!-- surface label -->
+
+      <text
+        id="surfaceTitle"
+        x="360"
+        y="35"
+        text-anchor="middle"
+        font-size="20"
+      >
+        🪵 พื้นไม้
+      </text>
+
+
+      <text
+        x="360"
+        y="63"
+        text-anchor="middle"
+        font-size="14"
+        fill="#64748b"
+      >
+        ลากกล่องไปทางขวา หรือกดดูตัวอย่างอัตโนมัติ
+      </text>
+
+
+
+      <!-- BOX -->
+
+      <g id="box">
+
+        <g id="books"></g>
+
+        <rect
+          x="285"
+          y="145"
+          width="150"
+          height="90"
+          rx="12"
+          fill="#ffffff"
+          stroke="#111827"
+          stroke-width="3"
+        />
+
+        <text
+          x="360"
+          y="185"
+          text-anchor="middle"
+          font-size="18"
+        >
+          กล่อง
+        </text>
+
+        <text
+          id="massLabel"
+          x="360"
+          y="212"
+          text-anchor="middle"
+          font-size="13"
+          fill="#64748b"
+        >
+          5.0 kg
+        </text>
+
+      </g>
+
+
+
+      <!-- FORCE ARROWS -->
+
+      <g
+        id="forceVisual"
+        opacity="0"
+      >
+
+        <!-- applied force -->
+
+        <line
+          id="pullArrow"
+          x1="440"
+          y1="155"
+          x2="440"
+          y2="155"
+          stroke="#3b82f6"
+          stroke-width="6"
+          marker-end="url(#pullHead)"
+        />
+
+        <text
+          id="pullLabel"
+          x="450"
+          y="132"
+          font-size="13"
+          fill="#2563eb"
+        >
+          แรงดึง 0 N
+        </text>
+
+
+        <!-- friction -->
+
+        <line
+          id="fricArrow"
+          x1="280"
+          y1="200"
+          x2="280"
+          y2="200"
+          stroke="#16a34a"
+          stroke-width="6"
+          marker-end="url(#fricHead)"
+        />
+
+        <text
+          id="fricLabel"
+          x="270"
+          y="225"
+          text-anchor="end"
+          font-size="13"
+          fill="#15803d"
+        >
+          แรงเสียดทาน 0 N
+        </text>
+
+      </g>
+
+
+
+      <!-- GROUND -->
+
+      <rect
+        x="28"
+        y="235"
+        width="664"
+        height="54"
+        rx="10"
+        fill="#eef2f7"
+      />
+
+      <line
+        x1="28"
+        y1="235"
+        x2="692"
+        y2="235"
+        stroke="#64748b"
+        stroke-width="4"
+      />
+
+      <g id="texture"></g>
+
+
+      <!-- START MARK -->
+
+      <line
+        x1="360"
+        y1="244"
+        x2="360"
+        y2="275"
+        stroke="#94a3b8"
+        stroke-width="2"
+        stroke-dasharray="4 4"
+      />
+
+      <text
+        x="360"
+        y="308"
+        text-anchor="middle"
+        font-size="12"
+        fill="#64748b"
+      >
+        จุดเริ่มต้น
+      </text>
+
+    </svg>
+
+
+    <div
+      id="feedback"
+      class="feedback"
+    >
+      ลองลากกล่องเบา ๆ แล้วดูว่าลูกศรแรงเสียดทานจะค่อย ๆ ยาวขึ้นตามแรงที่ดึง
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================
+       SECTION 1 WEIGHT
+  ====================== -->
+
+  <div class="card">
+
+    <h2>1. เพิ่มน้ำหนัก</h2>
+
+    <p>
+      เพิ่มหนังสือบนกล่อง แล้วสังเกตว่าแรงเสียดทานเปลี่ยนไปอย่างไร
+    </p>
+
+
+    <div class="book-controls">
+
+      <button id="minusBook">
+        −
+      </button>
+
+      <div class="book-count">
+
+        <span id="bookCount">
+          0
+        </span>
+
+        เล่ม
+
+      </div>
+
+      <button id="plusBook">
+        ＋
+      </button>
+
+    </div>
+
+
+    <div class="grid-2" style="margin-top:15px">
+
+      <div class="metric">
+
+        <small>
+          มวลรวม
+        </small>
+
+        <strong id="massCard">
+          5.0 kg
+        </strong>
+
+      </div>
+
+
+      <div class="metric">
+
+        <small>
+          แรงปฏิกิริยาตั้งฉาก N
+        </small>
+
+        <strong id="normalCard">
+          49.0 N
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================
+       SECTION 2 SURFACE
+  ====================== -->
+
+  <div class="card">
+
+    <h2>
+      2. เลือกพื้น
+    </h2>
+
+    <p>
+      เปรียบเทียบค่า μₛ และ μₖ ของพื้นแต่ละชนิด
+    </p>
+
+
+    <div class="grid-3">
+
+      <button
+        class="surface-btn"
+        data-surface="ice"
+      >
+        🧊
+        <br>
+        <strong>น้ำแข็ง</strong>
+        <br>
+        μₛ = 0.10
+        <br>
+        μₖ = 0.05
+      </button>
+
+
+      <button
+        class="surface-btn active"
+        data-surface="wood"
+      >
+        🪵
+        <br>
+        <strong>ไม้</strong>
+        <br>
+        μₛ = 0.50
+        <br>
+        μₖ = 0.30
+      </button>
+
+
+      <button
+        class="surface-btn"
+        data-surface="rough"
+      >
+        🪨
+        <br>
+        <strong>พื้นหยาบ</strong>
+        <br>
+        μₛ = 0.80
+        <br>
+        μₖ = 0.60
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- VALUES -->
+
+  <div class="grid-4">
+
+    <div class="metric">
+
+      <small>
+        สัมประสิทธิ์สถิต
+      </small>
+
+      <strong>
+        μₛ =
+        <span id="muSCard">
+          0.50
+        </span>
+      </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+      <small>
+        สัมประสิทธิ์จลน์
+      </small>
+
+      <strong>
+        μₖ =
+        <span id="muKCard">
+          0.30
+        </span>
+      </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+      <small>
+        แรงเสียดทานสถิตสูงสุด
+      </small>
+
+      <strong id="fsMaxCard">
+        24.5 N
+      </strong>
+
+    </div>
+
+
+    <div class="metric">
+
+      <small>
+        แรงเสียดทานจลน์
+      </small>
+
+      <strong id="fkCard">
+        14.7 N
+      </strong>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- CUSTOM MU -->
+
+  <div class="card">
+
+    <h2>
+      3. ทดลองปรับ μ เอง
+    </h2>
+
+
+    <label>
+
+      <input
+        id="customToggle"
+        type="checkbox"
+      >
+
+      เปิดโหมดปรับเอง
+
+    </label>
+
+
+    <div
+      id="customControls"
+      class="custom-control grid-2"
+    >
+
+
+      <div>
+
+        <div class="row">
+
+          <label>
+            μₛ
+          </label>
+
+          <strong id="muSValue">
+            0.50
+          </strong>
+
+        </div>
+
+
+        <input
+          id="muSRange"
+          type="range"
+          min="0.10"
+          max="1.00"
+          step="0.05"
+          value="0.50"
+        >
+
+      </div>
+
+
+
+      <div>
+
+        <div class="row">
+
+          <label>
+            μₖ
+          </label>
+
+          <strong id="muKValue">
+            0.30
+          </strong>
+
+        </div>
+
+
+        <input
+          id="muKRange"
+          type="range"
+          min="0.05"
+          max="0.90"
+          step="0.05"
+          value="0.30"
+        >
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ACTION -->
+
+  <div class="buttons">
+
+    <button
+      id="resetBtn"
+    >
+      ↺ กลับจุดเริ่มต้น
+    </button>
+
+
+    <button
+      id="demoBtn"
+      class="primary"
+    >
+      ▶ ดูตัวอย่างอัตโนมัติ
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const scene =
+document.getElementById("scene");
+
+const box =
+document.getElementById("box");
+
+const forceVisual =
+document.getElementById("forceVisual");
+
+const pullArrow =
+document.getElementById("pullArrow");
+
+const fricArrow =
+document.getElementById("fricArrow");
+
+const pullLabel =
+document.getElementById("pullLabel");
+
+const fricLabel =
+document.getElementById("fricLabel");
+
+const feedback =
+document.getElementById("feedback");
+
+
+const g = 9.8;
+
+
+
+/* =========================
+   SURFACES
+========================= */
+
+const surfaces = {
+
+  ice: {
+
+    name: "น้ำแข็ง",
+
+    icon: "🧊",
+
+    muS: 0.10,
+
+    muK: 0.05
+
+  },
+
+
+  wood: {
+
+    name: "พื้นไม้",
+
+    icon: "🪵",
+
+    muS: 0.50,
+
+    muK: 0.30
+
+  },
+
+
+  rough: {
+
+    name: "พื้นหยาบ",
+
+    icon: "🪨",
+
+    muS: 0.80,
+
+    muK: 0.60
+
+  }
+
+};
+
+
+
+/* =========================
+   STATE
+========================= */
+
+let surface = "wood";
+
+let muS = 0.50;
+
+let muK = 0.30;
+
+let books = 0;
+
+let boxX = 0;
+
+let dragging = false;
+
+let startPointerX = 0;
+
+let startBoxX = 0;
+
+let demoRAF = null;
+
+
+
+/* =========================
+   PHYSICS
+========================= */
+
+function getMass() {
+
+  return 5 + books * 2;
+
+}
+
+
+function getNormal() {
+
+  return getMass() * g;
+
+}
+
+
+function getFsMax() {
+
+  return muS * getNormal();
+
+}
+
+
+function getFk() {
+
+  return muK * getNormal();
+
+}
+
+
+
+/* =========================
+   FORCE VISUAL SCALE
+========================= */
+
+/*
+  จำนวน pixel ต่อ 1 Newton
+
+  ถ้าอยากให้ลูกศร
+  แตกต่างกันชัดขึ้น
+  เพิ่มค่านี้ได้
+*/
+
+function forceScale(force) {
+
+  const pixelsPerNewton = 2.5;
+
+  return Math.min(
+    160,
+    force * pixelsPerNewton
+  );
+
+}
+
+
+
+/* =========================
+   UPDATE FORCE ARROWS
+========================= */
+
+function updateForceVisual(
+  appliedForce,
+  frictionForce,
+  isSliding,
+  direction = 1,
+  position = boxX
+) {
+
+  const center =
+  360 + position;
+
+
+  const pullLength =
+  forceScale(
+    appliedForce
+  );
+
+
+  const frictionLength =
+  forceScale(
+    frictionForce
+  );
+
+
+  forceVisual
+  .setAttribute(
+    "opacity",
+    "1"
+  );
+
+
+  /*
+    FORCE TO RIGHT
+  */
+
+  if(direction >= 0) {
+
+    /*
+      Applied force
+    */
+
+    pullArrow
+    .setAttribute(
+      "x1",
+      center + 78
+    );
+
+    pullArrow
+    .setAttribute(
+      "x2",
+      center + 78 +
+      pullLength
+    );
+
+
+    pullLabel
+    .setAttribute(
+      "x",
+      center + 90 +
+      pullLength
+    );
+
+    pullLabel
+    .setAttribute(
+      "text-anchor",
+      "start"
+    );
+
+
+    /*
+      Friction
+    */
+
+    fricArrow
+    .setAttribute(
+      "x1",
+      center - 78
+    );
+
+    fricArrow
+    .setAttribute(
+      "x2",
+      center - 78 -
+      frictionLength
+    );
+
+
+    fricLabel
+    .setAttribute(
+      "x",
+      center - 90 -
+      frictionLength
+    );
+
+    fricLabel
+    .setAttribute(
+      "text-anchor",
+      "end"
+    );
+
+  }
+
+
+  /*
+    FORCE TO LEFT
+  */
+
+  else {
+
+    pullArrow
+    .setAttribute(
+      "x1",
+      center - 78
+    );
+
+    pullArrow
+    .setAttribute(
+      "x2",
+      center - 78 -
+      pullLength
+    );
+
+
+    pullLabel
+    .setAttribute(
+      "x",
+      center - 90 -
+      pullLength
+    );
+
+    pullLabel
+    .setAttribute(
+      "text-anchor",
+      "end"
+    );
+
+
+    fricArrow
+    .setAttribute(
+      "x1",
+      center + 78
+    );
+
+    fricArrow
+    .setAttribute(
+      "x2",
+      center + 78 +
+      frictionLength
+    );
+
+
+    fricLabel
+    .setAttribute(
+      "x",
+      center + 90 +
+      frictionLength
+    );
+
+    fricLabel
+    .setAttribute(
+      "text-anchor",
+      "start"
+    );
+
+  }
+
+
+
+  /*
+    LABEL
+  */
+
+  pullLabel.textContent =
+
+  `แรงดึง ${appliedForce.toFixed(1)} N`;
+
+
+  if(isSliding) {
+
+    fricLabel.textContent =
+
+    `แรงเสียดทานจลน์ ${frictionForce.toFixed(1)} N`;
+
+  }
+
+  else {
+
+    fricLabel.textContent =
+
+    `แรงเสียดทานสถิต ${frictionForce.toFixed(1)} N`;
+
+  }
+
+}
+
+
+
+/* =========================
+   SVG POINT
+========================= */
+
+function getSVGPoint(event) {
+
+  const point =
+  scene.createSVGPoint();
+
+
+  point.x =
+  event.clientX;
+
+
+  point.y =
+  event.clientY;
+
+
+  return point
+  .matrixTransform(
+
+    scene
+    .getScreenCTM()
+    .inverse()
+
+  );
+
+}
+
+
+
+/* =========================
+   BOOKS
+========================= */
+
+function renderBooks() {
+
+  let html = "";
+
+
+  for(
+    let i = 0;
+    i < books;
+    i++
+  ) {
+
+    const y =
+    145 -
+    (i + 1) * 18;
+
+
+    html += `
+
+    <rect
+
+      x="315"
+
+      y="${y}"
+
+      width="90"
+
+      height="16"
+
+      rx="3"
+
+      fill="#ddd6fe"
+
+      stroke="#111827"
+
+      stroke-width="2"
+
+    />
+
+    `;
+
+  }
+
+
+  document
+  .getElementById("books")
+  .innerHTML = html;
+
+}
+
+
+
+/* =========================
+   SURFACE TEXTURE
+========================= */
+
+function renderTexture() {
+
+  let html = "";
+
+
+  /*
+    ICE
+  */
+
+  if(surface === "ice") {
+
+    for(
+      let x = 45;
+      x < 685;
+      x += 65
+    ) {
+
+      html += `
+
+      <path
+
+        d="
+        M${x} 257
+        q18 -11 36 0
+        "
+
+        fill="none"
+
+        stroke="#94a3b8"
+
+        stroke-width="2"
+
+        opacity=".35"
+
+      />
+
+      `;
+
+    }
+
+  }
+
+
+  /*
+    WOOD
+  */
+
+  else if(
+    surface === "wood"
+  ) {
+
+    for(
+      let x = 42;
+      x < 690;
+      x += 58
+    ) {
+
+      html += `
+
+      <path
+
+        d="
+        M${x} 250
+        q18 12 36 0
+
+        M${x + 7} 270
+        q13 8 26 0
+        "
+
+        fill="none"
+
+        stroke="#94a3b8"
+
+        stroke-width="2"
+
+        opacity=".45"
+
+      />
+
+      `;
+
+    }
+
+  }
+
+
+  /*
+    ROUGH
+  */
+
+  else {
+
+    for(
+      let x = 40;
+      x < 690;
+      x += 34
+    ) {
+
+      html += `
+
+      <path
+
+        d="
+        M${x} 270
+
+        l8 -14
+        l8 14
+        l8 -14
+        "
+
+        fill="none"
+
+        stroke="#64748b"
+
+        stroke-width="2"
+
+        opacity=".65"
+
+      />
+
+      `;
+
+    }
+
+  }
+
+
+  document
+  .getElementById(
+    "texture"
+  )
+  .innerHTML =
+  html;
+
+}
+
+
+
+/* =========================
+   UPDATE DISPLAY
+========================= */
+
+function renderValues() {
+
+  const preset =
+  surfaces[surface];
+
+
+  document
+  .getElementById(
+    "surfaceTitle"
+  )
+  .textContent =
+
+  `${preset.icon} ${preset.name}`;
+
+
+  document
+  .getElementById(
+    "muSCard"
+  )
+  .textContent =
+
+  muS.toFixed(2);
+
+
+  document
+  .getElementById(
+    "muKCard"
+  )
+  .textContent =
+
+  muK.toFixed(2);
+
+
+  document
+  .getElementById(
+    "muSValue"
+  )
+  .textContent =
+
+  muS.toFixed(2);
+
+
+  document
+  .getElementById(
+    "muKValue"
+  )
+  .textContent =
+
+  muK.toFixed(2);
+
+
+  document
+  .getElementById(
+    "fsMaxCard"
+  )
+  .textContent =
+
+  getFsMax()
+  .toFixed(1)
+  + " N";
+
+
+  document
+  .getElementById(
+    "fkCard"
+  )
+  .textContent =
+
+  getFk()
+  .toFixed(1)
+  + " N";
+
+
+  document
+  .getElementById(
+    "massCard"
+  )
+  .textContent =
+
+  getMass()
+  .toFixed(1)
+  + " kg";
+
+
+  document
+  .getElementById(
+    "normalCard"
+  )
+  .textContent =
+
+  getNormal()
+  .toFixed(1)
+  + " N";
+
+
+  document
+  .getElementById(
+    "massLabel"
+  )
+  .textContent =
+
+  getMass()
+  .toFixed(1)
+  + " kg";
+
+
+  document
+  .getElementById(
+    "bookCount"
+  )
+  .textContent =
+  books;
+
+
+  document
+  .querySelectorAll(
+    ".surface-btn"
+  )
+  .forEach(button => {
+
+    button
+    .classList
+    .toggle(
+
+      "active",
+
+      button.dataset.surface
+      === surface
+
+    );
+
+  });
+
+
+  renderBooks();
+
+  renderTexture();
+
+}
+
+
+
+/* =========================
+   CANCEL DEMO
+========================= */
+
+function cancelDemo() {
+
+  if(demoRAF) {
+
+    cancelAnimationFrame(
+      demoRAF
+    );
+
+    demoRAF = null;
+
+  }
+
+}
+
+
+
+/* =========================
+   RESET
+========================= */
+
+function reset() {
+
+  cancelDemo();
+
+
+  boxX = 0;
+
+
+  box.style.transform =
+  "translateX(0px)";
+
+
+  forceVisual
+  .setAttribute(
+    "opacity",
+    "0"
+  );
+
+
+  feedback.innerHTML =
+
+  "กลับจุดเริ่มต้นแล้ว ลองลากใหม่ได้เลย";
+
+}
+
+
+
+/* =========================
+   DRAG
+========================= */
+
+box.addEventListener(
+
+  "pointerdown",
+
+  event => {
+
+    cancelDemo();
+
+
+    dragging = true;
+
+
+    box.style.cursor =
+    "grabbing";
+
+
+    const point =
+    getSVGPoint(event);
+
+
+    startPointerX =
+    point.x;
+
+
+    startBoxX =
+    boxX;
+
+
+    box.setPointerCapture(
+      event.pointerId
+    );
+
+  }
+
+);
+
+
+
+box.addEventListener(
+
+  "pointermove",
+
+  event => {
+
+    if(!dragging) {
+
+      return;
+
+    }
+
+
+    const point =
+    getSVGPoint(event);
+
+
+    const delta =
+    point.x -
+    startPointerX;
+
+
+    const direction =
+    Math.sign(delta) || 1;
+
+
+    /*
+      pointer distance
+      -> simulated force
+    */
+
+    const appliedForce =
+
+    Math.min(
+
+      120,
+
+      Math.abs(delta) * .55
+
+    );
+
+
+    /*
+      STATIC OR KINETIC
+    */
+
+    const sliding =
+
+    appliedForce >
+    getFsMax();
+
+
+    /*
+      FRICTION VALUE
+    */
+
+    const frictionForce =
+
+    sliding
+
+    ?
+
+    getFk()
+
+    :
+
+    appliedForce;
+
+
+
+    /*
+      BOX MOVEMENT
+    */
+
+    if(sliding) {
+
+      const extraForce =
+
+      appliedForce -
+      getFsMax();
+
+
+      const travel =
+
+      direction *
+
+      extraForce *
+
+      2.2;
+
+
+      boxX =
+
+      Math.max(
+
+        -180,
+
+        Math.min(
+
+          180,
+
+          startBoxX +
+          travel
+
+        )
+
+      );
+
+
+      feedback.innerHTML =
+
+      `📦💨 กล่องเริ่มไถลแล้ว
+
+      <br>
+
+      แรงเสียดทานเปลี่ยนเป็น
+
+      <strong>
+
+      ${frictionForce.toFixed(1)} N
+
+      </strong>`;
+
+    }
+
+
+    else {
+
+      boxX =
+      startBoxX;
+
+
+      feedback.innerHTML =
+
+      `📦 กล่องยังไม่เคลื่อน
+
+      <br>
+
+      แรงเสียดทานสถิต =
+
+      <strong>
+
+      ${frictionForce.toFixed(1)} N
+
+      </strong>
+
+      และเพิ่มได้สูงสุดถึง
+
+      <strong>
+
+      ${getFsMax().toFixed(1)} N
+
+      </strong>`;
+
+    }
+
+
+
+    box.style.transform =
+
+    `translateX(${boxX}px)`;
+
+
+
+    updateForceVisual(
+
+      appliedForce,
+
+      frictionForce,
+
+      sliding,
+
+      direction,
+
+      boxX
+
+    );
+
+  }
+
+);
+
+
+
+function endDrag(event) {
+
+  if(!dragging) {
+
+    return;
+
+  }
+
+
+  dragging = false;
+
+
+  box.style.cursor =
+  "grab";
+
+
+  if(
+    box.hasPointerCapture(
+      event.pointerId
+    )
+  ) {
+
+    box.releasePointerCapture(
+      event.pointerId
+    );
+
+  }
+
+}
+
+
+
+box.addEventListener(
+
+  "pointerup",
+
+  endDrag
+
+);
+
+
+
+box.addEventListener(
+
+  "pointercancel",
+
+  endDrag
+
+);
+
+
+
+/* =========================
+   SURFACE BUTTON
+========================= */
+
+document
+.querySelectorAll(
+  ".surface-btn"
+)
+.forEach(button => {
+
+  button.addEventListener(
+
+    "click",
+
+    () => {
+
+      surface =
+      button.dataset.surface;
+
+
+      const preset =
+      surfaces[surface];
+
+
+      muS =
+      preset.muS;
+
+
+      muK =
+      preset.muK;
+
+
+      document
+      .getElementById(
+        "muSRange"
+      )
+      .value =
+      muS;
+
+
+      document
+      .getElementById(
+        "muKRange"
+      )
+      .value =
+      muK;
+
+
+      reset();
+
+      renderValues();
+
+
+      feedback.innerHTML =
+
+      `เลือก
+
+      <strong>
+
+      ${preset.name}
+
+      </strong>
+
+      แล้ว ลองลากกล่องเพื่อเปรียบเทียบ`;
+
+    }
+
+  );
+
+});
+
+
+
+/* =========================
+   ADD BOOK
+========================= */
+
+document
+.getElementById(
+  "plusBook"
+)
+.addEventListener(
+
+  "click",
+
+  () => {
+
+    books =
+    Math.min(
+      3,
+      books + 1
+    );
+
+
+    reset();
+
+    renderValues();
+
+
+    feedback.innerHTML =
+
+    `เพิ่มน้ำหนักแล้ว
+
+    <br>
+
+    N เพิ่มเป็น
+
+    <strong>
+
+    ${getNormal().toFixed(1)} N
+
+    </strong>
+
+    ทำให้แรงเสียดทานเพิ่มขึ้น`;
+
+  }
+
+);
+
+
+
+/* =========================
+   REMOVE BOOK
+========================= */
+
+document
+.getElementById(
+  "minusBook"
+)
+.addEventListener(
+
+  "click",
+
+  () => {
+
+    books =
+    Math.max(
+      0,
+      books - 1
+    );
+
+
+    reset();
+
+    renderValues();
+
+  }
+
+);
+
+
+
+/* =========================
+   CUSTOM MU
+========================= */
+
+document
+.getElementById(
+  "customToggle"
+)
+.addEventListener(
+
+  "change",
+
+  event => {
+
+    document
+    .getElementById(
+      "customControls"
+    )
+    .classList
+    .toggle(
+
+      "show",
+
+      event.target.checked
+
+    );
+
+  }
+
+);
+
+
+
+/* =========================
+   STATIC COEFFICIENT
+========================= */
+
+document
+.getElementById(
+  "muSRange"
+)
+.addEventListener(
+
+  "input",
+
+  event => {
+
+    muS =
+    Number(
+      event.target.value
+    );
+
+
+    /*
+      make sure
+      muK < muS
+    */
+
+    if(muK >= muS) {
+
+      muK =
+      Math.max(
+
+        .05,
+
+        muS - .05
+
+      );
+
+
+      document
+      .getElementById(
+        "muKRange"
+      )
+      .value =
+      muK;
+
+    }
+
+
+    reset();
+
+    renderValues();
+
+  }
+
+);
+
+
+
+/* =========================
+   KINETIC COEFFICIENT
+========================= */
+
+document
+.getElementById(
+  "muKRange"
+)
+.addEventListener(
+
+  "input",
+
+  event => {
+
+    muK =
+    Number(
+      event.target.value
+    );
+
+
+    if(muK >= muS) {
+
+      muK =
+      Math.max(
+
+        .05,
+
+        muS - .05
+
+      );
+
+
+      event.target.value =
+      muK;
+
+    }
+
+
+    reset();
+
+    renderValues();
+
+  }
+
+);
+
+
+
+/* =========================
+   RESET BUTTON
+========================= */
+
+document
+.getElementById(
+  "resetBtn"
+)
+.addEventListener(
+
+  "click",
+
+  reset
+
+);
+
+
+
+/* =========================
+   AUTOMATIC DEMO
+========================= */
+
+document
+.getElementById(
+  "demoBtn"
+)
+.addEventListener(
+
+  "click",
+
+  () => {
+
+    reset();
+
+
+    /*
+      SIMULATION TIMING
+    */
+
+    const startTime =
+    performance.now();
+
+
+    const staticDuration =
+    1800;
+
+
+    const kineticDuration =
+    2200;
+
+
+    const totalDuration =
+
+    staticDuration +
+    kineticDuration;
+
+
+
+    /*
+      applied force
+      after breakaway
+    */
+
+    const maximumApplied =
+
+    Math.max(
+
+      getFsMax() * 1.5,
+
+      getFsMax() + 15
+
+    );
+
+
+
+    /*
+      how far box moves
+    */
+
+    const finalDistance =
+
+    Math.min(
+
+      150,
+
+      80 +
+      (1 - muK) * 70
+
+    );
+
+
+
+    forceVisual
+    .setAttribute(
+      "opacity",
+      "1"
+    );
+
+
+    feedback.innerHTML =
+
+    `เริ่มออกแรงดึงทีละน้อย
+
+    <br>
+
+    สังเกตความยาวของ
+
+    <strong>
+
+    ลูกศรสีฟ้าและสีเขียว
+
+    </strong>`;
+
+
+
+    /*
+      FRAME LOOP
+    */
+
+    function demoStep(now) {
+
+      const elapsed =
+
+      now -
+      startTime;
+
+
+
+      let appliedForce = 0;
+
+      let frictionForce = 0;
+
+      let isSliding = false;
+
+      let position = 0;
+
+
+
+      /* =========================
+         STATIC FRICTION
+      ========================= */
+
+      if(
+        elapsed <=
+        staticDuration
+      ) {
+
+        const progress =
+
+        Math.min(
+
+          1,
+
+          elapsed /
+          staticDuration
+
+        );
+
+
+        /*
+          applied force
+          increases
+        */
+
+        appliedForce =
+
+        getFsMax() *
+        progress;
+
+
+        /*
+          static friction
+          equals applied
+        */
+
+        frictionForce =
+
+        appliedForce;
+
+
+        position = 0;
+
+
+        feedback.innerHTML =
+
+        `แรงดึงกำลังเพิ่มขึ้น
+
+        <br>
+
+        แรงเสียดทานสถิตเพิ่มตามเป็น
+
+        <strong>
+
+        ${frictionForce.toFixed(1)} N
+
+        </strong>`;
+
+      }
+
+
+
+      /* =========================
+         KINETIC FRICTION
+      ========================= */
+
+      else {
+
+        isSliding = true;
+
+
+        const progress =
+
+        Math.min(
+
+          1,
+
+          (
+            elapsed -
+            staticDuration
+          ) /
+
+          kineticDuration
+
+        );
+
+
+        /*
+          applied force
+          keeps increasing
+        */
+
+        appliedForce =
+
+        getFsMax() +
+
+        (
+          maximumApplied -
+          getFsMax()
+        )
+
+        *
+
+        progress;
+
+
+
+        /*
+          kinetic friction
+          fixed at muK N
+        */
+
+        frictionForce =
+
+        getFk();
+
+
+
+        /*
+          smooth movement
+        */
+
+        const eased =
+
+        1 -
+
+        Math.pow(
+
+          1 - progress,
+
+          3
+
+        );
+
+
+        position =
+
+        finalDistance *
+        eased;
+
+
+
+        feedback.innerHTML =
+
+        `📦💨 กล่องเริ่มเคลื่อนแล้ว
+
+        <br>
+
+        แรงเสียดทานลดลงมาเป็น
+
+        <strong>
+
+        fₖ =
+        ${frictionForce.toFixed(1)} N
+
+        </strong>`;
+
+      }
+
+
+
+      /*
+        UPDATE POSITION
+      */
+
+      boxX =
+      position;
+
+
+      box.style.transform =
+
+      `translateX(${position}px)`;
+
+
+
+      /*
+        IMPORTANT
+
+        updateForceVisual
+        recalculates BOTH
+
+        position AND length
+        of each arrow
+      */
+
+      updateForceVisual(
+
+        appliedForce,
+
+        frictionForce,
+
+        isSliding,
+
+        1,
+
+        position
+
+      );
+
+
+
+      /*
+        CONTINUE
+      */
+
+      if(
+        elapsed <
+        totalDuration
+      ) {
+
+        demoRAF =
+        requestAnimationFrame(
+          demoStep
+        );
+
+      }
+
+
+      else {
+
+        demoRAF = null;
+
+
+        feedback.innerHTML =
+
+        `✅ จบการทดลอง
+
+        <br><br>
+
+        ก่อนเคลื่อนที่:
+
+        <strong>
+
+        fₛ เพิ่มจาก 0 ถึง
+        ${getFsMax().toFixed(1)} N
+
+        </strong>
+
+        <br>
+
+        เมื่อเริ่มไถล:
+
+        <strong>
+
+        fₖ =
+        ${getFk().toFixed(1)} N
+
+        </strong>
+
+        <br><br>
+
+        สังเกตว่าลูกศรแรงเสียดทาน
+
+        <strong>
+
+        สั้นลงทันทีเมื่อเปลี่ยนจาก
+        แรงเสียดทานสถิตเป็นจลน์
+
+        </strong>`;
+
+      }
+
+    }
+
+
+    demoRAF =
+    requestAnimationFrame(
+      demoStep
+    );
+
+  }
+
+);
+
+
+
+/* =========================
+   START
+========================= */
+
+renderValues();
+
+</script>
+
+</body>
+</html>
