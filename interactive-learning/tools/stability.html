@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Interactive เสถียรภาพของวัตถุ</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Tahoma", "Arial", sans-serif;
+    background: #f5f7fb;
+    color: #1e293b;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    margin: 0 0 10px;
+    font-size: 32px;
+}
+
+.header p {
+    margin: 0;
+    color: #64748b;
+}
+
+/* =========================
+   TOP BUTTONS
+========================= */
+
+.top-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+.primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.secondary {
+    background: white;
+    border: 2px solid #dbe1ea;
+    color: #334155;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 22px;
+}
+
+.english {
+    text-align: center;
+    color: #64748b;
+    margin: 5px 0 15px;
+    font-size: 14px;
+}
+
+/* =========================
+   SCENE
+========================= */
+
+.scene {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.play-button {
+    width: 100%;
+    margin-top: 12px;
+    background: #4f46e5;
+    color: white;
+}
+
+.result {
+    margin-top: 12px;
+    min-height: 66px;
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background: #eef2ff;
+
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    line-height: 1.5;
+}
+
+.ball {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary {
+    margin-top: 25px;
+
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+}
+
+.summary-box {
+    padding: 17px;
+
+    background: white;
+
+    border-radius: 16px;
+
+    text-align: center;
+
+    box-shadow: 0 5px 16px rgba(0,0,0,.05);
+}
+
+.summary-box strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.memory {
+    margin-top: 20px;
+
+    padding: 18px;
+
+    border-radius: 16px;
+
+    background: #e0e7ff;
+
+    text-align: center;
+
+    line-height: 1.7;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            ⚖️ เสถียรภาพของวัตถุ
+        </h1>
+
+        <p>
+            ทดลองดูว่าเมื่อวัตถุถูกทำให้เคลื่อนออกจากตำแหน่งสมดุล
+            จะเกิดอะไรขึ้น
+        </p>
+
+    </div>
+
+
+    <!-- GLOBAL BUTTON -->
+
+    <div class="top-buttons">
+
+        <button
+            id="playAll"
+            class="primary">
+
+            ▶ เล่นพร้อมกัน
+
+        </button>
+
+
+        <button
+            id="resetAll"
+            class="secondary">
+
+            ↺ เริ่มใหม่
+
+        </button>
+
+    </div>
+
+
+
+    <!-- =================================
+         SIMULATIONS
+    ================================== -->
+
+    <div class="grid">
+
+
+        <!-- =================================
+             STABLE
+        ================================== -->
+
+        <div
+            class="card"
+            data-kind="stable">
+
+            <h2>
+                สมดุลเสถียร
+            </h2>
+
+            <div class="english">
+                Stable Equilibrium
+            </div>
+
+
+            <svg
+                class="scene"
+                viewBox="0 0 300 240">
+
+
+                <!-- arrow -->
+
+                <defs>
+
+                    <marker
+                        id="arrowStable"
+                        viewBox="0 0 10 10"
+                        refX="8"
+                        refY="5"
+                        markerWidth="6"
+                        markerHeight="6"
+                        orient="auto">
+
+                        <path
+                            d="M0 0 L10 5 L0 10Z"
+                            fill="#ef4444"/>
+
+                    </marker>
+
+                </defs>
+
+
+                <!-- valley -->
+
+                <path
+                    d="
+                    M35 80
+                    Q150 225
+                    265 80
+                    "
+
+                    fill="none"
+                    stroke="#3b82f6"
+                    stroke-width="12"
+                    stroke-linecap="round"/>
+
+
+                <!-- equilibrium position -->
+
+                <circle
+                    cx="150"
+                    cy="194"
+                    r="5"
+                    fill="#94a3b8"/>
+
+
+                <!-- ball -->
+
+                <circle
+                    class="ball"
+                    cx="150"
+                    cy="172"
+                    r="20"
+
+                    fill="#3b82f6"
+                    stroke="#1e293b"
+                    stroke-width="3"/>
+
+
+                <!-- movement arrow -->
+
+                <path
+                    class="arrow"
+
+                    d="
+                    M220 115
+                    Q185 150
+                    160 168
+                    "
+
+                    fill="none"
+                    stroke="#ef4444"
+                    stroke-width="4"
+
+                    marker-end="url(#arrowStable)"
+
+                    opacity="0"/>
+
+
+                <text
+                    x="150"
+                    y="222"
+                    text-anchor="middle"
+                    font-size="14"
+                    fill="#64748b">
+
+                    ตำแหน่งสมดุล
+
+                </text>
+
+            </svg>
+
+
+            <button class="play-button">
+
+                ▶ รบกวนแล้วปล่อย
+
+            </button>
+
+
+            <div class="result">
+
+                วัตถุอยู่ก้นแอ่ง
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================
+             UNSTABLE
+        ================================== -->
+
+        <div
+            class="card"
+            data-kind="unstable">
+
+            <h2>
+                สมดุลไม่เสถียร
+            </h2>
+
+            <div class="english">
+                Unstable Equilibrium
+            </div>
+
+
+            <svg
+                class="scene"
+                viewBox="0 0 300 240">
+
+
+                <defs>
+
+                    <marker
+                        id="arrowUnstable"
+                        viewBox="0 0 10 10"
+                        refX="8"
+                        refY="5"
+                        markerWidth="6"
+                        markerHeight="6"
+                        orient="auto">
+
+                        <path
+                            d="M0 0 L10 5 L0 10Z"
+                            fill="#ef4444"/>
+
+                    </marker>
+
+                </defs>
+
+
+                <!-- hill -->
+
+                <path
+                    d="
+                    M35 190
+                    Q150 45
+                    265 190
+                    "
+
+                    fill="none"
+                    stroke="#f59e0b"
+                    stroke-width="12"
+                    stroke-linecap="round"/>
+
+
+                <!-- equilibrium position -->
+
+                <circle
+                    cx="150"
+                    cy="70"
+                    r="5"
+                    fill="#94a3b8"/>
+
+
+                <!-- ball -->
+
+                <circle
+                    class="ball"
+                    cx="150"
+                    cy="50"
+                    r="20"
+
+                    fill="#f59e0b"
+                    stroke="#1e293b"
+                    stroke-width="3"/>
+
+
+                <!-- movement arrow -->
+
+                <path
+                    class="arrow"
+
+                    d="
+                    M160 63
+                    Q205 90
+                    235 145
+                    "
+
+                    fill="none"
+                    stroke="#ef4444"
+                    stroke-width="4"
+
+                    marker-end="url(#arrowUnstable)"
+
+                    opacity="0"/>
+
+
+                <text
+                    x="150"
+                    y="218"
+                    text-anchor="middle"
+                    font-size="14"
+                    fill="#64748b">
+
+                    ยอดเนิน
+
+                </text>
+
+            </svg>
+
+
+            <button class="play-button">
+
+                ▶ รบกวนแล้วปล่อย
+
+            </button>
+
+
+            <div class="result">
+
+                วัตถุอยู่บนยอดเนิน
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================
+             NEUTRAL
+        ================================== -->
+
+        <div
+            class="card"
+            data-kind="neutral">
+
+            <h2>
+                สมดุลสะเทิน
+            </h2>
+
+            <div class="english">
+                Neutral Equilibrium
+            </div>
+
+
+            <svg
+                class="scene"
+                viewBox="0 0 300 240">
+
+
+                <defs>
+
+                    <marker
+                        id="arrowNeutral"
+                        viewBox="0 0 10 10"
+                        refX="8"
+                        refY="5"
+                        markerWidth="6"
+                        markerHeight="6"
+                        orient="auto">
+
+                        <path
+                            d="M0 0 L10 5 L0 10Z"
+                            fill="#ef4444"/>
+
+                    </marker>
+
+                </defs>
+
+
+                <!-- flat surface -->
+
+                <line
+                    x1="35"
+                    y1="175"
+                    x2="265"
+                    y2="175"
+
+                    stroke="#10b981"
+                    stroke-width="12"
+                    stroke-linecap="round"/>
+
+
+                <!-- original position -->
+
+                <circle
+                    cx="115"
+                    cy="175"
+                    r="5"
+                    fill="#94a3b8"/>
+
+
+                <!-- ball -->
+
+                <circle
+                    class="ball"
+                    cx="115"
+                    cy="151"
+                    r="20"
+
+                    fill="#10b981"
+                    stroke="#1e293b"
+                    stroke-width="3"/>
+
+
+                <!-- movement arrow -->
+
+                <path
+                    class="arrow"
+
+                    d="
+                    M140 120
+                    L220 120
+                    "
+
+                    fill="none"
+                    stroke="#ef4444"
+                    stroke-width="4"
+
+                    marker-end="url(#arrowNeutral)"
+
+                    opacity="0"/>
+
+
+                <text
+                    x="150"
+                    y="210"
+                    text-anchor="middle"
+                    font-size="14"
+                    fill="#64748b">
+
+                    พื้นราบ
+
+                </text>
+
+            </svg>
+
+
+            <button class="play-button">
+
+                ▶ ผลักแล้วปล่อย
+
+            </button>
+
+
+            <div class="result">
+
+                วัตถุอยู่บนพื้นราบ
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================
+         SUMMARY
+    ================================== -->
+
+    <div class="summary">
+
+        <div class="summary-box">
+
+            <strong>
+                🔵 สมดุลเสถียร
+            </strong>
+
+            ขยับออกจากตำแหน่งเดิม
+
+            <br>
+
+            ↓
+
+            <br>
+
+            <b>
+                กลับสู่ตำแหน่งเดิม
+            </b>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <strong>
+                🟠 สมดุลไม่เสถียร
+            </strong>
+
+            ขยับออกจากตำแหน่งเดิม
+
+            <br>
+
+            ↓
+
+            <br>
+
+            <b>
+                เคลื่อนห่างออกไป
+            </b>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <strong>
+                🟢 สมดุลสะเทิน
+            </strong>
+
+            ขยับออกจากตำแหน่งเดิม
+
+            <br>
+
+            ↓
+
+            <br>
+
+            <b>
+                อยู่ที่ตำแหน่งใหม่
+            </b>
+
+        </div>
+
+    </div>
+
+
+    <div class="memory">
+
+        🧠 <b>จำง่าย ๆ</b>
+
+        <br>
+
+        <b>กลับที่เดิม</b> = สมดุลเสถียร
+
+        &nbsp; | &nbsp;
+
+        <b>หนีจากที่เดิม</b> = สมดุลไม่เสถียร
+
+        &nbsp; | &nbsp;
+
+        <b>อยู่ที่ใหม่</b> = สมดุลสะเทิน
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================
+   GET ELEMENTS
+===================================== */
+
+const cards =
+document.querySelectorAll(
+    "[data-kind]"
+);
+
+
+/* เก็บสถานะของ simulation */
+
+const simulations = {};
+
+
+cards.forEach(card => {
+
+    const kind =
+    card.dataset.kind;
+
+
+    simulations[kind] = {
+
+        card: card,
+
+        ball:
+        card.querySelector(
+            ".ball"
+        ),
+
+        arrow:
+        card.querySelector(
+            ".arrow"
+        ),
+
+        result:
+        card.querySelector(
+            ".result"
+        ),
+
+        button:
+        card.querySelector(
+            ".play-button"
+        )
+
+    };
+
+
+    simulations[kind]
+    .button
+    .addEventListener(
+        "click",
+        ()=>play(kind)
+    );
+
+});
+
+
+
+/* =====================================
+   RESET
+===================================== */
+
+function reset(kind){
+
+    const sim =
+    simulations[kind];
+
+
+    /*
+    cancel animation
+    */
+
+    sim.ball
+    .getAnimations()
+    .forEach(animation=>{
+
+        animation.cancel();
+
+    });
+
+
+    sim.arrow
+    .getAnimations()
+    .forEach(animation=>{
+
+        animation.cancel();
+
+    });
+
+
+    sim.ball.style.transform =
+    "translate(0px,0px)";
+
+
+    sim.arrow.style.opacity =
+    "0";
+
+
+    /* =====================
+       stable
+    ===================== */
+
+    if(kind === "stable"){
+
+        sim.result.innerHTML =
+        "วัตถุอยู่ก้นแอ่ง";
+
+    }
+
+
+    /* =====================
+       unstable
+    ===================== */
+
+    if(kind === "unstable"){
+
+        sim.result.innerHTML =
+        "วัตถุอยู่บนยอดเนิน";
+
+    }
+
+
+    /* =====================
+       neutral
+    ===================== */
+
+    if(kind === "neutral"){
+
+        sim.result.innerHTML =
+        "วัตถุอยู่บนพื้นราบ";
+
+    }
+
+}
+
+
+
+/* =====================================
+   PLAY
+===================================== */
+
+function play(kind){
+
+    reset(kind);
+
+
+    const sim =
+    simulations[kind];
+
+
+    /*
+    Show direction arrow
+    */
+
+    sim.arrow.animate(
+
+        [
+
+            {
+                opacity:0
+            },
+
+            {
+                opacity:1
+            },
+
+            {
+                opacity:1
+            },
+
+            {
+                opacity:0
+            }
+
+        ],
+
+        {
+
+            duration:1400,
+
+            fill:"forwards"
+
+        }
+
+    );
+
+
+
+    /* =====================================
+       STABLE
+    ===================================== */
+
+    if(kind === "stable"){
+
+        sim.result.innerHTML =
+
+        "👉 วัตถุถูกผลักออกจากตำแหน่งสมดุล";
+
+
+        const animation =
+        sim.ball.animate(
+
+            [
+
+                {
+                    transform:
+                    "translate(0px,0px)"
+                },
+
+                {
+                    transform:
+                    "translate(70px,-60px)",
+
+                    offset:.27
+                },
+
+                {
+                    transform:
+                    "translate(35px,-23px)",
+
+                    offset:.52
+                },
+
+                {
+                    transform:
+                    "translate(-18px,-9px)",
+
+                    offset:.72
+                },
+
+                {
+                    transform:
+                    "translate(9px,-4px)",
+
+                    offset:.87
+                },
+
+                {
+                    transform:
+                    "translate(0px,0px)"
+                }
+
+            ],
+
+            {
+
+                duration:2800,
+
+                easing:"ease-in-out",
+
+                fill:"forwards"
+
+            }
+
+        );
+
+
+        animation.onfinish =
+        ()=>{
+
+            sim.result.innerHTML =
+
+            `
+            ✅ <b>กลับสู่ตำแหน่งเดิม</b>
+
+            <br>
+
+            จึงเป็น
+            <b>สมดุลเสถียร</b>
+            `;
+
+        };
+
+    }
+
+
+
+    /* =====================================
+       UNSTABLE
+    ===================================== */
+
+    if(kind === "unstable"){
+
+        sim.result.innerHTML =
+
+        "👉 วัตถุถูกผลักเพียงเล็กน้อย";
+
+
+        const animation =
+        sim.ball.animate(
+
+            [
+
+                {
+                    transform:
+                    "translate(0px,0px)"
+                },
+
+                {
+                    transform:
+                    "translate(8px,5px)",
+
+                    offset:.2
+                },
+
+                {
+                    transform:
+                    "translate(35px,30px)",
+
+                    offset:.45
+                },
+
+                {
+                    transform:
+                    "translate(75px,75px)",
+
+                    offset:.75
+                },
+
+                {
+                    transform:
+                    "translate(105px,115px)"
+                }
+
+            ],
+
+            {
+
+                duration:2300,
+
+                easing:"ease-in",
+
+                fill:"forwards"
+
+            }
+
+        );
+
+
+        animation.onfinish =
+        ()=>{
+
+            sim.result.innerHTML =
+
+            `
+            ❌ <b>เคลื่อนห่างจากตำแหน่งเดิม</b>
+
+            <br>
+
+            จึงเป็น
+            <b>สมดุลไม่เสถียร</b>
+            `;
+
+        };
+
+    }
+
+
+
+    /* =====================================
+       NEUTRAL
+    ===================================== */
+
+    if(kind === "neutral"){
+
+        sim.result.innerHTML =
+
+        "👉 วัตถุถูกผลักไปทางขวา";
+
+
+        const animation =
+        sim.ball.animate(
+
+            [
+
+                {
+                    transform:
+                    "translate(0px,0px)"
+                },
+
+                {
+                    transform:
+                    "translate(110px,0px)"
+                }
+
+            ],
+
+            {
+
+                duration:1500,
+
+                easing:"ease-out",
+
+                fill:"forwards"
+
+            }
+
+        );
+
+
+        animation.onfinish =
+        ()=>{
+
+            sim.result.innerHTML =
+
+            `
+            ➡️ <b>หยุดอยู่ที่ตำแหน่งใหม่</b>
+
+            <br>
+
+            จึงเป็น
+            <b>สมดุลสะเทิน</b>
+            `;
+
+        };
+
+    }
+
+}
+
+
+
+/* =====================================
+   PLAY ALL
+===================================== */
+
+document
+.getElementById(
+    "playAll"
+)
+.addEventListener(
+
+    "click",
+
+    ()=>{
+
+        play("stable");
+
+        setTimeout(
+            ()=>play("unstable"),
+            150
+        );
+
+        setTimeout(
+            ()=>play("neutral"),
+            300
+        );
+
+    }
+
+);
+
+
+
+/* =====================================
+   RESET ALL
+===================================== */
+
+document
+.getElementById(
+    "resetAll"
+)
+.addEventListener(
+
+    "click",
+
+    ()=>{
+
+        reset("stable");
+
+        reset("unstable");
+
+        reset("neutral");
+
+    }
+
+);
+
+
+
+/* =====================================
+   INITIALIZE
+===================================== */
+
+reset("stable");
+
+reset("unstable");
+
+reset("neutral");
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Complex → Polar Calculator</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Tahoma,Arial,sans-serif;
+    background:#f5f7fb;
+    color:#172033;
+    padding:24px;
+  }
+  .wrap{max-width:1100px;margin:auto}
+  .header{margin-bottom:18px}
+  .header h1{margin:0 0 6px;font-size:30px}
+  .header p{margin:0;color:#64748b}
+  .grid{display:grid;grid-template-columns:380px 1fr;gap:18px}
+  .card{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:18px;
+  }
+  .section-title{font-size:18px;font-weight:700;margin-bottom:12px}
+  .inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{display:block;font-size:14px;margin-bottom:6px;color:#475569}
+  input[type=number]{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    font-size:17px;
+  }
+  input[type=range]{width:100%}
+  .complex-preview{
+    margin-top:14px;
+    padding:14px;
+    background:#eef2ff;
+    border-radius:12px;
+    text-align:center;
+    font-size:22px;
+    font-weight:700;
+  }
+  .switches{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  button{
+    border:1px solid #cbd5e1;
+    background:white;
+    color:#172033;
+    border-radius:10px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  button.active{background:#4f46e5;color:white;border-color:#4f46e5}
+  button.primary{background:#4f46e5;color:white;border-color:#4f46e5}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .metric{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px;
+  }
+  .metric small{color:#64748b}
+  .metric strong{display:block;margin-top:6px;font-size:20px}
+  .formula{
+    margin-top:10px;
+    padding:12px;
+    border-radius:12px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    line-height:1.6;
+  }
+  .formula b{color:#4338ca}
+  .helper{font-size:13px;color:#64748b;margin-top:10px;line-height:1.5}
+  .canvas-wrap{
+    position:relative;
+    width:100%;
+    aspect-ratio:1.25;
+    min-height:390px;
+  }
+  canvas{
+    width:100%;
+    height:100%;
+    display:block;
+    background:#fff;
+    border-radius:14px;
+    border:1px solid #e2e8f0;
+    touch-action:none;
+  }
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:#475569}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
+  .sliders{margin-top:18px;display:grid;gap:14px}
+  .slider-row{display:grid;grid-template-columns:90px 1fr 60px;gap:10px;align-items:center}
+  .slider-row span:last-child{text-align:right;font-weight:700}
+  .footer-note{margin-top:18px;padding:14px;background:#ecfeff;border-radius:12px;line-height:1.6}
+  @media(max-width:850px){
+    .grid{grid-template-columns:1fr}
+    .canvas-wrap{min-height:330px}
+  }
+  @media(max-width:520px){
+    body{padding:12px}
+    .inputs,.result-grid{grid-template-columns:1fr}
+    .slider-row{grid-template-columns:70px 1fr 55px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="header">
+<h1>🔢 เครื่องคำนวณจำนวนเชิงซ้อน</h1>
+<p>แปลงจำนวนเชิงซ้อนจากรูป <b>a + bi</b> เป็นรูป Polar พร้อมดูตำแหน่งบนระนาบเชิงซ้อน</p>
+</div>
+<div class="grid">
+<div>
+<div class="card">
+<div class="section-title">ใส่จำนวนเชิงซ้อน</div>
+<div class="inputs">
+<div>
+<label for="realInput">ส่วนจริง a</label>
+<input id="realInput" step="0.1" type="number" value="3"/>
+</div>
+<div>
+<label for="imagInput">ส่วนจินตภาพ b</label>
+<input id="imagInput" step="0.1" type="number" value="4"/>
+</div>
+</div>
+<div class="complex-preview" id="complexPreview">z = 3 + 4i</div>
+<div class="switches">
+<button class="active" id="degreeBtn" type="button">องศา (°)</button>
+<button id="radianBtn" type="button">เรเดียน (rad)</button>
+<button id="resetBtn" type="button">↺ รีเซ็ต</button>
+</div>
+</div>
+
+</div>
+<div class="card">
+<div class="section-title">ลากจุดบนระนาบเชิงซ้อน</div>
+<div class="helper" style="margin-top:-6px;margin-bottom:10px">
+        ลากจุดสีม่วงเพื่อเปลี่ยนค่า a และ b แบบ Interactive
+      </div>
+<div class="canvas-wrap">
+<canvas id="plane"></canvas>
+</div>
+<div class="legend">
+<span><span class="dot" style="background:#4f46e5"></span>z = a + bi</span>
+<span><span class="dot" style="background:#ef4444"></span>เวกเตอร์ r</span>
+</div>
+<div class="sliders">
+<div class="slider-row">
+<span>Real a</span>
+<input id="realRange" max="10" min="-10" step="0.1" type="range" value="3"/>
+<span id="realRangeValue">3.0</span>
+</div>
+<div class="slider-row">
+<span>Imag b</span>
+<input id="imagRange" max="10" min="-10" step="0.1" type="range" value="4"/>
+<span id="imagRangeValue">4.0</span>
+</div>
+</div>
+</div>
+</div><div class="card" style="margin-top:18px">
+<div class="section-title">ผลลัพธ์</div>
+<div class="result-grid">
+<div class="metric">
+<small>ขนาด r = |z|</small>
+<strong id="rValue">5</strong>
+</div>
+<div class="metric">
+<small>มุม θ</small>
+<strong id="thetaValue">53.13°</strong>
+</div>
+<div class="metric">
+<small>Quadrant</small>
+<strong id="quadrantValue">I</strong>
+</div>
+<div class="metric">
+<small>Argument</small>
+<strong id="argValue">53.13°</strong>
+</div>
+</div>
+<div class="formula">
+<small>Polar form</small><br/>
+<b id="polarValue">5(cos 53.13° + i sin 53.13°)</b>
+</div>
+<div class="formula">
+<small>Exponential form</small><br/>
+<b id="expoValue">5e^(i53.13°)</b>
+</div>
+<div class="formula">
+<small>วิธีคำนวณ</small><br/>
+          r = √(a² + b²)<br/>
+          θ = atan2(b, a)
+        </div>
+<div class="helper">
+          ใช้ <b>atan2(b,a)</b> เพื่อให้มุมอยู่ใน Quadrant ที่ถูกต้องโดยอัตโนมัติ
+        </div>
+</div>
+<div class="footer-note">
+    💡 <b>แนวคิด:</b> จำนวนเชิงซ้อน <b>a + bi</b> สามารถมองเป็นจุด (a,b) บนระนาบเชิงซ้อน
+    โดย <b>r</b> คือระยะจากจุดกำเนิดถึงจุดนั้น และ <b>θ</b> คือมุมที่วัดจากแกนจริงบวก
+  </div>
+</div>
+<script>
+const realInput = document.getElementById("realInput");
+const imagInput = document.getElementById("imagInput");
+const realRange = document.getElementById("realRange");
+const imagRange = document.getElementById("imagRange");
+
+const realRangeValue = document.getElementById("realRangeValue");
+const imagRangeValue = document.getElementById("imagRangeValue");
+
+const complexPreview = document.getElementById("complexPreview");
+const rValue = document.getElementById("rValue");
+const thetaValue = document.getElementById("thetaValue");
+const quadrantValue = document.getElementById("quadrantValue");
+const argValue = document.getElementById("argValue");
+const polarValue = document.getElementById("polarValue");
+const expoValue = document.getElementById("expoValue");
+
+const degreeBtn = document.getElementById("degreeBtn");
+const radianBtn = document.getElementById("radianBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const canvas = document.getElementById("plane");
+const ctx = canvas.getContext("2d");
+
+let unit = "deg";
+let dragging = false;
+
+function cleanNumber(n, digits=4){
+  if (Math.abs(n) < 1e-10) n = 0;
+  return Number(n.toFixed(digits)).toString();
+}
+
+function signedComplex(a,b){
+  if (b === 0) return `${cleanNumber(a)}`;
+  if (a === 0) return `${cleanNumber(b)}i`;
+  return `${cleanNumber(a)} ${b >= 0 ? "+" : "−"} ${cleanNumber(Math.abs(b))}i`;
+}
+
+function getQuadrant(a,b){
+  if (a === 0 && b === 0) return "ไม่กำหนด";
+  if (b === 0) return a > 0 ? "แกนจริง +" : "แกนจริง −";
+  if (a === 0) return b > 0 ? "แกนจินตภาพ +" : "แกนจินตภาพ −";
+  if (a > 0 && b > 0) return "I";
+  if (a < 0 && b > 0) return "II";
+  if (a < 0 && b < 0) return "III";
+  return "IV";
+}
+
+function syncControls(a,b,source){
+  if(source !== "input"){
+    realInput.value = cleanNumber(a,2);
+    imagInput.value = cleanNumber(b,2);
+  }
+  if(source !== "range"){
+    realRange.value = Math.max(-10,Math.min(10,a));
+    imagRange.value = Math.max(-10,Math.min(10,b));
+  }
+
+  realRangeValue.textContent = Number(a).toFixed(1);
+  imagRangeValue.textContent = Number(b).toFixed(1);
+}
+
+function update(a,b,source="input"){
+  a = Number(a) || 0;
+  b = Number(b) || 0;
+
+  syncControls(a,b,source);
+
+  const r = Math.hypot(a,b);
+  const thetaRad = Math.atan2(b,a);
+  const thetaDeg = thetaRad * 180 / Math.PI;
+
+  complexPreview.textContent = `z = ${signedComplex(a,b)}`;
+  rValue.textContent = cleanNumber(r,4);
+  quadrantValue.textContent = getQuadrant(a,b);
+
+  if(a === 0 && b === 0){
+    thetaValue.textContent = "ไม่กำหนด";
+    argValue.textContent = "ไม่กำหนด";
+    polarValue.textContent = "0";
+    expoValue.textContent = "0";
+  } else if(unit === "deg"){
+    const t = cleanNumber(thetaDeg,2);
+    thetaValue.textContent = `${t}°`;
+    argValue.textContent = `${t}°`;
+    polarValue.textContent = `${cleanNumber(r,4)}(cos ${t}° + i sin ${t}°)`;
+    expoValue.textContent = `${cleanNumber(r,4)}e^(i${t}°)`;
+  } else {
+    const t = cleanNumber(thetaRad,4);
+    thetaValue.textContent = `${t} rad`;
+    argValue.textContent = `${t} rad`;
+    polarValue.textContent = `${cleanNumber(r,4)}(cos ${t} + i sin ${t})`;
+    expoValue.textContent = `${cleanNumber(r,4)}e^(i${t})`;
+  }
+
+  drawPlane(a,b);
+}
+
+function resizeCanvas(){
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(rect.width*dpr);
+  canvas.height = Math.round(rect.height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  update(Number(realInput.value),Number(imagInput.value),"input");
+}
+
+function drawArrow(x1,y1,x2,y2,color){
+  const angle = Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=color;
+  ctx.fillStyle=color;
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+
+  const size=10;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-size*Math.cos(angle-Math.PI/6), y2-size*Math.sin(angle-Math.PI/6));
+  ctx.lineTo(x2-size*Math.cos(angle+Math.PI/6), y2-size*Math.sin(angle+Math.PI/6));
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawPlane(a,b){
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+
+  ctx.clearRect(0,0,w,h);
+
+  const maxCoord = 10;
+  const pad = 32;
+  const scale = Math.min((w-2*pad)/(2*maxCoord),(h-2*pad)/(2*maxCoord));
+  const ox = w/2;
+  const oy = h/2;
+
+  ctx.strokeStyle="#e2e8f0";
+  ctx.lineWidth=1;
+  ctx.font="11px Tahoma";
+  ctx.fillStyle="#64748b";
+
+  for(let i=-10;i<=10;i++){
+    const x=ox+i*scale;
+    const y=oy-i*scale;
+
+    ctx.beginPath();
+    ctx.moveTo(x,pad);
+    ctx.lineTo(x,h-pad);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(pad,y);
+    ctx.lineTo(w-pad,y);
+    ctx.stroke();
+
+    if(i!==0 && i%2===0){
+      ctx.fillText(i.toString(),x+3,oy+14);
+      ctx.fillText(i.toString(),ox+6,y-3);
+    }
+  }
+
+  ctx.strokeStyle="#334155";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(pad,oy);
+  ctx.lineTo(w-pad,oy);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(ox,pad);
+  ctx.lineTo(ox,h-pad);
+  ctx.stroke();
+
+  ctx.fillStyle="#334155";
+  ctx.font="13px Tahoma";
+  ctx.fillText("Re",w-pad-22,oy-8);
+  ctx.fillText("Im",ox+8,pad+12);
+
+  const px=ox+a*scale;
+  const py=oy-b*scale;
+
+  drawArrow(ox,oy,px,py,"#ef4444");
+
+  if(!(a===0 && b===0)){
+    const radius=Math.min(42,Math.hypot(px-ox,py-oy)*0.32);
+    let angle=Math.atan2(-(b),a);
+    ctx.strokeStyle="#0f766e";
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    if(angle<0){
+      ctx.arc(ox,oy,radius,0,angle,true);
+    }else{
+      ctx.arc(ox,oy,radius,0,angle,false);
+    }
+    ctx.stroke();
+
+    const labelAngle=angle/2;
+    ctx.fillStyle="#0f766e";
+    ctx.fillText("θ",ox+(radius+10)*Math.cos(labelAngle),oy+(radius+10)*Math.sin(labelAngle));
+  }
+
+  ctx.fillStyle="#4f46e5";
+  ctx.beginPath();
+  ctx.arc(px,py,9,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle="#ffffff";
+  ctx.lineWidth=3;
+  ctx.stroke();
+
+  ctx.fillStyle="#172033";
+  ctx.font="13px Tahoma";
+  ctx.fillText(`(${cleanNumber(a,2)}, ${cleanNumber(b,2)})`,px+12,py-10);
+}
+
+function canvasToComplex(event){
+  const rect=canvas.getBoundingClientRect();
+  const w=rect.width, h=rect.height;
+  const pad=32;
+  const scale=Math.min((w-2*pad)/20,(h-2*pad)/20);
+  const ox=w/2, oy=h/2;
+
+  let a=(event.clientX-rect.left-ox)/scale;
+  let b=-(event.clientY-rect.top-oy)/scale;
+
+  a=Math.max(-10,Math.min(10,a));
+  b=Math.max(-10,Math.min(10,b));
+
+  return [Math.round(a*10)/10,Math.round(b*10)/10];
+}
+
+realInput.addEventListener("input",()=>update(realInput.value,imagInput.value,"input"));
+imagInput.addEventListener("input",()=>update(realInput.value,imagInput.value,"input"));
+
+realRange.addEventListener("input",()=>{
+  realInput.value=realRange.value;
+  update(realRange.value,imagRange.value,"range");
+});
+
+imagRange.addEventListener("input",()=>{
+  imagInput.value=imagRange.value;
+  update(realRange.value,imagRange.value,"range");
+});
+
+degreeBtn.addEventListener("click",()=>{
+  unit="deg";
+  degreeBtn.classList.add("active");
+  radianBtn.classList.remove("active");
+  update(realInput.value,imagInput.value,"input");
+});
+
+radianBtn.addEventListener("click",()=>{
+  unit="rad";
+  radianBtn.classList.add("active");
+  degreeBtn.classList.remove("active");
+  update(realInput.value,imagInput.value,"input");
+});
+
+resetBtn.addEventListener("click",()=>{
+  unit="deg";
+  degreeBtn.classList.add("active");
+  radianBtn.classList.remove("active");
+  realInput.value=3;
+  imagInput.value=4;
+  update(3,4,"input");
+});
+
+canvas.addEventListener("pointerdown",e=>{
+  dragging=true;
+  canvas.setPointerCapture(e.pointerId);
+  const [a,b]=canvasToComplex(e);
+  realInput.value=a;
+  imagInput.value=b;
+  update(a,b,"input");
+});
+
+canvas.addEventListener("pointermove",e=>{
+  if(!dragging)return;
+  const [a,b]=canvasToComplex(e);
+  realInput.value=a;
+  imagInput.value=b;
+  update(a,b,"input");
+});
+
+canvas.addEventListener("pointerup",e=>{
+  dragging=false;
+  if(canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
+});
+
+canvas.addEventListener("pointercancel",()=>dragging=false);
+
+window.addEventListener("resize",resizeCanvas);
+
+requestAnimationFrame(()=>{
+  resizeCanvas();
+  update(3,4,"input");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{
+  "site": {
+    "title": "SMP Interactive Tools",
+    "tagline": "สื่อโต้ตอบฟิสิกส์ คณิตศาสตร์ และ TGAT2",
+    "accent": "#0080ff"
+  },
+  "order": ["ฟิสิกส์", "คณิตศาสตร์", "ชีววิทยา", "TGAT2"],
+  "tools": {
+    "friction": {
+      "name": "แรงเสียดทาน",
+      "en": "Friction Lab",
+      "subject": "ฟิสิกส์",
+      "description": "ปรับมุมและสัมประสิทธิ์ ดูแรงเสียดทานสถิตกับจลน์"
+    },
+    "pulley": {
+      "name": "รอก",
+      "en": "Drag the Rope",
+      "subject": "ฟิสิกส์",
+      "description": "ลากเชือกดูแรงตึงและการได้เปรียบเชิงกลของรอก"
+    },
+    "sound-wave": {
+      "name": "คลื่นเสียง",
+      "en": "Sound Wave Lab",
+      "subject": "ฟิสิกส์",
+      "description": "ปรับความถี่และแอมพลิจูด ดูรูปคลื่นเสียงแบบเรียลไทม์"
+    },
+    "impulse": {
+      "name": "แรงดล",
+      "en": "Tennis Impulse Lab",
+      "subject": "ฟิสิกส์",
+      "description": "เชื่อมแรงกับเวลาผ่านการตีเทนนิส หาโมเมนตัมที่เปลี่ยน"
+    },
+    "stability": {
+      "name": "เสถียรภาพของวัตถุ",
+      "en": "Object Stability",
+      "subject": "ฟิสิกส์",
+      "description": "จุดศูนย์ถ่วงกับฐานรองรับ ทดสอบว่าวัตถุล้มหรือไม่"
+    },
+    "stability-vase": {
+      "name": "เสถียรภาพของวัตถุ (แจกัน)",
+      "en": "Object Stability (Vase)",
+      "subject": "ฟิสิกส์",
+      "description": "เอียงทรงแจกันแล้วดูว่าคืนตัวกลับหรือคว่ำ"
+    },
+    "complex-number": {
+      "name": "จำนวนเชิงซ้อน สู่รูปเชิงขั้ว",
+      "en": "Complex to Polar Calculator",
+      "subject": "คณิตศาสตร์",
+      "description": "แปลงจำนวนเชิงซ้อนเป็นรูปเชิงขั้วพร้อมแผนภาพ"
+    },
+    "genetics": {
+      "name": "พันธุศาสตร์ Punnett Square",
+      "en": "Punnett Square",
+      "subject": "ชีววิทยา",
+      "description": "เลือก genotype พ่อแม่ 2 ลักษณะ ดูอัตราส่วนรุ่นลูกเรียลไทม์"
+    },
+    "tgat2-box": {
+      "name": "TGAT2 พับกล่อง",
+      "en": "Box Folding",
+      "subject": "TGAT2",
+      "description": "จำลองการพับกล่องจากแผ่นคลี่ ฝึกมิติสัมพันธ์"
+    },
+    "tgat2-cube": {
+      "name": "TGAT2 สร้างลูกบาศก์ 3 มิติ",
+      "en": "3D Cube Builder",
+      "subject": "TGAT2",
+      "description": "ประกอบลูกบาศก์ในพื้นที่ 3 มิติ ฝึกการมองภาพเชิงพื้นที่"
+    }
+  }
+}

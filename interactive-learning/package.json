@@ -1,0 +1,17 @@
+{
+  "name": "smp-interactive-hub",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Landing page that indexes standalone SMP interactive HTML tools.",
+  "scripts": {
+    "thumbs": "node thumbs.mjs",
+    "thumbs:force": "node thumbs.mjs --force",
+    "build": "node build.mjs",
+    "build:all": "node thumbs.mjs && node build.mjs",
+    "preview": "node build.mjs && node serve.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.62.1"
+  }
+}

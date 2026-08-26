@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TGAT2 Interactive - พับกล่อง</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Tahoma, Arial, sans-serif;
+    background:linear-gradient(135deg,#dff4ff,#eef0ff);
+    color:#1e293b;
+}
+
+.container{
+    width:min(1200px,95%);
+    margin:30px auto;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:24px;
+}
+
+.header h1{
+    margin:0;
+    font-size:32px;
+}
+
+.header p{
+    color:#64748b;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.game-layout{
+    display:grid;
+    grid-template-columns:360px 1fr;
+    gap:25px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+/* =========================
+   NET
+========================= */
+
+.net-title{
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.net-svg{
+    width:100%;
+    height:auto;
+}
+
+.hint{
+    background:#eff6ff;
+    border-left:4px solid #3b82f6;
+    padding:12px;
+    border-radius:10px;
+    margin-top:14px;
+    line-height:1.6;
+}
+
+/* =========================
+   3D AREA
+========================= */
+
+.stage{
+    height:470px;
+    position:relative;
+    overflow:hidden;
+
+    background:
+    radial-gradient(circle at center,#ffffff,#f1f5f9);
+
+    border-radius:18px;
+    border:2px solid #e2e8f0;
+
+    perspective:1000px;
+    touch-action:none;
+    user-select:none;
+}
+
+.drag-help{
+    position:absolute;
+    top:15px;
+    left:15px;
+
+    padding:10px 14px;
+
+    background:rgba(255,255,255,.9);
+    border-radius:10px;
+
+    font-size:14px;
+    color:#64748b;
+
+    z-index:10;
+}
+
+.scene-holder{
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.scene{
+    width:120px;
+    height:120px;
+
+    position:relative;
+
+    transform-style:preserve-3d;
+
+    transform:
+    rotateX(-22deg)
+    rotateY(30deg);
+}
+
+/* =========================
+   CUBE FACES
+========================= */
+
+.face{
+    position:absolute;
+
+    width:120px;
+    height:120px;
+
+    left:0;
+    top:0;
+
+    border:3px solid #172033;
+    background:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    transform-style:preserve-3d;
+
+    border-radius:3px;
+}
+
+.face svg{
+    width:100%;
+    height:100%;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls{
+    margin-top:18px;
+}
+
+.slider-row{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.slider-row input{
+    flex:1;
+}
+
+.fold-percent{
+    min-width:60px;
+    font-weight:bold;
+}
+
+.buttons{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+    margin-top:15px;
+}
+
+button{
+    border:0;
+    padding:12px;
+    border-radius:10px;
+
+    cursor:pointer;
+    font-size:15px;
+
+    background:#e2e8f0;
+    color:#1e293b;
+
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    background:#cbd5e1;
+}
+
+.primary{
+    background:#e2e8f0;
+    color:#1e293b;
+}
+
+.primary:hover{
+    background:#4338ca;
+}
+
+.status{
+    display:inline-block;
+
+    background:#eef2ff;
+    color:#4338ca;
+
+    padding:6px 12px;
+    border-radius:999px;
+
+    margin-bottom:10px;
+}
+
+/* =========================
+   ANSWERS
+========================= */
+
+.answer-section{
+    margin-top:25px;
+}
+
+.answers{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+    margin-top:15px;
+}
+
+.answer{
+    background:white;
+
+    border:3px solid transparent;
+
+    border-radius:15px;
+
+    padding:8px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.answer:hover{
+    transform:translateY(-4px);
+    border-color:#818cf8;
+}
+
+.answer.selected{
+    border-color:#4f46e5;
+    background:#eef2ff;
+}
+
+.answer.correct{
+    border-color:#22c55e;
+    background:#dcfce7;
+}
+
+.answer.wrong{
+    border-color:#ef4444;
+    background:#fee2e2;
+}
+
+.answer svg{
+    width:100%;
+}
+
+.answer-number{
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.result{
+    margin-top:18px;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    background:#f8fafc;
+
+    min-height:60px;
+
+    line-height:1.7;
+}
+
+.check-row{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+.check-row button{
+    flex:1;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+    .game-layout{
+        grid-template-columns:1fr;
+    }
+
+    .answers{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .buttons{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>🧊 TGAT2 BOX FOLDING</h1>
+
+        <p>
+            ทดลองพับรูปคลี่ หมุนกล่อง 360° แล้วเลือกคำตอบที่ถูกต้อง
+        </p>
+
+    </div>
+
+
+    <div class="game-layout">
+
+        <!-- =================================
+             QUESTION
+        ================================== -->
+
+        <div class="card">
+
+            <div class="net-title">
+                โจทย์
+            </div>
+
+            <p>
+                เมื่อพับรูปคลี่ต่อไปนี้เป็นลูกบาศก์
+                ข้อใดสามารถเกิดขึ้นได้?
+            </p>
+
+
+            <!-- NET SVG -->
+
+            <svg
+                class="net-svg"
+                viewBox="0 0 430 330">
+
+                <!-- cube net -->
+
+                <g
+                    fill="white"
+                    stroke="#111827"
+                    stroke-width="4">
+
+                    <!-- center -->
+
+                    <rect
+                        x="40"
+                        y="120"
+                        width="85"
+                        height="85"/>
+
+                    <!-- top -->
+
+                    <rect
+                        x="40"
+                        y="35"
+                        width="85"
+                        height="85"/>
+
+                    <!-- bottom -->
+
+                    <rect
+                        x="40"
+                        y="205"
+                        width="85"
+                        height="85"/>
+
+                    <!-- right 1 -->
+
+                    <rect
+                        x="125"
+                        y="120"
+                        width="85"
+                        height="85"/>
+
+                    <!-- right 2 -->
+
+                    <rect
+                        x="210"
+                        y="120"
+                        width="85"
+                        height="85"/>
+
+                    <!-- right 3 -->
+
+                    <rect
+                        x="295"
+                        y="120"
+                        width="85"
+                        height="85"/>
+
+                </g>
+
+
+                <!-- EYE -->
+
+                <path
+                    d="
+                    M58 75
+                    Q82 53 107 75
+                    Q82 97 58 75
+                    "
+                    fill="none"
+                    stroke="#111827"
+                    stroke-width="4"/>
+
+
+                <!-- TAG SYMBOL -->
+
+                <g
+                    transform="
+                    translate(83 162)
+                    rotate(-42)
+                    ">
+
+                    <rect
+                        x="-14"
+                        y="-31"
+                        width="28"
+                        height="62"
+                        rx="14"
+
+                        fill="none"
+                        stroke="#111827"
+                        stroke-width="4"/>
+
+                    <circle
+                        cx="0"
+                        cy="18"
+                        r="5"
+                        fill="#111827"/>
+
+                </g>
+
+
+                <!-- DOT SYMBOL -->
+
+                <g transform="translate(355 138)">
+
+                    <circle
+                        cx="0"
+                        cy="0"
+                        r="7"
+                        fill="white"
+                        stroke="#111827"
+                        stroke-width="3"/>
+
+                    <circle
+                        cx="0"
+                        cy="17"
+                        r="7"
+                        fill="#111827"/>
+
+                    <circle
+                        cx="0"
+                        cy="34"
+                        r="7"
+                        fill="#111827"/>
+
+                    <circle
+                        cx="0"
+                        cy="51"
+                        r="7"
+                        fill="white"
+                        stroke="#111827"
+                        stroke-width="3"/>
+
+                </g>
+
+            </svg>
+
+
+            <div class="hint">
+
+                💡 <b>วิธีคิด</b><br>
+
+                สังเกตว่าแต่ละหน้า
+                อยู่ติดกับหน้าใดบ้าง
+
+                และอย่าลืมดู
+                <b>ทิศทางของสัญลักษณ์</b>
+                หลังจากพับ
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================
+             INTERACTIVE CUBE
+        ================================== -->
+
+        <div class="card">
+
+            <div class="status" id="status">
+                รูปคลี่
+            </div>
+
+            <h2>
+                ทดลองพับกล่อง
+            </h2>
+
+
+            <div
+                class="stage"
+                id="stage">
+
+                <div class="drag-help">
+
+                    🖱️ ลากซ้าย–ขวา : หมุน 360°<br>
+
+                    ↕ ลากขึ้น–ลง : เปลี่ยนมุมมอง
+
+                </div>
+
+
+                <div class="scene-holder">
+
+                    <div
+                        class="scene"
+                        id="scene">
+
+
+                        <!-- CENTER = TAG -->
+
+                        <div
+                            class="face"
+                            data-face="front">
+
+                            <svg viewBox="0 0 100 100">
+
+                                <g
+                                    transform="
+                                    translate(50 50)
+                                    rotate(-42)
+                                    ">
+
+                                    <rect
+                                        x="-14"
+                                        y="-31"
+                                        width="28"
+                                        height="62"
+                                        rx="14"
+
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="4"/>
+
+                                    <circle
+                                        cx="0"
+                                        cy="18"
+                                        r="5"
+                                        fill="currentColor"/>
+
+                                </g>
+
+                            </svg>
+
+                        </div>
+
+
+
+                        <!-- RIGHT BLANK -->
+
+                        <div
+                            class="face"
+                            data-face="right">
+                        </div>
+
+
+
+                        <!-- BACK BLANK -->
+
+                        <div
+                            class="face"
+                            data-face="back">
+                        </div>
+
+
+
+                        <!-- LEFT = DOTS -->
+
+                        <div
+                            class="face"
+                            data-face="left">
+
+                            <svg viewBox="0 0 100 100">
+
+                                <g transform="translate(78 25)">
+
+                                    <circle
+                                        cx="0"
+                                        cy="0"
+                                        r="6"
+                                        fill="white"
+                                        stroke="currentColor"
+                                        stroke-width="3"/>
+
+                                    <circle
+                                        cx="0"
+                                        cy="17"
+                                        r="6"
+                                        fill="currentColor"/>
+
+                                    <circle
+                                        cx="0"
+                                        cy="34"
+                                        r="6"
+                                        fill="currentColor"/>
+
+                                    <circle
+                                        cx="0"
+                                        cy="51"
+                                        r="6"
+                                        fill="white"
+                                        stroke="currentColor"
+                                        stroke-width="3"/>
+
+                                </g>
+
+                            </svg>
+
+                        </div>
+
+
+
+                        <!-- TOP = EYE -->
+
+                        <div
+                            class="face"
+                            data-face="top">
+
+                            <svg viewBox="0 0 100 100">
+
+                                <path
+                                    d="
+                                    M25 28
+                                    Q50 8 75 28
+                                    Q50 48 25 28
+                                    "
+
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="4"/>
+
+                            </svg>
+
+                        </div>
+
+
+
+                        <!-- BOTTOM BLANK -->
+
+                        <div
+                            class="face"
+                            data-face="bottom">
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTROLS -->
+
+            <div class="controls">
+
+                <label>
+                    ระดับการพับ
+                </label>
+
+
+                <div class="slider-row">
+
+                    <input
+                        id="foldSlider"
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="0">
+
+                    <span
+                        class="fold-percent"
+                        id="foldPercent">
+
+                        0%
+
+                    </span>
+
+                </div>
+
+
+                <div class="buttons">
+
+                    <button id="unfold">
+                        คลี่
+                    </button>
+
+                    <button
+                        id="fold"
+                        class="primary">
+
+                        พับ
+
+                    </button>
+
+                    <button id="rotateLeft">
+                        ← ซ้าย
+                    </button>
+
+                    <button id="rotateRight">
+                        ขวา →
+                    </button>
+
+                    <button id="reset">
+                        ⟳ รีเซ็ต
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================
+         ANSWER
+    ================================== -->
+
+    <div class="card answer-section">
+
+        <h2>
+            เลือกคำตอบ
+        </h2>
+
+        <p>
+            ทดลองพับและหมุนกล่องก่อน
+            จากนั้นเลือกคำตอบ 1–5
+        </p>
+
+
+        <div
+            class="answers"
+            id="answers">
+
+        </div>
+
+
+        <div class="check-row">
+
+            <button
+                id="checkAnswer"
+                class="primary">
+
+                ✅ ตรวจคำตอบ
+
+            </button>
+
+
+            <button id="tryAgain">
+
+                🔄 ลองใหม่
+
+            </button>
+
+        </div>
+
+
+        <div
+            class="result"
+            id="result">
+
+            เลือกคำตอบก่อน แล้วกด
+            <b>ตรวจคำตอบ</b>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================
+   VARIABLES
+===================================== */
+
+const scene =
+document.getElementById("scene");
+
+const stage =
+document.getElementById("stage");
+
+const slider =
+document.getElementById("foldSlider");
+
+const percent =
+document.getElementById("foldPercent");
+
+const status =
+document.getElementById("status");
+
+
+let yaw = 30;
+let pitch = -22;
+
+let dragging = false;
+
+let lastX = 0;
+let lastY = 0;
+
+let animationFrame = null;
+
+
+/* =====================================
+   UTILITY
+===================================== */
+
+function lerp(a,b,t){
+
+    return a+(b-a)*t;
+
+}
+
+
+/* =====================================
+   FACE POSITIONS
+===================================== */
+
+function getPose(name,t){
+
+    const size = 120;
+
+    const half = size/2;
+
+
+    /* position while unfolded */
+
+    const net = {
+
+        front:{
+            x:0,
+            y:0,
+            z:0,
+            rx:0,
+            ry:0
+        },
+
+        top:{
+            x:0,
+            y:-size,
+            z:0,
+            rx:0,
+            ry:0
+        },
+
+        bottom:{
+            x:0,
+            y:size,
+            z:0,
+            rx:0,
+            ry:0
+        },
+
+        right:{
+            x:size,
+            y:0,
+            z:0,
+            rx:0,
+            ry:0
+        },
+
+        back:{
+            x:size*2,
+            y:0,
+            z:0,
+            rx:0,
+            ry:0
+        },
+
+        left:{
+            x:size*3,
+            y:0,
+            z:0,
+            rx:0,
+            ry:0
+        }
+
+    };
+
+
+    /* position after folding */
+
+    const cube = {
+
+        front:{
+            x:0,
+            y:0,
+            z:half,
+            rx:0,
+            ry:0
+        },
+
+        right:{
+            x:half,
+            y:0,
+            z:0,
+            rx:0,
+            ry:90
+        },
+
+        back:{
+            x:0,
+            y:0,
+            z:-half,
+            rx:0,
+            ry:180
+        },
+
+        left:{
+            x:-half,
+            y:0,
+            z:0,
+            rx:0,
+            ry:-90
+        },
+
+        top:{
+            x:0,
+            y:-half,
+            z:0,
+            rx:90,
+            ry:0
+        },
+
+        bottom:{
+            x:0,
+            y:half,
+            z:0,
+            rx:-90,
+            ry:0
+        }
+
+    };
+
+
+    return{
+
+        x:lerp(
+            net[name].x,
+            cube[name].x,
+            t
+        ),
+
+        y:lerp(
+            net[name].y,
+            cube[name].y,
+            t
+        ),
+
+        z:lerp(
+            net[name].z,
+            cube[name].z,
+            t
+        ),
+
+        rx:lerp(
+            net[name].rx,
+            cube[name].rx,
+            t
+        ),
+
+        ry:lerp(
+            net[name].ry,
+            cube[name].ry,
+            t
+        )
+
+    };
+
+}
+
+
+/* =====================================
+   FOLD RENDER
+===================================== */
+
+function renderFold(){
+
+    const t =
+    Number(slider.value)/100;
+
+
+    document
+    .querySelectorAll(".face")
+    .forEach(face=>{
+
+        const pose =
+        getPose(
+            face.dataset.face,
+            t
+        );
+
+
+        face.style.transform = `
+
+        translate3d(
+        ${pose.x}px,
+        ${pose.y}px,
+        ${pose.z}px
+        )
+
+        rotateX(
+        ${pose.rx}deg
+        )
+
+        rotateY(
+        ${pose.ry}deg
+        )
+
+        `;
+
+    });
+
+
+    percent.textContent =
+    Math.round(t*100)+"%";
+
+
+    if(t < .05){
+
+        status.textContent =
+        "รูปคลี่";
+
+    }
+
+    else if(t > .95){
+
+        status.textContent =
+        "พับเป็นลูกบาศก์แล้ว";
+
+    }
+
+    else{
+
+        status.textContent =
+        "กำลังพับ...";
+
+    }
+
+}
+
+
+/* =====================================
+   ROTATE
+===================================== */
+
+function renderRotation(){
+
+    pitch =
+    Math.max(
+        -80,
+        Math.min(80,pitch)
+    );
+
+
+    scene.style.transform = `
+
+    rotateX(${pitch}deg)
+
+    rotateY(${yaw}deg)
+
+    `;
+
+}
+
+
+/* =====================================
+   FOLD ANIMATION
+===================================== */
+
+function animateFold(target){
+
+    if(animationFrame){
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+    }
+
+
+    const start =
+    Number(slider.value);
+
+    const difference =
+    target-start;
+
+    const startTime =
+    performance.now();
+
+    const duration =
+    700;
+
+
+    function animate(time){
+
+        const progress =
+        Math.min(
+            1,
+            (time-startTime)/duration
+        );
+
+
+        const ease =
+        1-Math.pow(
+            1-progress,
+            3
+        );
+
+
+        slider.value =
+        start +
+        difference*ease;
+
+
+        renderFold();
+
+
+        if(progress < 1){
+
+            animationFrame =
+            requestAnimationFrame(
+                animate
+            );
+
+        }
+
+    }
+
+
+    animationFrame =
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+
+/* =====================================
+   CONTROLS
+===================================== */
+
+slider.addEventListener(
+    "input",
+    renderFold
+);
+
+
+document
+.getElementById("fold")
+.addEventListener(
+    "click",
+    ()=>animateFold(100)
+);
+
+
+document
+.getElementById("unfold")
+.addEventListener(
+    "click",
+    ()=>animateFold(0)
+);
+
+
+document
+.getElementById("rotateLeft")
+.addEventListener(
+    "click",
+    ()=>{
+
+        yaw -= 45;
+
+        renderRotation();
+
+    }
+);
+
+
+document
+.getElementById("rotateRight")
+.addEventListener(
+    "click",
+    ()=>{
+
+        yaw += 45;
+
+        renderRotation();
+
+    }
+);
+
+
+document
+.getElementById("reset")
+.addEventListener(
+    "click",
+    ()=>{
+
+        yaw = 30;
+
+        pitch = -22;
+
+        slider.value = 0;
+
+        renderRotation();
+
+        renderFold();
+
+    }
+);
+
+
+/* =====================================
+   MOUSE / TOUCH DRAG
+===================================== */
+
+stage.addEventListener(
+    "pointerdown",
+    event=>{
+
+        dragging = true;
+
+        lastX =
+        event.clientX;
+
+        lastY =
+        event.clientY;
+
+
+        stage.setPointerCapture(
+            event.pointerId
+        );
+
+    }
+);
+
+
+stage.addEventListener(
+    "pointermove",
+    event=>{
+
+        if(!dragging){
+
+            return;
+
+        }
+
+
+        const deltaX =
+        event.clientX-lastX;
+
+        const deltaY =
+        event.clientY-lastY;
+
+
+        yaw += deltaX*.7;
+
+        pitch -= deltaY*.6;
+
+
+        lastX =
+        event.clientX;
+
+        lastY =
+        event.clientY;
+
+
+        renderRotation();
+
+    }
+);
+
+
+stage.addEventListener(
+    "pointerup",
+    event=>{
+
+        dragging = false;
+
+
+        if(
+            stage.hasPointerCapture(
+                event.pointerId
+            )
+        ){
+
+            stage.releasePointerCapture(
+                event.pointerId
+            );
+
+        }
+
+    }
+);
+
+
+stage.addEventListener(
+    "pointercancel",
+    ()=>{
+
+        dragging = false;
+
+    }
+);
+
+
+/* =====================================
+   SYMBOLS FOR ANSWERS
+===================================== */
+
+function eye(x,y,rotation=0){
+
+return`
+
+<g transform="
+translate(${x} ${y})
+rotate(${rotation})
+">
+
+<path
+d="
+M-21 0
+Q0 -15 21 0
+Q0 15 -21 0
+"
+fill="none"
+stroke="currentColor"
+stroke-width="4"
+/>
+
+</g>
+
+`;
+
+}
+
+
+function tag(x,y,rotation=0){
+
+return`
+
+<g transform="
+translate(${x} ${y})
+rotate(${rotation})
+">
+
+<rect
+x="-10"
+y="-25"
+width="20"
+height="50"
+rx="10"
+fill="none"
+stroke="currentColor"
+stroke-width="4"
+/>
+
+<circle
+cx="0"
+cy="14"
+r="4"
+fill="currentColor"
+/>
+
+</g>
+
+`;
+
+}
+
+
+function dotsVertical(x,y){
+
+return`
+
+<g
+transform="
+translate(${x} ${y})
+"
+stroke="currentColor"
+stroke-width="2"
+>
+
+<circle
+cx="0"
+cy="-18"
+r="5"
+fill="white"
+/>
+
+<circle
+cx="0"
+cy="-6"
+r="5"
+fill="currentColor"
+/>
+
+<circle
+cx="0"
+cy="6"
+r="5"
+fill="currentColor"
+/>
+
+<circle
+cx="0"
+cy="18"
+r="5"
+fill="white"
+/>
+
+</g>
+
+`;
+
+}
+
+
+function dotsHorizontal(x,y){
+
+return`
+
+<g transform="
+translate(${x} ${y})
+rotate(90)
+">
+
+${dotsVertical(0,0)}
+
+</g>
+
+`;
+
+}
+
+
+/* =====================================
+   ANSWER CUBES
+===================================== */
+
+const answerConfig = [
+
+{
+    top:tag(75,37,0),
+    left:dotsHorizontal(42,85),
+    right:eye(108,94,-25)
+},
+
+{
+    top:eye(58,34,-15),
+    left:tag(48,90,-28),
+    right:dotsVertical(111,86)
+},
+
+{
+    top:dotsHorizontal(76,33),
+    left:eye(43,91,-25),
+    right:tag(108,89,28)
+},
+
+{
+    top:tag(75,36,180),
+    left:eye(43,97,-25),
+    right:dotsHorizontal(110,84)
+},
+
+{
+    top:eye(94,34,15),
+    left:tag(48,91,-28),
+    right:dotsVertical(111,86)
+}
+
+];
+
+
+function cubeSVG(config){
+
+return`
+
+<svg
+viewBox="0 0 150 145"
+>
+
+<!-- TOP -->
+
+<polygon
+points="
+75,15
+130,48
+75,80
+20,48
+"
+
+fill="white"
+stroke="currentColor"
+stroke-width="3"
+/>
+
+
+<!-- LEFT -->
+
+<polygon
+points="
+20,48
+75,80
+75,137
+20,105
+"
+
+fill="white"
+stroke="currentColor"
+stroke-width="3"
+/>
+
+
+<!-- RIGHT -->
+
+<polygon
+points="
+75,80
+130,48
+130,105
+75,137
+"
+
+fill="white"
+stroke="currentColor"
+stroke-width="3"
+/>
+
+
+${config.top}
+
+${config.left}
+
+${config.right}
+
+</svg>
+
+`;
+
+}
+
+
+/* =====================================
+   CREATE ANSWERS
+===================================== */
+
+const answerContainer =
+document.getElementById(
+    "answers"
+);
+
+
+let selectedAnswer = null;
+
+
+answerConfig.forEach(
+(config,index)=>{
+
+    const button =
+    document.createElement(
+        "div"
+    );
+
+
+    button.className =
+    "answer";
+
+
+    button.dataset.answer =
+    index+1;
+
+
+    button.innerHTML =
+
+    cubeSVG(config)
+
+    +
+
+    `
+
+    <div class="answer-number">
+
+    ${index+1}
+
+    </div>
+
+    `;
+
+
+    button.addEventListener(
+        "click",
+        ()=>selectAnswer(
+            index+1,
+            button
+        )
+    );
+
+
+    answerContainer.appendChild(
+        button
+    );
+
+});
+
+
+function selectAnswer(
+number,
+element
+){
+
+    selectedAnswer =
+    number;
+
+
+    document
+    .querySelectorAll(".answer")
+    .forEach(answer=>{
+
+        answer.classList.remove(
+            "selected",
+            "wrong",
+            "correct"
+        );
+
+    });
+
+
+    element.classList.add(
+        "selected"
+    );
+
+
+    document
+    .getElementById(
+        "result"
+    )
+    .innerHTML =
+
+    `คุณเลือก <b>ข้อ ${number}</b>
+    — ทดลองหมุนกล่องก่อนตรวจคำตอบได้`;
+
+}
+
+
+/* =====================================
+   CHECK ANSWER
+===================================== */
+
+document
+.getElementById(
+    "checkAnswer"
+)
+.addEventListener(
+"click",
+()=>{
+
+    const result =
+    document.getElementById(
+        "result"
+    );
+
+
+    if(
+        selectedAnswer === null
+    ){
+
+        result.innerHTML =
+        "⚠️ กรุณาเลือกคำตอบก่อน";
+
+        return;
+
+    }
+
+
+    /*
+        เฉลยโจทย์จากภาพ
+    */
+
+    const correctAnswer = 5;
+
+
+    const selectedElement =
+    document.querySelector(
+        `[data-answer="${selectedAnswer}"]`
+    );
+
+
+    if(
+        selectedAnswer ===
+        correctAnswer
+    ){
+
+        selectedElement
+        .classList
+        .add("correct");
+
+
+        result.innerHTML = `
+
+        🎉 <b>ถูกต้อง! ข้อ 5</b>
+
+        <br><br>
+
+        เมื่อพับรูปคลี่เป็นลูกบาศก์
+
+        หน้าที่มี
+
+        <b>รูปตา</b>,
+
+        <b>รูปแท่งมีจุด</b>
+
+        และ
+
+        <b>จุด 4 จุด</b>
+
+        สามารถมาพบกันที่มุมเดียวกันได้
+
+        และทิศทางของสัญลักษณ์
+        สอดคล้องกับตัวเลือกที่ 5
+
+        `;
+
+
+        /*
+        fold automatically
+        */
+
+        animateFold(100);
+
+
+        yaw = -40;
+        pitch = -25;
+
+        renderRotation();
+
+    }
+
+    else{
+
+        selectedElement
+        .classList
+        .add("wrong");
+
+
+        result.innerHTML = `
+
+        ❌ <b>ยังไม่ถูก</b>
+
+        <br><br>
+
+        ลองกด
+        <b>พับ</b>
+
+        แล้วลากหมุนลูกบาศก์
+
+        เพื่อสังเกตว่า
+
+        <b>รูปตา</b>
+
+        อยู่ด้านใดของ
+
+        <b>รูปแท่ง</b>
+
+        และแนวจุด 4 จุด
+        ควรหันไปทางใด
+
+        `;
+
+    }
+
+});
+
+
+/* =====================================
+   TRY AGAIN
+===================================== */
+
+document
+.getElementById(
+    "tryAgain"
+)
+.addEventListener(
+"click",
+()=>{
+
+    selectedAnswer = null;
+
+
+    document
+    .querySelectorAll(
+        ".answer"
+    )
+    .forEach(answer=>{
+
+        answer.classList.remove(
+            "selected",
+            "correct",
+            "wrong"
+        );
+
+    });
+
+
+    document
+    .getElementById(
+        "result"
+    )
+    .innerHTML =
+
+    `เลือกคำตอบก่อน แล้วกด
+    <b>ตรวจคำตอบ</b>`;
+
+
+    slider.value = 0;
+
+    yaw = 30;
+    pitch = -22;
+
+
+    renderFold();
+    renderRotation();
+
+});
+
+
+/* =====================================
+   START
+===================================== */
+
+renderFold();
+renderRotation();
+
+</script>
+
+</body>
+</html>
+
+

@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sound Wave Lab</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+  padding: 24px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+.subtitle {
+  color: #64748b;
+  margin-top: -5px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 18px;
+}
+
+.control-group {
+  margin-bottom: 22px;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.control-header strong {
+  color: #4338ca;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #4f46e5;
+}
+
+.range-label {
+  display: flex;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-size: 15px;
+  background: white;
+}
+
+button.primary {
+  background: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.metric {
+  padding: 14px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+}
+
+.metric small {
+  display: block;
+  color: #64748b;
+  margin-bottom: 7px;
+}
+
+.metric strong {
+  font-size: 21px;
+}
+
+.explain {
+  margin-top: 12px;
+  padding: 15px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  line-height: 1.6;
+}
+
+.callout {
+  background: #eef2ff;
+  border-left: 5px solid #4f46e5;
+  border-radius: 12px;
+  padding: 14px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.visual-section {
+  margin-top: 22px;
+}
+
+.visual-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.visual-header p {
+  margin: 5px 0 0;
+  color: #64748b;
+}
+
+.badge {
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.note {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.concepts {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.concept {
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 14px;
+  padding: 15px;
+}
+
+.concept strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.formula {
+  margin-top: 18px;
+  text-align: center;
+  background: #eef2ff;
+  padding: 16px;
+  border-radius: 14px;
+  line-height: 1.7;
+}
+
+@media (max-width: 850px) {
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .concepts {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 520px) {
+
+  body {
+    padding: 12px;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+  <h1>🔊 Sound Wave Lab</h1>
+
+  <p class="subtitle">
+    ทดลองปรับความถี่ แอมพลิจูด และตัวกลาง
+    แล้วสังเกตการเปลี่ยนแปลงของคลื่นเสียง
+  </p>
+
+
+  <div class="callout">
+
+    <strong>ลองสังเกต:</strong>
+
+    ความถี่มากขึ้น → เสียงสูงขึ้น
+
+    &nbsp;•&nbsp;
+
+    แอมพลิจูดมากขึ้น → เสียงดังขึ้น
+
+    &nbsp;•&nbsp;
+
+    เปลี่ยนตัวกลาง → ความเร็วและความยาวคลื่นเปลี่ยน
+
+  </div>
+
+
+
+  <div class="grid">
+
+    <!-- CONTROLS -->
+
+    <div class="card">
+
+      <!-- FREQUENCY -->
+
+      <div class="control-group">
+
+        <div class="control-header">
+
+          <label for="frequency">
+            ความถี่ f
+          </label>
+
+          <strong>
+            <span id="frequencyValue">
+              440
+            </span>
+            Hz
+          </strong>
+
+        </div>
+
+
+        <input
+          id="frequency"
+          type="range"
+          min="100"
+          max="1200"
+          step="10"
+          value="440"
+        >
+
+
+        <div class="range-label">
+
+          <span>
+            เสียงต่ำ
+          </span>
+
+          <span>
+            เสียงสูง
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- AMPLITUDE -->
+
+      <div class="control-group">
+
+        <div class="control-header">
+
+          <label for="amplitude">
+            แอมพลิจูด A
+          </label>
+
+          <strong>
+            <span id="amplitudeValue">
+              60
+            </span>
+            %
+          </strong>
+
+        </div>
+
+
+        <input
+          id="amplitude"
+          type="range"
+          min="10"
+          max="100"
+          step="5"
+          value="60"
+        >
+
+
+        <div class="range-label">
+
+          <span>
+            เบา
+          </span>
+
+          <span>
+            ดัง
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- MEDIUM -->
+
+      <div class="control-group">
+
+        <label for="medium">
+          ตัวกลาง
+        </label>
+
+        <br><br>
+
+        <select id="medium">
+
+          <option value="air">
+            อากาศ
+          </option>
+
+          <option value="water">
+            น้ำ
+          </option>
+
+          <option value="steel">
+            เหล็ก
+          </option>
+
+        </select>
+
+      </div>
+
+
+
+      <!-- BUTTONS -->
+
+      <div class="buttons">
+
+        <button
+          id="pauseBtn"
+          class="primary"
+        >
+          ⏸ หยุดภาพ
+        </button>
+
+
+        <button id="resetBtn">
+          ↺ ค่าเริ่มต้น
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- INFORMATION -->
+
+    <div>
+
+      <div class="metrics">
+
+        <div class="metric">
+
+          <small>
+            ลักษณะเสียง
+          </small>
+
+          <strong id="pitchCard">
+            ปานกลาง
+          </strong>
+
+        </div>
+
+
+        <div class="metric">
+
+          <small>
+            ความดัง
+          </small>
+
+          <strong id="loudCard">
+            ปานกลาง
+          </strong>
+
+        </div>
+
+
+        <div class="metric">
+
+          <small>
+            ความเร็วเสียง v
+          </small>
+
+          <strong id="speedCard">
+            343 m/s
+          </strong>
+
+        </div>
+
+
+        <div class="metric">
+
+          <small>
+            ความยาวคลื่น λ
+          </small>
+
+          <strong id="lambdaCard">
+            0.780 m
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="explain"
+        class="explain"
+      >
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================
+       VISUALIZATION
+  ========================== -->
+
+  <div class="visual-section">
+
+    <div class="visual-header">
+
+      <div>
+
+        <h2>
+          มองคลื่นเสียง 2 แบบพร้อมกัน
+        </h2>
+
+        <p>
+          กราฟด้านบนแสดงรูปคลื่น
+          ส่วนด้านล่างแสดงการสั่นของอนุภาค
+        </p>
+
+      </div>
+
+
+      <div class="badge">
+
+        คลื่นเสียง = คลื่นตามยาว
+
+      </div>
+
+    </div>
+
+
+
+    <svg
+      id="visual"
+      viewBox="0 0 760 390"
+    >
+
+      <!-- =========================
+           WAVE GRAPH
+      ========================== -->
+
+      <rect
+        x="35"
+        y="2"
+        width="690"
+        height="180"
+        rx="14"
+        fill="#ffffff"
+        stroke="#cbd5e1"
+      />
+
+
+      <line
+        x1="65"
+        y1="105"
+        x2="700"
+        y2="105"
+        stroke="#cbd5e1"
+        stroke-width="2"
+      />
+
+
+      <text
+        x="60"
+        y="25"
+        font-size="13"
+        fill="#64748b"
+      >
+        ความดัน / การกระจัด
+      </text>
+
+
+      <path
+        id="wavePath"
+        fill="none"
+        stroke="#4f46e5"
+        stroke-width="4"
+      />
+
+
+      <!-- AMPLITUDE GUIDE -->
+
+      <line
+        id="ampGuide"
+        x1="90"
+        y1="102"
+        x2="90"
+        y2="70"
+        stroke="#16a34a"
+        stroke-width="2"
+        stroke-dasharray="5 5"
+      />
+
+
+      <text
+        id="ampLabel"
+        x="96"
+        y="70"
+        font-size="13"
+        fill="#15803d"
+      >
+        A
+      </text>
+
+
+
+      <!-- =========================
+           PARTICLES
+      ========================== -->
+
+      <rect
+        x="35"
+        y="205"
+        width="690"
+        height="145"
+        rx="14"
+        fill="#ffffff"
+        stroke="#cbd5e1"
+      />
+
+
+      <text
+        x="60"
+        y="230"
+        font-size="13"
+        fill="#64748b"
+      >
+        อนุภาคของตัวกลาง
+      </text>
+
+
+
+      <!-- SPEAKER -->
+
+      <g
+        id="speaker"
+        transform="translate(55,250)"
+      >
+
+        <rect
+          x="0"
+          y="18"
+          width="28"
+          height="48"
+          rx="5"
+          fill="#eef2ff"
+          stroke="#4f46e5"
+          stroke-width="2"
+        />
+
+
+        <path
+          d="
+          M28 30
+          L50 18
+          V66
+          L28 54
+          Z
+          "
+          fill="#eef2ff"
+          stroke="#4f46e5"
+          stroke-width="2"
+        />
+
+
+        <path
+          id="speakerCone"
+          d="
+          M55 29
+          Q70 42
+          55 55
+          "
+          fill="none"
+          stroke="#4f46e5"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
+
+      </g>
+
+
+
+      <!-- PARTICLES -->
+
+      <g id="particles"></g>
+
+
+      <text
+        x="325"
+        y="335"
+        text-anchor="middle"
+        font-size="12"
+        fill="#64748b"
+      >
+        บริเวณอัด
+      </text>
+
+
+      <text
+        x="530"
+        y="335"
+        text-anchor="middle"
+        font-size="12"
+        fill="#64748b"
+      >
+        บริเวณขยาย
+      </text>
+
+    </svg>
+
+
+
+    <p class="note">
+
+      หมายเหตุ:
+      ภาพเคลื่อนไหวถูกชะลอเพื่อให้เห็นการสั่นของอนุภาคชัดเจน
+      อนุภาคไม่ได้เดินทางไปพร้อมกับคลื่น
+      แต่สั่นไป–กลับรอบตำแหน่งสมดุล
+
+    </p>
+
+  </div>
+
+
+
+  <!-- =========================
+       CONCEPTS
+  ========================== -->
+
+  <div class="concepts">
+
+    <div class="concept">
+
+      <strong>
+        ความถี่ f
+      </strong>
+
+      จำนวนรอบการสั่นต่อวินาที
+
+      <br><br>
+
+      <b>
+        f มาก → เสียงสูง
+      </b>
+
+    </div>
+
+
+    <div class="concept">
+
+      <strong>
+        แอมพลิจูด A
+      </strong>
+
+      ขนาดการสั่นของอนุภาค
+
+      <br><br>
+
+      <b>
+        A มาก → เสียงดัง
+      </b>
+
+    </div>
+
+
+    <div class="concept">
+
+      <strong>
+        ความยาวคลื่น λ
+      </strong>
+
+      ระยะระหว่างตำแหน่งที่มีเฟสเหมือนกัน
+
+      <br><br>
+
+      <b>
+        λ = v / f
+      </b>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="formula">
+
+    <strong>
+      ความสัมพันธ์สำคัญ
+    </strong>
+
+    <br>
+
+    v = fλ
+
+    &nbsp;&nbsp;•&nbsp;&nbsp;
+
+    T = 1 / f
+
+    <br>
+
+    คาบปัจจุบัน
+
+    T =
+
+    <span id="periodValue">
+      2.27
+    </span>
+
+    ms
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const frequency =
+document.getElementById(
+  "frequency"
+);
+
+
+const amplitude =
+document.getElementById(
+  "amplitude"
+);
+
+
+const medium =
+document.getElementById(
+  "medium"
+);
+
+
+const wavePath =
+document.getElementById(
+  "wavePath"
+);
+
+
+const particles =
+document.getElementById(
+  "particles"
+);
+
+
+const pauseBtn =
+document.getElementById(
+  "pauseBtn"
+);
+
+
+
+/* =========================
+   MEDIUM DATA
+========================= */
+
+const media = {
+
+  air: {
+
+    name: "อากาศ",
+
+    speed: 343
+
+  },
+
+
+  water: {
+
+    name: "น้ำ",
+
+    speed: 1480
+
+  },
+
+
+  steel: {
+
+    name: "เหล็ก",
+
+    speed: 5960
+
+  }
+
+};
+
+
+
+/* =========================
+   ANIMATION STATE
+========================= */
+
+let paused = false;
+
+let phase = 0;
+
+let lastTime =
+performance.now();
+
+
+
+/* =========================
+   PARTICLE POSITIONS
+========================= */
+
+const particleBase = [];
+
+
+for(
+  let i = 0;
+  i < 34;
+  i++
+) {
+
+  particleBase.push(
+
+    130 +
+    i * 16.5
+
+  );
+
+}
+
+
+
+/* =========================
+   SOUND LEVEL
+========================= */
+
+function pitchText(
+  frequency
+) {
+
+  if(
+    frequency < 300
+  ) {
+
+    return "ต่ำ";
+
+  }
+
+
+  if(
+    frequency < 700
+  ) {
+
+    return "ปานกลาง";
+
+  }
+
+
+  return "สูง";
+
+}
+
+
+
+/* =========================
+   LOUDNESS
+========================= */
+
+function loudText(
+  amplitude
+) {
+
+  if(
+    amplitude < 35
+  ) {
+
+    return "เบา";
+
+  }
+
+
+  if(
+    amplitude < 75
+  ) {
+
+    return "ปานกลาง";
+
+  }
+
+
+  return "ดัง";
+
+}
+
+
+
+/* =========================
+   UPDATE INFORMATION
+========================= */
+
+function updateInfo() {
+
+  const f =
+  Number(
+    frequency.value
+  );
+
+
+  const amp =
+  Number(
+    amplitude.value
+  );
+
+
+  const mediumData =
+  media[
+    medium.value
+  ];
+
+
+  /*
+    wavelength
+  */
+
+  const lambda =
+
+  mediumData.speed /
+  f;
+
+
+  /*
+    period in ms
+  */
+
+  const periodMs =
+
+  1000 /
+  f;
+
+
+
+  /* frequency */
+
+  document
+  .getElementById(
+    "frequencyValue"
+  )
+  .textContent =
+  f;
+
+
+
+  /* amplitude */
+
+  document
+  .getElementById(
+    "amplitudeValue"
+  )
+  .textContent =
+  amp;
+
+
+
+  /* pitch */
+
+  document
+  .getElementById(
+    "pitchCard"
+  )
+  .textContent =
+
+  pitchText(
+    f
+  );
+
+
+
+  /* loudness */
+
+  document
+  .getElementById(
+    "loudCard"
+  )
+  .textContent =
+
+  loudText(
+    amp
+  );
+
+
+
+  /* wave speed */
+
+  document
+  .getElementById(
+    "speedCard"
+  )
+  .textContent =
+
+  mediumData.speed +
+  " m/s";
+
+
+
+  /* wavelength */
+
+  document
+  .getElementById(
+    "lambdaCard"
+  )
+  .textContent =
+
+  lambda.toFixed(
+
+    lambda < 1
+    ? 3
+    : 2
+
+  )
+
+  + " m";
+
+
+
+  /* period */
+
+  document
+  .getElementById(
+    "periodValue"
+  )
+  .textContent =
+
+  periodMs.toFixed(
+    2
+  );
+
+
+
+  /* explanation */
+
+  document
+  .getElementById(
+    "explain"
+  )
+  .innerHTML =
+
+  `ขณะนี้เสียงมีความถี่
+
+  <strong>
+    ${f} Hz
+  </strong>
+
+  จึงเป็นเสียงระดับ
+
+  <strong>
+    ${pitchText(f)}
+  </strong>
+
+  <br>
+
+  แอมพลิจูด
+
+  <strong>
+    ${amp}%
+  </strong>
+
+  ทำให้มีความดังระดับ
+
+  <strong>
+    ${loudText(amp)}
+  </strong>
+
+  <br>
+
+  ใน${mediumData.name}
+
+  เสียงเคลื่อนที่ประมาณ
+
+  <strong>
+    ${mediumData.speed} m/s
+  </strong>
+
+  ทำให้ความยาวคลื่นเท่ากับ
+
+  <strong>
+
+    ${lambda.toFixed(
+      lambda < 1
+      ? 3
+      : 2
+    )}
+
+    m
+
+  </strong>`;
+
+}
+
+
+
+/* =========================
+   DRAW WAVE
+========================= */
+
+function drawWave(
+  phase
+) {
+
+  const f =
+  Number(
+    frequency.value
+  );
+
+
+  const amp =
+
+  Number(
+    amplitude.value
+  )
+
+  / 100;
+
+
+
+  /*
+    Visual number of cycles
+
+    ใช้เพื่อช่วยให้เห็น
+    frequency ต่างกัน
+  */
+
+  const visualCycles =
+
+  1.2 +
+
+  (
+    (
+      f - 100
+    )
+
+    / 1100
+
+  )
+
+  * 5.3;
+
+
+
+  /*
+    Visual amplitude
+  */
+
+  const waveAmplitude =
+
+  18 +
+
+  amp * 42;
+
+
+
+  let path = "";
+
+
+  for(
+    let x = 65;
+    x <= 700;
+    x += 4
+  ) {
+
+    const position =
+
+    (
+      x - 65
+    )
+
+    /
+
+    (
+      700 - 65
+    );
+
+
+    const y =
+
+    105 -
+
+    waveAmplitude
+
+    *
+
+    Math.sin(
+
+      2 *
+      Math.PI *
+      visualCycles *
+      position
+
+      -
+
+      phase
+
+    );
+
+
+    path +=
+
+    (
+      x === 65
+      ? "M"
+      : "L"
+    )
+
+    +
+
+    x.toFixed(1)
+
+    + " "
+
+    +
+
+    y.toFixed(1)
+
+    + " ";
+
+  }
+
+
+  wavePath
+  .setAttribute(
+    "d",
+    path
+  );
+
+
+
+  /*
+    amplitude guide
+  */
+
+  document
+  .getElementById(
+    "ampGuide"
+  )
+  .setAttribute(
+
+    "y2",
+
+    105 -
+    waveAmplitude
+
+  );
+
+
+  document
+  .getElementById(
+    "ampLabel"
+  )
+  .setAttribute(
+
+    "y",
+
+    100 -
+    waveAmplitude
+
+  );
+
+}
+
+
+
+/* =========================
+   DRAW PARTICLES
+========================= */
+
+function drawParticles(
+  phase
+) {
+
+  const f =
+  Number(
+    frequency.value
+  );
+
+
+  const amp =
+
+  Number(
+    amplitude.value
+  )
+
+  / 100;
+
+
+
+  const visualCycles =
+
+  1.2 +
+
+  (
+    (
+      f - 100
+    )
+
+    / 1100
+
+  )
+
+  * 5.3;
+
+
+
+  /*
+    Particle oscillation
+    amplitude
+  */
+
+  const particleAmplitude =
+
+  5 +
+
+  amp * 12;
+
+
+
+  let html = "";
+
+
+  particleBase
+  .forEach(
+
+    (
+      baseX,
+      index
+    ) => {
+
+      const normalized =
+
+      (
+        baseX -
+        130
+      )
+
+      /
+
+      (
+        680 -
+        130
+      );
+
+
+      /*
+        particle moves
+        horizontally
+      */
+
+      const shift =
+
+      particleAmplitude
+
+      *
+
+      Math.sin(
+
+        2 *
+        Math.PI *
+        visualCycles *
+        normalized
+
+        -
+
+        phase
+
+      );
+
+
+      const x =
+
+      baseX +
+      shift;
+
+
+      /*
+        Three particle rows
+      */
+
+      const row =
+
+      index % 3;
+
+
+      const y =
+
+      268 +
+      row * 17;
+
+
+
+      html += `
+
+      <circle
+
+        cx="${x.toFixed(1)}"
+
+        cy="${y}"
+
+        r="4.5"
+
+        fill="#16a34a"
+
+        opacity="${
+          0.65 +
+          row * 0.1
+        }"
+
+      />
+
+      `;
+
+    }
+
+  );
+
+
+  particles.innerHTML =
+  html;
+
+
+
+  /*
+    Speaker vibration
+  */
+
+  const speakerMove =
+
+  Math.sin(
+    phase
+  )
+
+  *
+
+  (
+    3 +
+    amp * 5
+  );
+
+
+  document
+  .getElementById(
+    "speakerCone"
+  )
+  .setAttribute(
+
+    "transform",
+
+    `translate(
+      ${speakerMove},
+      0
+    )`
+
+  );
+
+}
+
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render(
+  phase
+) {
+
+  drawWave(
+    phase
+  );
+
+
+  drawParticles(
+    phase
+  );
+
+}
+
+
+
+/* =========================
+   ANIMATION LOOP
+========================= */
+
+function animationLoop(
+  now
+) {
+
+  /*
+    prevent huge frame gap
+  */
+
+  const deltaTime =
+
+  Math.min(
+
+    40,
+
+    now -
+    lastTime
+
+  );
+
+
+  lastTime =
+  now;
+
+
+
+  if(
+    !paused
+  ) {
+
+    const f =
+
+    Number(
+      frequency.value
+    );
+
+
+    /*
+      Animation speed is
+      intentionally slowed down.
+
+      Real sound oscillations
+      would be far too fast
+      to see.
+    */
+
+    const visualSpeed =
+
+    1.4 +
+
+    (
+      (
+        f - 100
+      )
+
+      / 1100
+
+    )
+
+    * 3.8;
+
+
+
+    phase +=
+
+    deltaTime /
+    1000
+
+    *
+
+    visualSpeed
+
+    *
+
+    2 *
+    Math.PI;
+
+
+
+    render(
+      phase
+    );
+
+  }
+
+
+
+  requestAnimationFrame(
+    animationLoop
+  );
+
+}
+
+
+
+/* =========================
+   INPUT EVENTS
+========================= */
+
+frequency
+.addEventListener(
+
+  "input",
+
+  () => {
+
+    updateInfo();
+
+    render(
+      phase
+    );
+
+  }
+
+);
+
+
+
+amplitude
+.addEventListener(
+
+  "input",
+
+  () => {
+
+    updateInfo();
+
+    render(
+      phase
+    );
+
+  }
+
+);
+
+
+
+medium
+.addEventListener(
+
+  "change",
+
+  () => {
+
+    updateInfo();
+
+    render(
+      phase
+    );
+
+  }
+
+);
+
+
+
+/* =========================
+   PAUSE
+========================= */
+
+pauseBtn
+.addEventListener(
+
+  "click",
+
+  () => {
+
+    paused =
+    !paused;
+
+
+    pauseBtn.textContent =
+
+    paused
+
+    ?
+
+    "▶ เล่นภาพ"
+
+    :
+
+    "⏸ หยุดภาพ";
+
+  }
+
+);
+
+
+
+/* =========================
+   RESET
+========================= */
+
+document
+.getElementById(
+  "resetBtn"
+)
+.addEventListener(
+
+  "click",
+
+  () => {
+
+    frequency.value =
+    440;
+
+
+    amplitude.value =
+    60;
+
+
+    medium.value =
+    "air";
+
+
+    phase =
+    0;
+
+
+    paused =
+    false;
+
+
+    pauseBtn.textContent =
+    "⏸ หยุดภาพ";
+
+
+    updateInfo();
+
+
+    render(
+      phase
+    );
+
+  }
+
+);
+
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+updateInfo();
+
+render(
+  phase
+);
+
+
+requestAnimationFrame(
+  animationLoop
+);
+
+</script>
+
+</body>
+</html>

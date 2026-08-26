@@ -1,0 +1,3433 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>3D Cube Builder — TGAT2</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1,
+h2 {
+  margin-top: 0;
+}
+
+.subtitle {
+  margin-top: -4px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.callout {
+  margin-bottom: 18px;
+  padding: 15px;
+
+  border-left: 5px solid #4f46e5;
+  border-radius: 12px;
+
+  background: #eef2ff;
+  line-height: 1.7;
+}
+
+
+/* ==================================================
+   TOOLBAR
+================================================== */
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.card {
+  padding: 16px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  background: white;
+}
+
+.tool-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.control-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+button {
+  padding: 11px 12px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+
+  background: white;
+  color: #172033;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  transition:
+    background .15s,
+    border-color .15s,
+    transform .15s;
+}
+
+button:hover {
+  background: #f8fafc;
+}
+
+.tool-button.active {
+  border-color: #4f46e5;
+  background: #4f46e5;
+  color: white;
+}
+
+
+/* ==================================================
+   COLOR PALETTE
+================================================== */
+
+.palette-box {
+  margin-top: 15px;
+  padding: 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #f8fafc;
+}
+
+.palette-title {
+  font-weight: bold;
+}
+
+.palette-description {
+  margin-top: 4px;
+
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-top: 14px;
+}
+
+.color-choice {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  padding: 0;
+
+  border: 3px solid transparent;
+  border-radius: 50%;
+
+  background: var(--swatch);
+
+  cursor: pointer;
+
+  /*
+    ทำให้สีขาวยังเห็นขอบ
+  */
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, .22);
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    border-color .15s ease;
+}
+
+.color-choice:hover {
+  background: var(--swatch);
+  transform: scale(1.1);
+}
+
+.color-choice.active {
+  background: var(--swatch);
+
+  border-color: #172033;
+
+  box-shadow:
+    0 0 0 3px #ffffff,
+    0 0 0 6px #4f46e5;
+
+  transform: scale(1.08);
+}
+
+.color-choice.active::after {
+  content: "✓";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  color: white;
+
+  font-size: 19px;
+  font-weight: bold;
+
+  text-shadow:
+    0 1px 4px rgba(0,0,0,.7);
+}
+
+
+/*
+  สีขาวใช้เครื่องหมายถูกสีเข้ม
+*/
+
+.color-choice[data-light="true"].active::after {
+  color: #172033;
+  text-shadow: none;
+}
+
+
+/* ==================================================
+   SELECTED COLOR
+================================================== */
+
+.selected-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 14px;
+
+  color: #64748b;
+  font-size: 13px;
+}
+
+.selected-color-preview {
+  width: 24px;
+  height: 24px;
+
+  border: 2px solid #334155;
+  border-radius: 7px;
+}
+
+
+/* ==================================================
+   SCENE HEADER
+================================================== */
+
+.scene-header {
+  display: flex;
+
+  align-items: end;
+  justify-content: space-between;
+
+  gap: 12px;
+  flex-wrap: wrap;
+
+  margin-bottom: 10px;
+}
+
+.badge {
+  padding: 7px 12px;
+
+  border-radius: 999px;
+
+  background: #eef2ff;
+  color: #4338ca;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+/* ==================================================
+   VIEWPORT
+================================================== */
+
+.viewport {
+  position: relative;
+
+  height: 520px;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #ffffff 0%,
+      #f8fafc 67%,
+      #edf2f7 100%
+    );
+
+  perspective: 1000px;
+
+  touch-action: none;
+  user-select: none;
+
+  /*
+    พื้นที่ว่าง = ลากหมุน
+  */
+  cursor: grab;
+}
+
+.viewport.dragging {
+  cursor: grabbing;
+}
+
+
+/* ==================================================
+   FLOOR
+================================================== */
+
+.floor {
+  position: absolute;
+
+  left: 50%;
+  top: 69%;
+
+  width: 680px;
+  height: 420px;
+
+  transform:
+    translate(-50%, -50%)
+    rotateX(68deg);
+
+  transform-origin: center;
+
+  background-image:
+    linear-gradient(
+      rgba(148,163,184,.23) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(148,163,184,.23) 1px,
+      transparent 1px
+    );
+
+  background-size: 40px 40px;
+
+  opacity: .7;
+
+  pointer-events: none;
+}
+
+
+/* ==================================================
+   3D WORLD
+================================================== */
+
+.world {
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  width: 0;
+  height: 0;
+
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+
+/* ==================================================
+   CUBE
+================================================== */
+
+.cube {
+  position: absolute;
+
+  width: 64px;
+  height: 64px;
+
+  margin-left: -32px;
+  margin-top: -32px;
+
+  transform-style: preserve-3d;
+}
+
+
+/* ==================================================
+   CUBE FACES
+================================================== */
+
+.face {
+  position: absolute;
+
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #1e293b;
+
+  transform-style: preserve-3d;
+
+  backface-visibility: hidden;
+
+  transition:
+    filter .12s,
+    border-color .12s,
+    box-shadow .12s;
+}
+
+.front {
+  transform:
+    translateZ(32px);
+}
+
+.back {
+  transform:
+    rotateY(180deg)
+    translateZ(32px);
+}
+
+.right {
+  transform:
+    rotateY(90deg)
+    translateZ(32px);
+}
+
+.left {
+  transform:
+    rotateY(-90deg)
+    translateZ(32px);
+}
+
+.top {
+  transform:
+    rotateX(90deg)
+    translateZ(32px);
+}
+
+.bottom {
+  transform:
+    rotateX(-90deg)
+    translateZ(32px);
+}
+
+
+/* ==================================================
+   SELECTED BLOCK
+================================================== */
+
+.cube.selected .face {
+  border-color: #f97316;
+
+  box-shadow:
+    inset 0 0 0 3px rgba(249,115,22,.30);
+}
+
+
+/* ==================================================
+   SELECT MODE
+================================================== */
+
+.viewport.select-mode .face {
+  cursor: pointer;
+}
+
+.viewport.select-mode .face:hover {
+  border-color: #f97316;
+
+  box-shadow:
+    inset 0 0 0 3px rgba(249,115,22,.20);
+
+  filter: brightness(1.08);
+}
+
+.viewport.select-mode .face::after {
+  content: "✓";
+
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+
+  border-radius: 50%;
+
+  background: #f97316;
+  color: white;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  opacity: 0;
+}
+
+.viewport.select-mode .face:hover::after {
+  opacity: 1;
+}
+
+
+/* ==================================================
+   ADD MODE
+================================================== */
+
+.viewport.add-mode .face {
+  cursor: copy;
+}
+
+.viewport.add-mode .face:hover {
+  border-color: #16a34a;
+
+  box-shadow:
+    inset 0 0 0 4px rgba(22,163,74,.25);
+
+  filter: brightness(1.1);
+}
+
+.viewport.add-mode .face::after {
+  content: "+";
+
+  display: grid;
+  place-items: center;
+
+  width: 27px;
+  height: 27px;
+
+  border-radius: 50%;
+
+  background: #16a34a;
+  color: white;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  opacity: 0;
+}
+
+.viewport.add-mode .face:hover::after {
+  opacity: 1;
+}
+
+
+/* ==================================================
+   DELETE MODE
+================================================== */
+
+.viewport.delete-mode .face {
+  cursor: pointer;
+}
+
+.viewport.delete-mode .face:hover {
+  border-color: #dc2626;
+
+  box-shadow:
+    inset 0 0 0 4px rgba(220,38,38,.22);
+
+  filter: saturate(.4);
+}
+
+.viewport.delete-mode .face::after {
+  content: "−";
+
+  display: grid;
+  place-items: center;
+
+  width: 27px;
+  height: 27px;
+
+  border-radius: 50%;
+
+  background: #dc2626;
+  color: white;
+
+  font-size: 21px;
+  font-weight: bold;
+
+  opacity: 0;
+}
+
+.viewport.delete-mode .face:hover::after {
+  opacity: 1;
+}
+
+
+/* ==================================================
+   VIEWPORT HINT
+================================================== */
+
+.viewport-hint {
+  position: absolute;
+
+  left: 50%;
+  bottom: 15px;
+
+  transform: translateX(-50%);
+
+  padding: 7px 13px;
+
+  border-radius: 999px;
+
+  background: rgba(238,242,255,.95);
+  color: #4338ca;
+
+  font-size: 13px;
+
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   MESSAGE
+================================================== */
+
+.message {
+  min-height: 58px;
+
+  margin-top: 14px;
+  padding: 13px 15px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+
+  background: #f8fafc;
+
+  line-height: 1.6;
+}
+
+.message.success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.message.warning {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+
+/* ==================================================
+   GUIDE
+================================================== */
+
+.guide {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  margin-top: 15px;
+}
+
+.guide-item {
+  padding: 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: white;
+
+  line-height: 1.6;
+}
+
+.guide-item strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.guide-item span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 850px) {
+
+  .guide {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 12px;
+  }
+
+  .viewport {
+    height: 430px;
+  }
+
+  .tool-buttons,
+  .control-buttons,
+  .guide {
+    grid-template-columns: 1fr;
+  }
+
+  .viewport-hint {
+    white-space: normal;
+    text-align: center;
+    width: max-content;
+    max-width: 90%;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+  <h1>
+    🧊 3D Cube Builder — TGAT2
+  </h1>
+
+
+  <p class="subtitle">
+    สร้างรูปทรงจาก Block อย่างอิสระ
+    เลือกก้อน เปลี่ยนสี เพิ่ม ลบ
+    และหมุนดูได้รอบ 360°
+  </p>
+
+
+  <div class="callout">
+
+    <strong>เลือกและเปลี่ยนสี:</strong>
+
+    กด
+    <strong>👆 เลือก Block</strong>
+    แล้วคลิกก้อนที่ต้องการ
+
+    จากนั้นคลิกเลือกสีจาก Palette
+    เพื่อเปลี่ยนสีได้ทันที
+
+    <br>
+
+    <strong>หมุนโมเดล:</strong>
+
+    กดค้างแล้วลากตรงพื้นที่ว่าง
+    รอบ ๆ Block ได้ตลอดเวลา
+
+  </div>
+
+
+
+  <!-- =================================================
+       TOOLBAR
+  ================================================== -->
+
+  <div class="toolbar">
+
+    <div class="card">
+
+      <h2>
+        เครื่องมือ
+      </h2>
+
+
+      <!-- TOOL MODE -->
+
+      <div class="tool-buttons">
+
+        <button
+          id="selectMode"
+          class="tool-button active"
+          type="button"
+        >
+          👆 เลือก Block
+        </button>
+
+
+        <button
+          id="addMode"
+          class="tool-button"
+          type="button"
+        >
+          ＋ เพิ่ม Block
+        </button>
+
+
+        <button
+          id="deleteMode"
+          class="tool-button"
+          type="button"
+        >
+          − ลบ Block
+        </button>
+
+      </div>
+
+
+
+      <!-- VIEW CONTROLS -->
+
+      <div class="control-buttons">
+
+        <button
+          id="autoRotate"
+          type="button"
+        >
+          ↻ หมุนอัตโนมัติ
+        </button>
+
+
+        <button
+          id="resetView"
+          type="button"
+        >
+          ⌂ มุมเริ่มต้น
+        </button>
+
+
+        <button
+          id="resetBlocks"
+          type="button"
+        >
+          ↺ เริ่มใหม่
+        </button>
+
+      </div>
+
+
+
+      <!-- =================================================
+           COLOR PALETTE
+      ================================================== -->
+
+      <div class="palette-box">
+
+        <div class="palette-title">
+          🎨 เลือกสี
+        </div>
+
+
+        <div class="palette-description">
+          เลือก Block ก่อน แล้วกดสีที่ต้องการ
+          สีของ Block จะเปลี่ยนทันที
+        </div>
+
+
+        <div
+          id="palette"
+          class="palette"
+        >
+
+          <!-- ม่วงน้ำเงิน -->
+
+          <button
+            class="color-choice active"
+            data-color="0"
+            style="--swatch:#818cf8;"
+            title="ม่วงน้ำเงิน"
+            aria-label="สีม่วงน้ำเงิน"
+          ></button>
+
+
+          <!-- ฟ้า -->
+
+          <button
+            class="color-choice"
+            data-color="1"
+            style="--swatch:#38bdf8;"
+            title="ฟ้า"
+            aria-label="สีฟ้า"
+          ></button>
+
+
+          <!-- เขียว -->
+
+          <button
+            class="color-choice"
+            data-color="2"
+            style="--swatch:#34d399;"
+            title="เขียว"
+            aria-label="สีเขียว"
+          ></button>
+
+
+          <!-- เหลือง -->
+
+          <button
+            class="color-choice"
+            data-color="3"
+            style="--swatch:#fbbf24;"
+            title="เหลือง"
+            aria-label="สีเหลือง"
+          ></button>
+
+
+          <!-- ชมพู -->
+
+          <button
+            class="color-choice"
+            data-color="4"
+            style="--swatch:#fb7185;"
+            title="ชมพู"
+            aria-label="สีชมพู"
+          ></button>
+
+
+          <!-- ม่วง -->
+
+          <button
+            class="color-choice"
+            data-color="5"
+            style="--swatch:#c084fc;"
+            title="ม่วง"
+            aria-label="สีม่วง"
+          ></button>
+
+
+          <!-- ส้ม -->
+
+          <button
+            class="color-choice"
+            data-color="6"
+            style="--swatch:#fb923c;"
+            title="ส้ม"
+            aria-label="สีส้ม"
+          ></button>
+
+
+          <!-- เทา -->
+
+          <button
+            class="color-choice"
+            data-color="7"
+            style="--swatch:#94a3b8;"
+            title="เทา"
+            aria-label="สีเทา"
+          ></button>
+
+
+          <!-- ขาว -->
+
+          <button
+            class="color-choice"
+            data-color="8"
+            data-light="true"
+            style="--swatch:#ffffff;"
+            title="ขาว"
+            aria-label="สีขาว"
+          ></button>
+
+        </div>
+
+
+
+        <div class="selected-color-row">
+
+          สีที่เลือก:
+
+          <span
+            id="selectedColorPreview"
+            class="selected-color-preview"
+          ></span>
+
+          <strong id="selectedColorName">
+            ม่วงน้ำเงิน
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =================================================
+       3D SCENE
+  ================================================== -->
+
+  <section>
+
+    <div class="scene-header">
+
+      <div>
+
+        <h2>
+          โมเดลลูกบาศก์ 3 มิติ
+        </h2>
+
+        <p class="subtitle">
+          คลิก Block เพื่อเลือก —
+          ลากพื้นที่ว่างเพื่อหมุน
+        </p>
+
+      </div>
+
+
+      <div
+        id="modeBadge"
+        class="badge"
+      >
+        👆 เลือก Block
+      </div>
+
+    </div>
+
+
+
+    <div
+      id="viewport"
+      class="viewport select-mode"
+    >
+
+      <div class="floor"></div>
+
+
+      <div
+        id="world"
+        class="world"
+      ></div>
+
+
+      <div class="viewport-hint">
+        ↔ ลากพื้นที่ว่างเพื่อหมุน 360°
+      </div>
+
+    </div>
+
+
+
+    <div
+      id="message"
+      class="message"
+    >
+
+      คลิก Block ที่ต้องการเลือก
+      จากนั้นเลือกสีจาก Palette ได้เลย
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =================================================
+       GUIDE
+  ================================================== -->
+
+  <div class="guide">
+
+
+    <div class="guide-item">
+
+      <strong>
+        👆 เลือก Block
+      </strong>
+
+      <span>
+        คลิกก้อนที่ต้องการ
+        ก้อนที่เลือกจะมีกรอบสีส้ม
+      </span>
+
+    </div>
+
+
+    <div class="guide-item">
+
+      <strong>
+        🎨 เลือกสี
+      </strong>
+
+      <span>
+        เมื่อเลือก Block แล้ว
+        คลิกสีเพื่อเปลี่ยนก้อนนั้นทันที
+      </span>
+
+    </div>
+
+
+    <div class="guide-item">
+
+      <strong>
+        ＋ เพิ่ม Block
+      </strong>
+
+      <span>
+        เลือกเครื่องมือเพิ่ม
+        แล้วคลิกด้านที่ต้องการต่อก้อนใหม่
+      </span>
+
+    </div>
+
+
+    <div class="guide-item">
+
+      <strong>
+        🔄 หมุน
+      </strong>
+
+      <span>
+        ลากพื้นที่ว่างรอบโมเดล
+        เพื่อหมุนดูได้รอบ 360°
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+/* ====================================================
+   ELEMENTS
+==================================================== */
+
+const viewport =
+document.getElementById("viewport");
+
+
+const world =
+document.getElementById("world");
+
+
+const selectModeBtn =
+document.getElementById("selectMode");
+
+
+const addModeBtn =
+document.getElementById("addMode");
+
+
+const deleteModeBtn =
+document.getElementById("deleteMode");
+
+
+const autoRotateBtn =
+document.getElementById("autoRotate");
+
+
+const resetViewBtn =
+document.getElementById("resetView");
+
+
+const resetBlocksBtn =
+document.getElementById("resetBlocks");
+
+
+const message =
+document.getElementById("message");
+
+
+const modeBadge =
+document.getElementById("modeBadge");
+
+
+const colorChoices =
+document.querySelectorAll(".color-choice");
+
+
+const selectedColorPreview =
+document.getElementById(
+  "selectedColorPreview"
+);
+
+
+const selectedColorName =
+document.getElementById(
+  "selectedColorName"
+);
+
+
+
+/* ====================================================
+   CONFIG
+==================================================== */
+
+const SIZE =
+64;
+
+
+const MAX_CUBES =
+50;
+
+
+
+/* ====================================================
+   COLORS
+==================================================== */
+
+const palettes = [
+
+  /* 0 — ม่วงน้ำเงิน */
+
+  {
+    name: "ม่วงน้ำเงิน",
+    base: "#818cf8",
+    front: "#a5b4fc",
+    side: "#818cf8",
+    top: "#c7d2fe",
+    bottom: "#6366f1"
+  },
+
+
+  /* 1 — ฟ้า */
+
+  {
+    name: "ฟ้า",
+    base: "#38bdf8",
+    front: "#7dd3fc",
+    side: "#38bdf8",
+    top: "#bae6fd",
+    bottom: "#0284c7"
+  },
+
+
+  /* 2 — เขียว */
+
+  {
+    name: "เขียว",
+    base: "#34d399",
+    front: "#6ee7b7",
+    side: "#34d399",
+    top: "#a7f3d0",
+    bottom: "#059669"
+  },
+
+
+  /* 3 — เหลือง */
+
+  {
+    name: "เหลือง",
+    base: "#fbbf24",
+    front: "#fcd34d",
+    side: "#fbbf24",
+    top: "#fde68a",
+    bottom: "#d97706"
+  },
+
+
+  /* 4 — ชมพู */
+
+  {
+    name: "ชมพู",
+    base: "#fb7185",
+    front: "#fda4af",
+    side: "#fb7185",
+    top: "#fecdd3",
+    bottom: "#e11d48"
+  },
+
+
+  /* 5 — ม่วง */
+
+  {
+    name: "ม่วง",
+    base: "#c084fc",
+    front: "#d8b4fe",
+    side: "#c084fc",
+    top: "#e9d5ff",
+    bottom: "#9333ea"
+  },
+
+
+  /* 6 — ส้ม */
+
+  {
+    name: "ส้ม",
+    base: "#fb923c",
+    front: "#fdba74",
+    side: "#fb923c",
+    top: "#fed7aa",
+    bottom: "#ea580c"
+  },
+
+
+  /* 7 — เทา */
+
+  {
+    name: "เทา",
+    base: "#94a3b8",
+    front: "#cbd5e1",
+    side: "#94a3b8",
+    top: "#e2e8f0",
+    bottom: "#64748b"
+  },
+
+
+  /* 8 — ขาว */
+
+  {
+    name: "ขาว",
+    base: "#ffffff",
+
+    /*
+      ยังคงใช้ shading อ่อน ๆ
+      เพื่อให้ลูกบาศก์สีขาวเห็นเป็น 3 มิติ
+    */
+
+    front: "#ffffff",
+    side: "#e2e8f0",
+    top: "#ffffff",
+    bottom: "#cbd5e1"
+  }
+
+];
+
+
+
+/*
+  สีที่เลือก
+*/
+
+let selectedColor =
+0;
+
+
+
+/* ====================================================
+   CUBE DATA
+==================================================== */
+
+let cubes = [
+
+  {
+    x: 0,
+    y: 0,
+    z: 0,
+    color: 0
+  },
+
+  {
+    x: 1,
+    y: 0,
+    z: 0,
+    color: 0
+  },
+
+  {
+    x: 0,
+    y: 1,
+    z: 0,
+    color: 1
+  },
+
+  {
+    x: 0,
+    y: 0,
+    z: 1,
+    color: 2
+  }
+
+];
+
+
+
+/* ====================================================
+   SELECTED BLOCK
+==================================================== */
+
+let selectedCubeKey =
+null;
+
+
+
+/* ====================================================
+   TOOL MODE
+==================================================== */
+
+let mode =
+"select";
+
+
+
+/* ====================================================
+   ROTATION
+==================================================== */
+
+let angleX =
+-22;
+
+
+let angleY =
+-35;
+
+
+let dragging =
+false;
+
+
+let activePointer =
+null;
+
+
+let dragStartX =
+0;
+
+
+let dragStartY =
+0;
+
+
+let startAngleX =
+0;
+
+
+let startAngleY =
+0;
+
+
+
+/* ====================================================
+   AUTO ROTATE
+==================================================== */
+
+let autoRotate =
+false;
+
+
+let autoFrame =
+null;
+
+
+
+/* ====================================================
+   DIRECTIONS
+==================================================== */
+
+const directions = {
+
+  front: {
+    x: 0,
+    y: 0,
+    z: 1
+  },
+
+  back: {
+    x: 0,
+    y: 0,
+    z: -1
+  },
+
+  right: {
+    x: 1,
+    y: 0,
+    z: 0
+  },
+
+  left: {
+    x: -1,
+    y: 0,
+    z: 0
+  },
+
+  top: {
+    x: 0,
+    y: 1,
+    z: 0
+  },
+
+  bottom: {
+    x: 0,
+    y: -1,
+    z: 0
+  }
+
+};
+
+
+
+/* ====================================================
+   POSITION KEY
+==================================================== */
+
+function cubeKey(
+  x,
+  y,
+  z
+) {
+
+  return `${x},${y},${z}`;
+
+}
+
+
+
+/* ====================================================
+   FIND CUBE
+==================================================== */
+
+function findCube(
+  x,
+  y,
+  z
+) {
+
+  return cubes.find(
+
+    cube =>
+
+      cube.x === x &&
+      cube.y === y &&
+      cube.z === z
+
+  );
+
+}
+
+
+
+function hasCube(
+  x,
+  y,
+  z
+) {
+
+  return Boolean(
+    findCube(x, y, z)
+  );
+
+}
+
+
+
+/* ====================================================
+   SELECTED CUBE
+==================================================== */
+
+function getSelectedCube() {
+
+  if (
+    !selectedCubeKey
+  ) {
+
+    return null;
+
+  }
+
+
+  return cubes.find(
+
+    cube =>
+
+      cubeKey(
+        cube.x,
+        cube.y,
+        cube.z
+      )
+
+      ===
+
+      selectedCubeKey
+
+  );
+
+}
+
+
+
+/* ====================================================
+   MODEL CENTER
+==================================================== */
+
+function getCenter() {
+
+  const xs =
+  cubes.map(
+    cube => cube.x
+  );
+
+
+  const ys =
+  cubes.map(
+    cube => cube.y
+  );
+
+
+  const zs =
+  cubes.map(
+    cube => cube.z
+  );
+
+
+  return {
+
+    x:
+
+    (
+      Math.min(...xs) +
+      Math.max(...xs)
+    )
+
+    / 2,
+
+
+    y:
+
+    (
+      Math.min(...ys) +
+      Math.max(...ys)
+    )
+
+    / 2,
+
+
+    z:
+
+    (
+      Math.min(...zs) +
+      Math.max(...zs)
+    )
+
+    / 2
+
+  };
+
+}
+
+
+
+/* ====================================================
+   AUTO SCALE
+==================================================== */
+
+function getModelScale() {
+
+  const xs =
+  cubes.map(
+    cube => cube.x
+  );
+
+
+  const ys =
+  cubes.map(
+    cube => cube.y
+  );
+
+
+  const zs =
+  cubes.map(
+    cube => cube.z
+  );
+
+
+  const spanX =
+
+  (
+    Math.max(...xs) -
+    Math.min(...xs) +
+    1
+  )
+
+  * SIZE;
+
+
+  const spanY =
+
+  (
+    Math.max(...ys) -
+    Math.min(...ys) +
+    1
+  )
+
+  * SIZE;
+
+
+  const spanZ =
+
+  (
+    Math.max(...zs) -
+    Math.min(...zs) +
+    1
+  )
+
+  * SIZE;
+
+
+  const largest =
+
+  Math.max(
+    spanX,
+    spanY,
+    spanZ
+  );
+
+
+  if (
+    largest <= 330
+  ) {
+
+    return 1;
+
+  }
+
+
+  return Math.max(
+
+    .4,
+
+    330 /
+    largest
+
+  );
+
+}
+
+
+
+/* ====================================================
+   CREATE FACE
+==================================================== */
+
+function createFace(
+  cube,
+  faceName
+) {
+
+  const face =
+  document.createElement(
+    "div"
+  );
+
+
+  face.className =
+  `face ${faceName}`;
+
+
+  face.dataset.face =
+  faceName;
+
+
+  face.dataset.x =
+  cube.x;
+
+
+  face.dataset.y =
+  cube.y;
+
+
+  face.dataset.z =
+  cube.z;
+
+
+
+  const palette =
+
+  palettes[
+    cube.color
+  ];
+
+
+
+  /*
+    ใส่สีแต่ละด้าน
+    เพื่อสร้างมิติ
+  */
+
+  if (
+    faceName === "top"
+  ) {
+
+    face.style.background =
+    palette.top;
+
+  }
+
+
+  else if (
+    faceName === "bottom"
+  ) {
+
+    face.style.background =
+    palette.bottom;
+
+  }
+
+
+  else if (
+
+    faceName === "left" ||
+    faceName === "right"
+
+  ) {
+
+    face.style.background =
+    palette.side;
+
+  }
+
+
+  else {
+
+    face.style.background =
+    palette.front;
+
+  }
+
+
+  return face;
+
+}
+
+
+
+/* ====================================================
+   CREATE CUBE
+==================================================== */
+
+function createCubeElement(
+  cube,
+  center
+) {
+
+  const element =
+  document.createElement(
+    "div"
+  );
+
+
+  element.className =
+  "cube";
+
+
+  const key =
+
+  cubeKey(
+    cube.x,
+    cube.y,
+    cube.z
+  );
+
+
+
+  /*
+    Highlight ก้อนที่เลือก
+  */
+
+  if (
+    key === selectedCubeKey
+  ) {
+
+    element.classList.add(
+      "selected"
+    );
+
+  }
+
+
+
+  const tx =
+
+  (
+    cube.x -
+    center.x
+  )
+
+  * SIZE;
+
+
+  const ty =
+
+  -(
+    cube.y -
+    center.y
+  )
+
+  * SIZE;
+
+
+  const tz =
+
+  (
+    cube.z -
+    center.z
+  )
+
+  * SIZE;
+
+
+
+  element.style.transform =
+
+  `translate3d(
+    ${tx}px,
+    ${ty}px,
+    ${tz}px
+  )`;
+
+
+
+  /*
+    สร้างเฉพาะด้านที่ไม่มี
+    Block อีกก้อนอยู่ติดกัน
+  */
+
+  Object.entries(
+    directions
+  )
+  .forEach(
+
+    (
+      [
+        faceName,
+        direction
+      ]
+    ) => {
+
+
+      const nx =
+
+      cube.x +
+      direction.x;
+
+
+      const ny =
+
+      cube.y +
+      direction.y;
+
+
+      const nz =
+
+      cube.z +
+      direction.z;
+
+
+
+      if (
+
+        !hasCube(
+          nx,
+          ny,
+          nz
+        )
+
+      ) {
+
+        element.appendChild(
+
+          createFace(
+            cube,
+            faceName
+          )
+
+        );
+
+      }
+
+    }
+
+  );
+
+
+  return element;
+
+}
+
+
+
+/* ====================================================
+   RENDER
+==================================================== */
+
+function renderCubes() {
+
+  world.innerHTML =
+  "";
+
+
+  const center =
+  getCenter();
+
+
+  cubes.forEach(
+
+    cube => {
+
+      world.appendChild(
+
+        createCubeElement(
+          cube,
+          center
+        )
+
+      );
+
+    }
+
+  );
+
+
+  updateWorldTransform();
+
+}
+
+
+
+/* ====================================================
+   WORLD TRANSFORM
+==================================================== */
+
+function updateWorldTransform() {
+
+  const scale =
+  getModelScale();
+
+
+  world.style.transform =
+
+  `
+  rotateX(${angleX}deg)
+  rotateY(${angleY}deg)
+  scale(${scale})
+  `;
+
+}
+
+
+
+/* ====================================================
+   MESSAGE
+==================================================== */
+
+function setMessage(
+  text,
+  type = ""
+) {
+
+  message.className =
+  "message";
+
+
+  if (
+    type
+  ) {
+
+    message.classList.add(
+      type
+    );
+
+  }
+
+
+  message.innerHTML =
+  text;
+
+}
+
+
+
+/* ====================================================
+   TOOL MODE
+==================================================== */
+
+function setMode(
+  newMode
+) {
+
+  mode =
+  newMode;
+
+
+  selectModeBtn.classList.toggle(
+    "active",
+    mode === "select"
+  );
+
+
+  addModeBtn.classList.toggle(
+    "active",
+    mode === "add"
+  );
+
+
+  deleteModeBtn.classList.toggle(
+    "active",
+    mode === "delete"
+  );
+
+
+  viewport.classList.remove(
+
+    "select-mode",
+    "add-mode",
+    "delete-mode"
+
+  );
+
+
+
+  if (
+    mode === "select"
+  ) {
+
+    viewport.classList.add(
+      "select-mode"
+    );
+
+
+    modeBadge.textContent =
+    "👆 เลือก Block";
+
+
+    setMessage(
+
+      "คลิก Block ที่ต้องการเลือก จากนั้นเลือกสีจาก Palette เพื่อเปลี่ยนสีได้ทันที"
+
+    );
+
+  }
+
+
+  else if (
+    mode === "add"
+  ) {
+
+    viewport.classList.add(
+      "add-mode"
+    );
+
+
+    modeBadge.textContent =
+    "＋ เพิ่ม Block";
+
+
+    setMessage(
+
+      `คลิกด้านของ Block เพื่อเพิ่มก้อนใหม่ โดย Block ใหม่จะใช้สี <strong>${palettes[selectedColor].name}</strong>`
+
+    );
+
+  }
+
+
+  else {
+
+    viewport.classList.add(
+      "delete-mode"
+    );
+
+
+    modeBadge.textContent =
+    "− ลบ Block";
+
+
+    setMessage(
+
+      "คลิก Block ที่ต้องการลบ"
+
+    );
+
+  }
+
+}
+
+
+
+/* ====================================================
+   UPDATE COLOR UI
+==================================================== */
+
+function updatePaletteUI() {
+
+  colorChoices.forEach(
+
+    button => {
+
+      const colorNumber =
+
+      Number(
+        button.dataset.color
+      );
+
+
+      button.classList.toggle(
+
+        "active",
+
+        colorNumber ===
+        selectedColor
+
+      );
+
+    }
+
+  );
+
+
+  selectedColorPreview
+  .style
+  .background =
+
+  palettes[
+    selectedColor
+  ]
+  .base;
+
+
+  selectedColorName
+  .textContent =
+
+  palettes[
+    selectedColor
+  ]
+  .name;
+
+}
+
+
+
+/* ====================================================
+   SELECT BLOCK
+==================================================== */
+
+function selectBlock(
+  face
+) {
+
+  const x =
+  Number(
+    face.dataset.x
+  );
+
+
+  const y =
+  Number(
+    face.dataset.y
+  );
+
+
+  const z =
+  Number(
+    face.dataset.z
+  );
+
+
+  const cube =
+  findCube(
+    x,
+    y,
+    z
+  );
+
+
+  if (
+    !cube
+  ) {
+
+    return;
+
+  }
+
+
+
+  selectedCubeKey =
+
+  cubeKey(
+    x,
+    y,
+    z
+  );
+
+
+
+  /*
+    Palette เปลี่ยนตามสี
+    ของ Block ที่เลือก
+  */
+
+  selectedColor =
+  cube.color;
+
+
+  updatePaletteUI();
+
+
+  renderCubes();
+
+
+  setMessage(
+
+    `👆 เลือก Block แล้ว — ตอนนี้เป็นสี <strong>${palettes[selectedColor].name}</strong> เลือกสีอื่นจาก Palette ได้เลย`
+
+  );
+
+}
+
+
+
+/* ====================================================
+   COLOR PICKER
+
+   เลือกสีได้ตลอดเวลา
+
+   ถ้ามี Block ถูกเลือก
+   เปลี่ยนสีก้อนนั้นทันที
+==================================================== */
+
+colorChoices.forEach(
+
+  button => {
+
+    button.addEventListener(
+
+      "click",
+
+      event => {
+
+        event.stopPropagation();
+
+
+        selectedColor =
+
+        Number(
+          button.dataset.color
+        );
+
+
+        updatePaletteUI();
+
+
+
+        const selectedCube =
+        getSelectedCube();
+
+
+
+        /*
+          ถ้ามี Block ถูกเลือก
+          ให้เปลี่ยนทันที
+        */
+
+        if (
+          selectedCube
+        ) {
+
+          selectedCube.color =
+          selectedColor;
+
+
+          renderCubes();
+
+
+          setMessage(
+
+            `🎨 เปลี่ยน Block ที่เลือกเป็นสี <strong>${palettes[selectedColor].name}</strong> แล้ว`,
+
+            "success"
+
+          );
+
+        }
+
+
+        /*
+          ถ้ายังไม่ได้เลือก Block
+          สีนี้จะใช้กับ Block ใหม่
+        */
+
+        else {
+
+          setMessage(
+
+            `🎨 เลือกสี <strong>${palettes[selectedColor].name}</strong> แล้ว — เลือก Block เพื่อเปลี่ยนสี หรือใช้สีนี้กับ Block ใหม่ได้`
+
+          );
+
+        }
+
+      }
+
+    );
+
+  }
+
+);
+
+
+
+/* ====================================================
+   ADD BLOCK
+==================================================== */
+
+function addBlockFromFace(
+  face
+) {
+
+  if (
+    cubes.length >=
+    MAX_CUBES
+  ) {
+
+    setMessage(
+
+      `เพิ่มได้สูงสุด ${MAX_CUBES} Block`,
+
+      "warning"
+
+    );
+
+    return;
+
+  }
+
+
+  const x =
+  Number(
+    face.dataset.x
+  );
+
+
+  const y =
+  Number(
+    face.dataset.y
+  );
+
+
+  const z =
+  Number(
+    face.dataset.z
+  );
+
+
+  const direction =
+
+  directions[
+    face.dataset.face
+  ];
+
+
+  const newX =
+
+  x +
+  direction.x;
+
+
+  const newY =
+
+  y +
+  direction.y;
+
+
+  const newZ =
+
+  z +
+  direction.z;
+
+
+
+  if (
+
+    hasCube(
+      newX,
+      newY,
+      newZ
+    )
+
+  ) {
+
+    setMessage(
+
+      "ตำแหน่งนี้มี Block อยู่แล้ว",
+
+      "warning"
+
+    );
+
+    return;
+
+  }
+
+
+
+  /*
+    ก้อนใหม่ใช้สี
+    ที่เลือกอยู่ใน Palette
+  */
+
+  cubes.push({
+
+    x:
+    newX,
+
+    y:
+    newY,
+
+    z:
+    newZ,
+
+    color:
+    selectedColor
+
+  });
+
+
+
+  /*
+    เลือกก้อนใหม่อัตโนมัติ
+  */
+
+  selectedCubeKey =
+
+  cubeKey(
+    newX,
+    newY,
+    newZ
+  );
+
+
+  renderCubes();
+
+
+  setMessage(
+
+    `✅ เพิ่ม Block สี <strong>${palettes[selectedColor].name}</strong> เรียบร้อย`,
+
+    "success"
+
+  );
+
+}
+
+
+
+/* ====================================================
+   DELETE BLOCK
+==================================================== */
+
+function deleteBlock(
+  face
+) {
+
+  if (
+    cubes.length <= 1
+  ) {
+
+    setMessage(
+
+      "ต้องเหลือ Block อย่างน้อย 1 ก้อน",
+
+      "warning"
+
+    );
+
+    return;
+
+  }
+
+
+  const x =
+  Number(
+    face.dataset.x
+  );
+
+
+  const y =
+  Number(
+    face.dataset.y
+  );
+
+
+  const z =
+  Number(
+    face.dataset.z
+  );
+
+
+  const key =
+
+  cubeKey(
+    x,
+    y,
+    z
+  );
+
+
+
+  cubes =
+
+  cubes.filter(
+
+    cube =>
+
+      cubeKey(
+        cube.x,
+        cube.y,
+        cube.z
+      )
+
+      !==
+
+      key
+
+  );
+
+
+
+  /*
+    ถ้าลบก้อนที่เลือกอยู่
+    ให้ยกเลิกการเลือก
+  */
+
+  if (
+    selectedCubeKey ===
+    key
+  ) {
+
+    selectedCubeKey =
+    null;
+
+  }
+
+
+  renderCubes();
+
+
+  setMessage(
+
+    "✅ ลบ Block เรียบร้อย",
+
+    "success"
+
+  );
+
+}
+
+
+
+/* ====================================================
+   CLICK BLOCK
+==================================================== */
+
+world.addEventListener(
+
+  "click",
+
+  event => {
+
+    const face =
+
+    event.target.closest(
+      ".face"
+    );
+
+
+    if (
+      !face
+    ) {
+
+      return;
+
+    }
+
+
+
+    if (
+      mode === "select"
+    ) {
+
+      selectBlock(
+        face
+      );
+
+    }
+
+
+    else if (
+      mode === "add"
+    ) {
+
+      addBlockFromFace(
+        face
+      );
+
+    }
+
+
+    else if (
+      mode === "delete"
+    ) {
+
+      deleteBlock(
+        face
+      );
+
+    }
+
+  }
+
+);
+
+
+
+/* ====================================================
+   ROTATE FROM EMPTY SPACE
+
+   คลิก Block = ใช้เครื่องมือ
+   คลิกพื้นที่ว่าง = หมุน
+==================================================== */
+
+viewport.addEventListener(
+
+  "pointerdown",
+
+  event => {
+
+    const face =
+
+    event.target.closest
+    ?
+
+    event.target.closest(
+      ".face"
+    )
+
+    :
+
+    null;
+
+
+
+    /*
+      ถ้ากดโดน Block
+      ไม่เริ่มหมุน
+    */
+
+    if (
+      face
+    ) {
+
+      return;
+
+    }
+
+
+
+    stopAutoRotate();
+
+
+    dragging =
+    true;
+
+
+    activePointer =
+    event.pointerId;
+
+
+    dragStartX =
+    event.clientX;
+
+
+    dragStartY =
+    event.clientY;
+
+
+    startAngleX =
+    angleX;
+
+
+    startAngleY =
+    angleY;
+
+
+    viewport
+    .classList
+    .add(
+      "dragging"
+    );
+
+
+    try {
+
+      viewport.setPointerCapture(
+        event.pointerId
+      );
+
+    }
+
+    catch (
+      error
+    ) {}
+
+
+    modeBadge.textContent =
+    "🔄 กำลังหมุน";
+
+
+    event.preventDefault();
+
+  }
+
+);
+
+
+
+/* ====================================================
+   ROTATE MOVE
+==================================================== */
+
+viewport.addEventListener(
+
+  "pointermove",
+
+  event => {
+
+    if (
+
+      !dragging
+
+      ||
+
+      event.pointerId !==
+      activePointer
+
+    ) {
+
+      return;
+
+    }
+
+
+    const dx =
+
+    event.clientX -
+    dragStartX;
+
+
+    const dy =
+
+    event.clientY -
+    dragStartY;
+
+
+
+    /*
+      หมุนซ้าย / ขวา
+    */
+
+    angleY =
+
+    startAngleY
+
+    +
+
+    dx *
+    .65;
+
+
+
+    /*
+      ก้ม / เงย
+    */
+
+    angleX =
+
+    Math.max(
+
+      -85,
+
+      Math.min(
+
+        85,
+
+        startAngleX
+
+        -
+
+        dy *
+        .55
+
+      )
+
+    );
+
+
+    updateWorldTransform();
+
+  }
+
+);
+
+
+
+/* ====================================================
+   STOP DRAG
+==================================================== */
+
+function stopDragging(
+  event
+) {
+
+  if (
+    !dragging
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+
+    event
+
+    &&
+
+    event.pointerId !==
+    undefined
+
+    &&
+
+    activePointer !==
+    null
+
+    &&
+
+    event.pointerId !==
+    activePointer
+
+  ) {
+
+    return;
+
+  }
+
+
+  const oldPointer =
+  activePointer;
+
+
+  dragging =
+  false;
+
+
+  activePointer =
+  null;
+
+
+  viewport
+  .classList
+  .remove(
+    "dragging"
+  );
+
+
+
+  /*
+    กลับ Badge ตามเครื่องมือ
+  */
+
+  if (
+    mode === "select"
+  ) {
+
+    modeBadge.textContent =
+    "👆 เลือก Block";
+
+  }
+
+
+  else if (
+    mode === "add"
+  ) {
+
+    modeBadge.textContent =
+    "＋ เพิ่ม Block";
+
+  }
+
+
+  else {
+
+    modeBadge.textContent =
+    "− ลบ Block";
+
+  }
+
+
+
+  if (
+    oldPointer !== null
+  ) {
+
+    try {
+
+      if (
+        viewport.hasPointerCapture(
+          oldPointer
+        )
+      ) {
+
+        viewport.releasePointerCapture(
+          oldPointer
+        );
+
+      }
+
+    }
+
+    catch (
+      error
+    ) {}
+
+  }
+
+}
+
+
+
+viewport.addEventListener(
+  "pointerup",
+  stopDragging
+);
+
+
+viewport.addEventListener(
+  "pointercancel",
+  stopDragging
+);
+
+
+
+viewport.addEventListener(
+
+  "lostpointercapture",
+
+  () => {
+
+    dragging =
+    false;
+
+
+    activePointer =
+    null;
+
+
+    viewport
+    .classList
+    .remove(
+      "dragging"
+    );
+
+  }
+
+);
+
+
+
+/* ====================================================
+   AUTO ROTATE
+==================================================== */
+
+function autoRotateLoop() {
+
+  if (
+    !autoRotate
+  ) {
+
+    return;
+
+  }
+
+
+  angleY +=
+  .45;
+
+
+  updateWorldTransform();
+
+
+  autoFrame =
+
+  requestAnimationFrame(
+    autoRotateLoop
+  );
+
+}
+
+
+
+function startAutoRotate() {
+
+  autoRotate =
+  true;
+
+
+  autoRotateBtn
+  .textContent =
+  "⏸ หยุดหมุน";
+
+
+  modeBadge
+  .textContent =
+  "↻ กำลังหมุน 360°";
+
+
+  autoRotateLoop();
+
+}
+
+
+
+function stopAutoRotate() {
+
+  autoRotate =
+  false;
+
+
+  autoRotateBtn
+  .textContent =
+  "↻ หมุนอัตโนมัติ";
+
+
+  if (
+    autoFrame
+  ) {
+
+    cancelAnimationFrame(
+      autoFrame
+    );
+
+
+    autoFrame =
+    null;
+
+  }
+
+}
+
+
+
+/* ====================================================
+   TOOL BUTTONS
+==================================================== */
+
+selectModeBtn.addEventListener(
+
+  "click",
+
+  () => {
+
+    setMode(
+      "select"
+    );
+
+  }
+
+);
+
+
+
+addModeBtn.addEventListener(
+
+  "click",
+
+  () => {
+
+    setMode(
+      "add"
+    );
+
+  }
+
+);
+
+
+
+deleteModeBtn.addEventListener(
+
+  "click",
+
+  () => {
+
+    setMode(
+      "delete"
+    );
+
+  }
+
+);
+
+
+
+/* ====================================================
+   AUTO ROTATE BUTTON
+==================================================== */
+
+autoRotateBtn.addEventListener(
+
+  "click",
+
+  () => {
+
+    if (
+      autoRotate
+    ) {
+
+      stopAutoRotate();
+
+
+      setMode(
+        mode
+      );
+
+    }
+
+    else {
+
+      startAutoRotate();
+
+    }
+
+  }
+
+);
+
+
+
+/* ====================================================
+   RESET VIEW
+==================================================== */
+
+resetViewBtn.addEventListener(
+
+  "click",
+
+  () => {
+
+    stopAutoRotate();
+
+
+    angleX =
+    -22;
+
+
+    angleY =
+    -35;
+
+
+    updateWorldTransform();
+
+
+    setMessage(
+
+      "⌂ กลับมาที่มุมมองเริ่มต้นแล้ว"
+
+    );
+
+  }
+
+);
+
+
+
+/* ====================================================
+   RESET BLOCKS
+==================================================== */
+
+resetBlocksBtn.addEventListener(
+
+  "click",
+
+  () => {
+
+    stopAutoRotate();
+
+
+
+    /*
+      กลับมา Block เดียว
+    */
+
+    cubes = [
+
+      {
+        x: 0,
+        y: 0,
+        z: 0,
+        color: 0
+      }
+
+    ];
+
+
+
+    /*
+      เลือก Block แรก
+    */
+
+    selectedCubeKey =
+
+    cubeKey(
+      0,
+      0,
+      0
+    );
+
+
+
+    /*
+      Reset สี
+    */
+
+    selectedColor =
+    0;
+
+
+
+    /*
+      Reset มุม
+    */
+
+    angleX =
+    -22;
+
+
+    angleY =
+    -35;
+
+
+
+    updatePaletteUI();
+
+
+    setMode(
+      "select"
+    );
+
+
+    renderCubes();
+
+
+    setMessage(
+
+      "↺ เริ่มใหม่จาก Block 1 ก้อนแล้ว"
+
+    );
+
+  }
+
+);
+
+
+
+/* ====================================================
+   SAFETY
+==================================================== */
+
+window.addEventListener(
+
+  "pointerup",
+
+  event => {
+
+    if (
+      dragging
+    ) {
+
+      stopDragging(
+        event
+      );
+
+    }
+
+  }
+
+);
+
+
+
+window.addEventListener(
+
+  "blur",
+
+  () => {
+
+    dragging =
+    false;
+
+
+    activePointer =
+    null;
+
+
+    viewport
+    .classList
+    .remove(
+      "dragging"
+    );
+
+  }
+
+);
+
+
+
+/* ====================================================
+   INITIALIZE
+==================================================== */
+
+/*
+  เลือก Block แรกตั้งแต่เริ่ม
+*/
+
+selectedCubeKey =
+cubeKey(
+  0,
+  0,
+  0
+);
+
+
+updatePaletteUI();
+
+
+renderCubes();
+
+
+setMode(
+  "select"
+);
+
+</script>
+
+</body>
+</html>
